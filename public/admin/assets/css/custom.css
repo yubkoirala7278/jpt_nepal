@@ -1,0 +1,30 @@
+/* Unique Card Style */
+.custom-test-card {
+    border-radius: 15px;
+    background-color: #f8f9fa; /* Light background color */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.custom-test-card:hover {
+    transform: translateY(-10px); /* Slightly lift the card on hover */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Hover shadow effect */
+}
+
+/* Unique Title Style */
+.custom-test-card-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #343a40; /* Dark text color */
+}
+
+/* Unique Count Style */
+.custom-test-card-count {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #007bff; /* Blue color for the count */
+}
+
+.card-body {
+    padding: 30px;
+}
+
