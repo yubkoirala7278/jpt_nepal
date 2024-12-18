@@ -7,7 +7,11 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+     <!-- Favicons -->
+     <link href="{{ asset('logo.png') }}" rel="icon">
+     <link href="{{ asset('logo.png') }}" rel="apple-touch-icon">
+
+    <title>Japanese Proficiency Test</title>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">

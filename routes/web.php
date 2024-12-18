@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Route;
 // ====Auth===============
 Auth::routes([
     'register' => false, // Disable registration
-    'reset' => false,    // Disable password reset
     'verify' => false,   // Disable email verification
 ]);
 // ====End of Auth=======
