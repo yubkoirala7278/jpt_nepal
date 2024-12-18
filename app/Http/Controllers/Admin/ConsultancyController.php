@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Events\ConsultancyCreated;
+use App\Events\ConsultancyCreatedEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ConsultancyRequest;
+use App\Mail\ConsultancyCreatedMail;
 use App\Models\Consultancy;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -104,7 +108,14 @@ class ConsultancyController extends Controller
                 'address' => $request['address'],
                 'logo' => $logoPath,
             ]);
-
+            // calling event to send mail to consultancy
+            $data=[
+                'name'=>$request['name'],
+                'email'=>$request['email'],
+                'password'=>$request['password'],
+                'phone'=>$request['phone']
+            ];
+            Mail::to($request['email'])->send(new ConsultancyCreatedMail($data));
             return redirect()->route('consultancy.index')->with('success', 'Consultancy added successfully!');
         } catch (\Throwable $th) {
             return back()->with('error', $th->getMessage());

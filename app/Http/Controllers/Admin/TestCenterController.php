@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Events\TestCenterCreatedEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TestCenterRequest;
+use App\Mail\TestCenterCreatedMail;
 use App\Models\TestCenter;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -104,6 +107,14 @@ class TestCenterController extends Controller
                 'address' => $request['address'],
                 'logo' => $logoPath,
             ]);
+            // send mail when created test center
+            $data=[
+                'name'=>$request['name'],
+                'email'=>$request['email'],
+                'password'=>$request['password'],
+                'phone'=>$request['phone']
+            ];
+            Mail::to($request['email'])->send(new TestCenterCreatedMail($data));
 
             return redirect()->route('test_center.index')->with('success', 'Test Center added successfully!');
         } catch (\Throwable $th) {
