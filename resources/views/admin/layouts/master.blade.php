@@ -43,7 +43,6 @@
 </head>
 
 <body>
-
     <!-- ======= Header ======= -->
     <header id="header" class="header fixed-top d-flex align-items-center">
 
@@ -221,7 +220,7 @@
                         data-bs-toggle="dropdown">
                         <img src="{{ asset('admin/assets/img/profile-img.jpg') }}" alt="Profile"
                             class="rounded-circle">
-                        <span class="d-none d-md-block dropdown-toggle ps-2">K. Anderson</span>
+                        <span class="d-none d-md-block dropdown-toggle ps-2">{{Auth::user()->name}}</span>
                     </a><!-- End Profile Iamge Icon -->
 
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
@@ -283,34 +282,46 @@
 
         <ul class="sidebar-nav" id="sidebar-nav">
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.home') ? '' : 'collapsed' }}" href="{{route('admin.home')}}">
+                <a class="nav-link {{ request()->routeIs('admin.home') ? '' : 'collapsed' }}"
+                    href="{{ route('admin.home') }}">
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
                 </a>
             </li><!-- End Dashboard Nav -->
 
+            @if (Auth::user()->hasRole('admin'))
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('test_center.create') || request()->routeIs('test_center.index') ? '' : 'collapsed' }}" data-bs-target="#icons-nav" data-bs-toggle="collapse" href="#">
-                    <i class="fa-solid fa-building-columns"></i><span>Test Centers</span><i
-                        class="fas fa-chevron-down ms-auto"></i>
+                <a class="nav-link {{ request()->routeIs('exam_date.index') ? '' : 'collapsed' }}"
+                    href="{{ route('exam_date.index') }}">
+                    <i class="fa-solid fa-calendar"></i>
+                    <span>Exam Dates</span>
                 </a>
-                <ul id="icons-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                    <li>
-                        <a href="{{route('test_center.create')}}">
-                            <i class="fas fa-circle"></i><span>Add New</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{route('test_center.index')}}">
-                            <i class="fas fa-circle"></i><span>List All</span>
-                        </a>
-                    </li>
-                </ul>
-            </li><!-- End Icons Nav -->
+            </li><!-- End Profile Page Nav -->
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('test_center.create') || request()->routeIs('test_center.index') ? '' : 'collapsed' }}"
+                        data-bs-target="#icons-nav" data-bs-toggle="collapse" href="#">
+                        <i class="fa-solid fa-building-columns"></i><span>Test Centers</span><i
+                            class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="icons-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                        <li>
+                            <a href="{{ route('test_center.create') }}">
+                                <i class="fas fa-circle"></i><span>Add New</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('test_center.index') }}">
+                                <i class="fas fa-circle"></i><span>List All</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li><!-- End Icons Nav -->
+            @endif
+
 
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('consultancy.create') || request()->routeIs('consultancy.index') ? '' : 'collapsed' }}" data-bs-target="#icons-nav-second" data-bs-toggle="collapse"
-                    href="#">
+                <a class="nav-link {{ request()->routeIs('consultancy.create') || request()->routeIs('consultancy.index') ? '' : 'collapsed' }}"
+                    data-bs-target="#icons-nav-second" data-bs-toggle="collapse" href="#">
                     <i class="fa-solid fa-user-graduate"></i><span>Education Consultancy</span><i
                         class="fas fa-chevron-down ms-auto"></i>
                 </a>
@@ -329,19 +340,19 @@
             </li><!-- End Icons Nav -->
 
             <li class="nav-item">
-                <a class="nav-link collapsed" data-bs-target="#icons-nav-third" data-bs-toggle="collapse"
-                    href="#">
-                    <i class="fa-solid fa-laptop-file"></i><span>JPT Applicants</span><i
+                <a class="nav-link {{ request()->routeIs('student.index') || request()->routeIs('student.create') ? '' : 'collapsed' }}"
+                    data-bs-target="#icons-nav-third" data-bs-toggle="collapse" href="#">
+                    <i class="fa-solid fa-laptop-file"></i><span>Students/Applicants</span><i
                         class="fas fa-chevron-down ms-auto"></i>
                 </a>
-                <ul id="icons-nav-third" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                <ul id="icons-nav-third" class="nav-content collapse" data-bs-parent="#sidebar-nav">
                     <li>
-                        <a href="#">
+                        <a href="{{ route('student.create') }}">
                             <i class="fas fa-circle"></i><span>Add New</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#">
+                        <a href="{{ route('student.index') }}">
                             <i class="fas fa-circle"></i><span>List All</span>
                         </a>
                     </li>
@@ -358,7 +369,7 @@
                 </ul>
             </li><!-- End Icons Nav -->
 
-            <li class="nav-item">
+            {{-- <li class="nav-item">
                 <a class="nav-link collapsed" data-bs-target="#icons-nav-fourth" data-bs-toggle="collapse"
                     href="#">
                     <i class="fa-solid fa-newspaper"></i><span>News & Notice</span><i
@@ -469,7 +480,7 @@
                     <i class="fas fa-comment"></i>
                     <span>Students Testimonial</span>
                 </a>
-            </li><!-- End Profile Page Nav -->
+            </li><!-- End Profile Page Nav --> --}}
 
             <li class="nav-item">
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">

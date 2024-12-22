@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class ConsultancyRequest extends FormRequest
 {
@@ -57,6 +58,11 @@ class ConsultancyRequest extends FormRequest
             $rules['logo'] = 'required|image|mimes:webp,jpeg,png,jpg,gif,svg|max:2048';
         } elseif ($this->isMethod('put') || $this->isMethod('patch')) { // Update method
             $rules['logo'] = 'nullable|image|mimes:webp,jpeg,png,jpg,gif,svg|max:2048';
+        }
+
+        // assign to test center 
+        if(Auth::user()->hasRole('admin')){
+            $rules['test_center']='required';
         }
 
         return $rules;

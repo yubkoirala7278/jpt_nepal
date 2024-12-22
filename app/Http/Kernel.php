@@ -67,5 +67,7 @@ class Kernel extends HttpKernel
         'auth.admin'=>\App\Http\Middleware\AdminMiddleware::class,
         'auth.consultancy'=>\App\Http\Middleware\ConsultancyMiddleware::class,
         'auth.test_center'=>\App\Http\Middleware\TestCenterMiddleware::class,
+        'auth.student'=>\App\Http\Middleware\StudentMiddleware::class,
+        'check.consultancy.access' => \App\Http\Middleware\CheckConsultancyAccess::class,
     ];
 }

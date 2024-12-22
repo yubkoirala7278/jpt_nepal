@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 class Consultancy extends Model
 {
     use HasFactory;
-    protected $fillable = ['user_id', 'slug', 'phone', 'address', 'logo'];
+    protected $fillable = ['user_id', 'slug', 'phone', 'address', 'logo','test_center_id'];
     // Automatically boot the model
     protected static function boot()
     {
@@ -41,5 +41,8 @@ class Consultancy extends Model
     // define relationship
     public function user(){
         return $this->belongsTo(User::class);
+    }
+    public function test_center(){
+        return $this->belongsTo(User::class,'test_center_id');
     }
 }

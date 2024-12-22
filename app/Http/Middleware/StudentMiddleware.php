@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class TestCenterMiddleware
+class StudentMiddleware
 {
     /**
      * Handle an incoming request.
@@ -15,12 +15,12 @@ class TestCenterMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Check if the user is authenticated and has either role 'admin'
-        if (auth()->check() && (auth()->user()->hasRole('admin'))) {
+        // Check if the user is authenticated and has either 'admin' or 'consultancy_manager' role
+        if (auth()->check() && (auth()->user()->hasRole('consultancy_manager') || auth()->user()->hasRole('admin'))) {
             return $next($request);
         }
 
-        // Redirect back page 
+        // Redirect to home page or a specific route with error if the user does not have the right role
         return back()->with('error','You do not have permission to access this page');
     }
 }

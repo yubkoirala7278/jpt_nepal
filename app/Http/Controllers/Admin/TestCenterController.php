@@ -99,6 +99,8 @@ class TestCenterController extends Controller
                 'email' => $request['email'],
                 'password' => Hash::make($request['password']),
             ]);
+            // assign role
+            $user->assignRole('test_center_manager');
 
             // Create the test center record
             TestCenter::create([

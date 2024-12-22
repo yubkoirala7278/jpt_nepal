@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Events\ConsultancyCreated;
-use App\Events\ConsultancyCreatedEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ConsultancyRequest;
 use App\Mail\ConsultancyCreatedMail;
 use App\Models\Consultancy;
+use App\Models\TestCenter;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
@@ -18,6 +18,11 @@ use Yajra\DataTables\Facades\DataTables;
 
 class ConsultancyController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('check.consultancy.access')->only(['edit', 'update','destroy']);
+    }
     /**
      * Display a listing of the resource.
      */
@@ -28,9 +33,14 @@ class ConsultancyController extends Controller
                 'consultancies.*',
                 'users.name as user_name',
                 'users.email as user_email',
-                'consultancies.created_at' // Directly use created_at
+                'consultancies.created_at'
             ])
                 ->join('users', 'users.id', '=', 'consultancies.user_id');
+
+            // Check user role
+            if (Auth::user()->hasRole('test_center_manager')) {
+                $consultancies->where('consultancies.test_center_id', Auth::user()->id);
+            }
 
             // Apply filters dynamically based on search term
             if ($request->has('search') && !empty($request->search)) {
@@ -72,7 +82,8 @@ class ConsultancyController extends Controller
     public function create()
     {
         try {
-            return view('admin.consultancy.create');
+            $testCenters = TestCenter::with('user')->latest()->get();
+            return view('admin.consultancy.create', compact('testCenters'));
         } catch (\Throwable $th) {
             return back()->with('error', $th->getMessage());
         }
@@ -107,13 +118,16 @@ class ConsultancyController extends Controller
                 'phone' => $request['phone'],
                 'address' => $request['address'],
                 'logo' => $logoPath,
+                'test_center_id' => Auth::user()->hasRole('test_center_manager')
+                    ? Auth::user()->id
+                    : $request['test_center']
             ]);
             // calling event to send mail to consultancy
-            $data=[
-                'name'=>$request['name'],
-                'email'=>$request['email'],
-                'password'=>$request['password'],
-                'phone'=>$request['phone']
+            $data = [
+                'name' => $request['name'],
+                'email' => $request['email'],
+                'password' => $request['password'],
+                'phone' => $request['phone']
             ];
             Mail::to($request['email'])->send(new ConsultancyCreatedMail($data));
             return redirect()->route('consultancy.index')->with('success', 'Consultancy added successfully!');
@@ -137,7 +151,8 @@ class ConsultancyController extends Controller
     public function edit(Consultancy $consultancy)
     {
         try {
-            return view('admin.consultancy.edit', compact('consultancy'));
+            $testCenters = TestCenter::with('user')->latest()->get();
+            return view('admin.consultancy.edit', compact('consultancy', 'testCenters'));
         } catch (\Throwable $th) {
             return back()->with('error', $th->getMessage());
         }
@@ -183,6 +198,9 @@ class ConsultancyController extends Controller
             $consultancy->update([
                 'phone' => $request->phone,
                 'address' => $request->address,
+                'test_center_id' => Auth::user()->hasRole('test_center_manager')
+                    ? Auth::user()->id
+                    : $request['test_center']
             ]);
 
             return redirect()->route('consultancy.index')->with('success', 'Consultancy updated successfully!');
