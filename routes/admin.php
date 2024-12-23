@@ -23,4 +23,7 @@ Route::middleware(['auth.consultancy'])->group(function () {
 // =======accessible by consultancy and admin only===============
 Route::middleware(['auth.student'])->group(function () {
     Route::resource('student',StudentController::class);
+    Route::put('/student/status/{slug}', [StudentController::class, 'updateStatus'])->name('update.status');
+    Route::post('/student/upload-admit-card/{slug}', [StudentController::class, 'uploadAdmitCard'])
+    ->name('student.uploadAdmitCard.store');
 });

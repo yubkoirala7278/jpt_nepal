@@ -1,7 +1,7 @@
 @extends('admin.layouts.master')
 
 @section('content')
-    @if (Auth::user()->hasRole('admon'))
+    @if (Auth::user()->hasRole('admin'))
         <div class="container text-center">
             <div class="row">
                 <div class="col-12 col-md-6 col-lg-4">

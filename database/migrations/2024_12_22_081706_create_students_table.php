@@ -24,6 +24,9 @@ return new class extends Migration
             $table->string('receipt_image');
             $table->unsignedBigInteger('consultancy_id');
             $table->foreign('consultancy_id')->references('id')->on('consultancies')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->unsignedBigInteger('exam_date_id');
+            $table->foreign('exam_date_id')->references('id')->on('exam_dates')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->boolean('status')->default(false);
             $table->timestamps();
         });
     }

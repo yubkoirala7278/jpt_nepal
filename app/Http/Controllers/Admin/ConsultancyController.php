@@ -111,6 +111,8 @@ class ConsultancyController extends Controller
                 'email' => $request['email'],
                 'password' => Hash::make($request['password']),
             ]);
+            // assign role as consultancy manager
+            $user->assignRole('consultancy_manager');
 
             // Create the consultancy record
             Consultancy::create([

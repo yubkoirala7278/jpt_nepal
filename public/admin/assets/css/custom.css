@@ -28,5 +28,16 @@
     padding: 30px;
 }
 
-
+.table {
+    white-space: nowrap;
+    overflow-x: auto;
+}
+mark {
+    background-color: yellow;
+    color: black;
+    font-weight: bold;
+    padding: 0 5px;
+    text-shadow: 0 0 10px rgba(255, 255, 0, 0.7); /* Yellow glow */
+    
+  }
 
