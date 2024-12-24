@@ -38,8 +38,9 @@ class TestCenter extends Model
         return 'slug';
     }
 
-    // define relationship
-    public function user(){
+    // Relationship back to the user
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 }

@@ -33,15 +33,17 @@ class ConsultancyController extends Controller
                 'consultancies.*',
                 'users.name as user_name',
                 'users.email as user_email',
+                'test_centers.name as test_center_name', // Add the test center name
                 'consultancies.created_at'
             ])
-                ->join('users', 'users.id', '=', 'consultancies.user_id');
-
+                ->join('users', 'users.id', '=', 'consultancies.user_id')
+                ->leftJoin('users as test_centers', 'test_centers.id', '=', 'consultancies.test_center_id'); // Join the users table again for test center
+    
             // Check user role
             if (Auth::user()->hasRole('test_center_manager')) {
                 $consultancies->where('consultancies.test_center_id', Auth::user()->id);
             }
-
+    
             // Apply filters dynamically based on search term
             if ($request->has('search') && !empty($request->search)) {
                 $consultancies->where(function ($query) use ($request) {
@@ -51,16 +53,17 @@ class ConsultancyController extends Controller
                         ->orWhere('consultancies.address', 'like', '%' . $request->search . '%');
                 });
             }
-
+    
             return DataTables::of($consultancies)
                 ->addIndexColumn()
                 ->addColumn('name', fn($row) => $row->user_name) // Access joined user name
                 ->addColumn('email', fn($row) => $row->user_email) // Access joined user email
+                ->addColumn('test_center', fn($row) => $row->test_center_name) // Add test center name column
                 ->addColumn('logo', fn($row) => '<img src="' . asset($row->logo) . '" alt="Logo" height="30" class="logo-image" data-url="' . asset($row->logo) . '" style="cursor:pointer;" loading="lazy" />') // Add data-url to image
                 ->addColumn('action', function ($row) {
                     $editUrl = route('consultancy.edit', $row->slug);
                     $deleteUrl = route('consultancy.destroy', $row->slug);
-
+    
                     return '
                     <div class="d-flex align-items-center" style="column-gap:10px">
                         <a href="' . $editUrl . '" class="btn btn-warning btn-sm">Edit</a>
@@ -72,9 +75,10 @@ class ConsultancyController extends Controller
                 ->rawColumns(['logo', 'action']) // Allow raw HTML in logo and action columns
                 ->make(true);
         }
-
+    
         return view('admin.consultancy.index');
     }
+    
 
     /**
      * Show the form for creating a new resource.

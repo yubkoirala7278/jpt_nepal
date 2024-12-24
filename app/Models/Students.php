@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Students extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'address', 'profile', 'phone', 'slug', 'dob', 'email', 'is_appeared_previously', 'receipt_image', 'consultancy_id','exam_date_id','status'];
+    protected $fillable = ['name', 'address', 'profile', 'phone', 'slug', 'dob', 'email', 'is_appeared_previously', 'receipt_image', 'user_id','exam_date_id','status'];
     // Boot method to hook into the model's lifecycle events
     protected static function boot()
     {
@@ -34,10 +34,13 @@ class Students extends Model
         return 'slug';
     }
 
-    public function consultancy(){
-        return $this->belongsTo(User::class,'consultancy_id');
+    public function user(){
+        return $this->belongsTo(User::class);
     }
     public function exam_date(){
-        return $this->belongsTo(ExamDate::class,'exam_date_id');
+        return $this->belongsTo(ExamDate::class);
+    }
+    public function admit_cards() {
+        return $this->hasOne(AdmitCard::class,'student_id');
     }
 }

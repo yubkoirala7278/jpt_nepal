@@ -23,6 +23,7 @@
                     <th>Email</th>
                     <th>Receipt</th>
                     <th>Status</th>
+                    {{-- <th>Previously Attend</th> --}}
                     <th>Exam Date</th>
                     <th>Exam Duration</th>
                     <th>Registration No.</th>
@@ -66,8 +67,7 @@
                         @csrf
                         <div class="mb-3">
                             <label for="admit_card" class="form-label">Admit Card</label>
-                            <input type="file" class="form-control" name="admit_card" id="admit_card"
-                                accept=".pdf,.jpg,.jpeg,.png,.webp" required>
+                            <input type="file" class="form-control" name="admit_card" id="admit_card" required>
                         </div>
                         <input type="hidden" name="student_slug" id="student_slug">
                     </form>
@@ -163,10 +163,10 @@
             $('#studentsTable').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('student.index') }}",
+                ajax: "{{ route('student.pending') }}",
                 columns: columns,
                 order: [
-                    [1, 'desc']
+                    [1, 'asc']
                 ] // Default sorting on the "name" column
             });
             // =========end of displaying applicants in data table====

@@ -90,8 +90,8 @@
             <div class="card mb-3 h-100">
                 <div class="card-body">
                     <h5 class="card-title mark px-2 rounded-2">Consultancy Information</h5>
-                    <p><strong>Consultancy Name:</strong> {{ $student->consultancy->name }}</p>
-                    <p><strong>Consultancy Email:</strong> {{ $student->consultancy->email }}</p>
+                    <p><strong>Consultancy Name:</strong> {{ $student->user->name }}</p>
+                    <p><strong>Consultancy Email:</strong> {{ $student->user->email }}</p>
                 </div>
             </div>
         </div>

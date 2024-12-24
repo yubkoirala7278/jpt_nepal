@@ -361,12 +361,12 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#">
+                            <a href="{{route('student.pending')}}">
                                 <i class="fas fa-circle"></i><span>Pending</span>
                             </a>
                         </li>
                         <li>
-                            <a href="#">
+                            <a href="{{route('student.approved')}}">
                                 <i class="fas fa-circle"></i><span>Approved</span>
                             </a>
                         </li>

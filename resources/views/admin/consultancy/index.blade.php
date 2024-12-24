@@ -5,21 +5,25 @@
         <h2>Consultancy</h2>
         <a class="btn btn-secondary btn-sm" href="{{ route('consultancy.create') }}">Add New</a>
     </div>
-    <table class="table consultancy-datatable table-hover pt-3">
-        <thead>
-            <tr>
-                <th>S.N</th>
-                <th>Name</th>
-                <th>Phone No.</th>
-                <th>Address</th>
-                <th>Email</th>
-                <th>Logo</th>
-                <th>Created At</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+
+    <div class="table-responsive"> <!-- Wrapper for horizontal scroll -->
+        <table class="table consultancy-datatable table-hover pt-3">
+            <thead>
+                <tr>
+                    <th>S.N</th>
+                    <th>Name</th>
+                    <th>Phone No.</th>
+                    <th>Address</th>
+                    <th>Email</th>
+                    <th>Logo</th>
+                    <th>Created At</th>
+                    <th>Test Center Name</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
 @endsection
 
 @section('modal')
@@ -97,6 +101,12 @@
                             searchable: true
                         },
                         {
+                            data: 'test_center', // Column for test center name
+                            name: 'test_center_name', // Alias defined in the controller
+                            orderable: true,
+                            searchable: true
+                        },
+                        {
                             data: 'action',
                             name: 'action',
                             orderable: false,
@@ -105,8 +115,17 @@
                     ],
                     order: [
                         [6, 'desc']
-                    ] // Default sorting by 'created_at' column
+                    ], // Default sorting by 'created_at' column
+
+                    // Conditionally hide the 'test_center_name' column if the user is a 'consultancy_manager'
+                    initComplete: function() {
+                        if ("{{ Auth::user()->hasRole('test_center_manager') }}") {
+                            this.api().column(7).visible(
+                                false); // Hide the 'test_center_name' column (index 7)
+                        }
+                    }
                 });
+
             });
 
 

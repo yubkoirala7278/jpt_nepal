@@ -14,11 +14,11 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable,HasRoles;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
     public function sendPasswordResetNotification($token)
     {
-        Mail::to($this->email)->send(new ResetPasswordMail($token,$this->email));
+        Mail::to($this->email)->send(new ResetPasswordMail($token, $this->email));
     }
 
     /**
@@ -51,5 +51,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
-
+    // Relationship with the consultancy
+    public function consultancy()
+    {
+        return $this->hasOne(Consultancy::class, 'user_id');
+    }
 }
