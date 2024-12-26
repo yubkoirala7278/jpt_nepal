@@ -23,8 +23,8 @@
                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="card custom-test-card shadow-sm">
                         <div class="card-body text-center">
-                            <h2 class="custom-test-card-title">JPT Applicants</h2>
-                            <p class="custom-test-card-count">32</p>
+                            <h2 class="custom-test-card-title">Applicants</h2>
+                            <p class="custom-test-card-count">{{$totalApplicants}}</p>
                         </div>
                     </div>
                 </div>
@@ -32,7 +32,7 @@
                     <div class="card custom-test-card shadow-sm">
                         <div class="card-body text-center">
                             <h2 class="custom-test-card-title">News & Notices</h2>
-                            <p class="custom-test-card-count">17</p>
+                            <p class="custom-test-card-count">{{$totalNotice}}</p>
                         </div>
                     </div>
                 </div>

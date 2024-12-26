@@ -40,7 +40,7 @@ class Kernel extends HttpKernel
 
         'api' => [
             // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-            \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
+            \Illuminate\Routing\Middleware\ThrottleRequests::class . ':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
     ];
@@ -64,11 +64,11 @@ class Kernel extends HttpKernel
         'signed' => \App\Http\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'auth.admin'=>\App\Http\Middleware\AdminMiddleware::class,
-        'auth.consultancy'=>\App\Http\Middleware\ConsultancyMiddleware::class,
-        'auth.test_center'=>\App\Http\Middleware\TestCenterMiddleware::class,
-        'auth.student'=>\App\Http\Middleware\StudentMiddleware::class,
+        'auth.admin' => \App\Http\Middleware\AdminMiddleware::class,
         'check.consultancy.access' => \App\Http\Middleware\CheckConsultancyAccess::class,
-        'check.student.access'=>\App\Http\Middleware\CheckStudentAccess::class,
+        'check.student.access' => \App\Http\Middleware\CheckStudentAccess::class,
+        'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
+        'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+        'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
     ];
 }

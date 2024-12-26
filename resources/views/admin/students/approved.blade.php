@@ -212,7 +212,7 @@
                             error: function(xhr) {
                                 Swal.fire(
                                     'Error!',
-                                    'Failed to delete student. Please try again.',
+                                    xhr.responseJSON.message || 'An unexpected error occurred.',
                                     'error'
                                 );
                             }

@@ -31,8 +31,8 @@ class ExamDateController extends Controller
                     ->addColumn('action', function ($row) {
                         return '
                             <div class="d-flex align-items-center" style="column-gap:10px">
-                                <button type="button" class="btn btn-warning btn-sm edit-btn" data-slug="' . $row->slug . '">Edit</button>
-                                <button type="button" class="btn btn-danger btn-sm delete-btn" data-url="' . route('exam_date.destroy', $row->slug) . '">Delete</button>
+                                <button type="button" class="btn btn-warning text-white btn-sm edit-btn" data-slug="' . $row->slug . '" title="edit exam date"><i class="fa-solid fa-pencil"></i></button>
+                                <button type="button" class="btn btn-danger btn-sm delete-btn" data-url="' . route('exam_date.destroy', $row->slug) . '" title="delete exam date"><i class="fa-solid fa-trash"></i></button>
                             </div>';
                     })
                     ->rawColumns(['action'])

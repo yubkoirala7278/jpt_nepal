@@ -52,8 +52,8 @@ class TestCenterController extends Controller
 
                     return '
                     <div class="d-flex align-items-center" style="column-gap:10px">
-                        <a href="' . $editUrl . '" class="btn btn-warning btn-sm">Edit</a>
-                        <button type="button" class="btn btn-danger btn-sm delete-btn" data-url="' . $deleteUrl . '">Delete</button>
+                        <a href="' . $editUrl . '" class="btn btn-warning text-white btn-sm" title="edit test center"><i class="fa-solid fa-pencil"></i></a>
+                        <button type="button" class="btn btn-danger btn-sm delete-btn" data-url="' . $deleteUrl . '" title="delete test center"><i class="fa-solid fa-trash"></i></button>
                     </div>';
                 })
                 ->editColumn('created_at', fn($row) => Carbon::parse($row->created_at)->format('M d, Y')) // Format date

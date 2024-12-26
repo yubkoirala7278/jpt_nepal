@@ -971,9 +971,9 @@ h6 {
 /*--------------------------------------------------------------
 # Profie Page
 --------------------------------------------------------------*/
-.profile .profile-card img {
+/* .profile .profile-card img {
   max-width: 120px;
-}
+} */
 
 .profile .profile-card h2 {
   font-size: 24px;

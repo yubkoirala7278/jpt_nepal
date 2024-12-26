@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class RoleSeeder extends Seeder
@@ -13,11 +14,19 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        $roles=['admin','consultancy_manager','user','test_center_manager'];
-        foreach ($roles as $key => $role) {
-           Role::create([
-            'name'=>$role
-           ]);
-        }
+        // Create permissions
+        Permission::create(['name' => 'view']);
+        Permission::create(['name' => 'manage']);
+
+        // Create roles
+        $admin = Role::create(['name' => 'admin']);
+        $consultancyManager = Role::create(['name' => 'consultancy_manager']);
+        $testCenterManager = Role::create(['name' => 'test_center_manager']);
+        $user = Role::create(['name' => 'user']);
+
+        // Assign permissions to roles
+        $admin->givePermissionTo(['manage', 'view']);
+        $consultancyManager->givePermissionTo('view');
+        $testCenterManager->givePermissionTo('view');
     }
 }

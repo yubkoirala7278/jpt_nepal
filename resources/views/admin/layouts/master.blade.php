@@ -34,6 +34,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
         integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+    @yield('header-links')
     {{-- toastify css --}}
     @toastifyCss
 
@@ -361,12 +362,12 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{{route('student.pending')}}">
+                            <a href="{{ route('student.pending') }}">
                                 <i class="fas fa-circle"></i><span>Pending</span>
                             </a>
                         </li>
                         <li>
-                            <a href="{{route('student.approved')}}">
+                            <a href="{{ route('student.approved') }}">
                                 <i class="fas fa-circle"></i><span>Approved</span>
                             </a>
                         </li>
@@ -375,20 +376,22 @@
             @endif
 
 
-            {{-- <li class="nav-item">
+            <li class="nav-item">
                 <a class="nav-link collapsed" data-bs-target="#icons-nav-fourth" data-bs-toggle="collapse"
                     href="#">
                     <i class="fa-solid fa-newspaper"></i><span>News & Notice</span><i
                         class="fas fa-chevron-down ms-auto"></i>
                 </a>
                 <ul id="icons-nav-fourth" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                    @if (Auth::user()->hasRole('admin'))
+                        <li>
+                            <a href="{{ route('notice.create') }}">
+                                <i class="fas fa-circle"></i><span>Add New</span>
+                            </a>
+                        </li>
+                    @endif
                     <li>
-                        <a href="#">
-                            <i class="fas fa-circle"></i><span>Add New</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
+                        <a href="{{ route('notice.index') }}">
                             <i class="fas fa-circle"></i><span>List All</span>
                         </a>
                     </li>
@@ -396,10 +399,8 @@
             </li><!-- End Icons Nav -->
 
             <li class="nav-item">
-                <a class="nav-link collapsed" data-bs-target="#icons-nav-fifth" data-bs-toggle="collapse"
-                    href="#">
-                    <i class="fa-solid fa-file"></i><span>Static Pages</span><i
-                        class="fas fa-chevron-down ms-auto"></i>
+                <a class="nav-link collapsed" data-bs-target="#icons-nav-fifth" data-bs-toggle="collapse" href="#">
+                    <i class="fa-solid fa-file"></i><span>Static Pages</span><i class="fas fa-chevron-down ms-auto"></i>
                 </a>
                 <ul id="icons-nav-fifth" class="nav-content collapse " data-bs-parent="#sidebar-nav">
                     <li>
@@ -440,53 +441,43 @@
                 </ul>
             </li><!-- End Icons Nav -->
 
-            <li class="nav-item">
+            {{-- <li class="nav-item">
                 <a class="nav-link collapsed" href="#">
                     <i class="fa-solid fa-sack-dollar"></i>
                     <span>Payments</span>
                 </a>
+            </li><!-- End Profile Page Nav --> --}}
+
+          
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="{{route('admin.admit-card')}}">
+                    <i class="fa-solid fa-ticket"></i>
+                    <span>Admit Card</span>
+                </a>
             </li><!-- End Profile Page Nav -->
 
-            <li class="nav-item">
-                <a class="nav-link collapsed" data-bs-target="#icons-nav-sixth" data-bs-toggle="collapse"
-                    href="#">
-                    <i class="fa-solid fa-ticket"></i><span>Admit Card</span><i
-                        class="fas fa-chevron-down ms-auto"></i>
-                </a>
-                <ul id="icons-nav-sixth" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                    <li>
-                        <a href="#">
-                            <i class="fas fa-circle"></i><span>Add New</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <i class="fas fa-circle"></i><span>List All</span>
-                        </a>
-                    </li>
-                </ul>
-            </li><!-- End Icons Nav -->
-
-            <li class="nav-item">
+            {{-- <li class="nav-item">
                 <a class="nav-link collapsed" href="#">
                     <i class="fa-solid fa-graduation-cap"></i>
                     <span>Results</span>
                 </a>
-            </li><!-- End Profile Page Nav -->
+            </li><!-- End Profile Page Nav --> --}}
 
-            <li class="nav-item">
+            {{-- <li class="nav-item">
                 <a class="nav-link collapsed" href="#">
                     <i class="fa-solid fa-file-zipper"></i>
                     <span>Upcoming Test</span>
                 </a>
-            </li><!-- End Profile Page Nav -->
-
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#">
-                    <i class="fas fa-comment"></i>
-                    <span>Students Testimonial</span>
-                </a>
             </li><!-- End Profile Page Nav --> --}}
+
+            @if (Auth::user()->hasRole('admin'))
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="{{ route('testimonial.index') }}">
+                        <i class="fas fa-comment"></i>
+                        <span>Testimonial</span>
+                    </a>
+                </li><!-- End Profile Page Nav -->
+            @endif
 
             <li class="nav-item">
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
@@ -544,7 +535,7 @@
     {{-- custom js --}}
     @stack('script')
 
-    {{-- toastify  --}}
+    {{-- toastify --}}
     @if (session()->has('success') || session()->has('error'))
         <script>
             document.addEventListener('DOMContentLoaded', function() {

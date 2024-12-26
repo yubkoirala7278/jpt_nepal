@@ -18,9 +18,9 @@ class AdminMiddleware
         if(!auth()->check()){
             return redirect()->route('login')->with('error','Please login to access this page');
         }
-        if (auth()->user()->hasRole('user')) {
-            return redirect()->route('home')->with('error', 'You do not have permission to access this page');
-        }
+        // if (auth()->user()->hasRole('user')) {
+        //     return redirect()->route('home')->with('error', 'You do not have permission to access this page');
+        // }
         return $next($request);
     }
 }

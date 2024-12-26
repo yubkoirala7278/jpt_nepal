@@ -4,19 +4,21 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StudentRequest;
+use App\Mail\StudentCreatedMail;
 use App\Models\AdmitCard;
 use App\Models\ExamDate;
 use App\Models\Students;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class StudentController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('check.student.access')->only(['edit', 'update', 'destroy', 'create', 'store', 'show']);
+        $this->middleware('check.student.access')->only(['edit', 'update', 'create', 'store', 'show']);
     }
     /**
      * Display a listing of the resource.
@@ -27,7 +29,6 @@ class StudentController extends Controller
             // Return the data for approved students
             return $this->getPendingOrApprovedStudents(null);
         }
-
         return view('admin.students.index');
     }
 
@@ -70,7 +71,7 @@ class StudentController extends Controller
                 // Replace 'public/' with 'Storage/' to store the desired path in the database
                 $receiptPath = str_replace('public/', 'Storage/', $receiptPath);
             }
-            Students::create([
+            $student = Students::create([
                 'name' => $request['name'],
                 'address' => $request['address'],
                 'profile' => $profilePath,
@@ -82,6 +83,22 @@ class StudentController extends Controller
                 'user_id' => Auth::user()->id,
                 'exam_date_id' => $request['exam_date']
             ]);
+            // send email to applicant
+            $examStartTime = \Carbon\Carbon::parse($student->exam_date->exam_start_time)->format('h:i A');
+            $examEndTime = \Carbon\Carbon::parse($student->exam_date->exam_end_time)->format('h:i A');
+            $data = [
+                'name' => $request['name'],
+                'address' => $request['address'],
+                'phone' => $request['phone'],
+                'dob' => $request['dob'],
+                'email' => $request['email'],
+                'exam_date' => \Carbon\Carbon::parse($student->exam_date->exam_date)->format('F j, Y'), // Formats as "Month Day, Year"
+                'exam_duration' => "$examStartTime to $examEndTime",
+                'consultancy_name' => $student->user->name,
+                'consultancy_address' => $student->user->consultancy->address,
+                'registration_number' => $student->slug
+            ];
+            Mail::to($request['email'])->send(new StudentCreatedMail($data));
             return redirect()->route('student.index')->with('success', "Applicant added successfully!");
         } catch (\Throwable $th) {
             return back()->with('error', $th->getMessage());
@@ -106,6 +123,9 @@ class StudentController extends Controller
     public function edit(Students $student)
     {
         try {
+            if ($student->status) {
+                return back()->with('error', 'You cannot update the approved applicants');
+            }
             $examDates = ExamDate::where('exam_date', '>', now())->latest()->get();
             return view('admin.students.edit', compact('student', 'examDates'));
         } catch (\Throwable $th) {
@@ -168,6 +188,22 @@ class StudentController extends Controller
                 'user_id' => Auth::user()->id,
                 'exam_date_id' => $request['exam_date'],
             ]);
+            // sending updated mail to applicant
+            $examStartTime = \Carbon\Carbon::parse($student->exam_date->exam_start_time)->format('h:i A');
+            $examEndTime = \Carbon\Carbon::parse($student->exam_date->exam_end_time)->format('h:i A');
+            $data = [
+                'name' => $request['name'],
+                'address' => $request['address'],
+                'phone' => $request['phone'],
+                'dob' => $request['dob'],
+                'email' => $request['email'],
+                'exam_date' => \Carbon\Carbon::parse($student->exam_date->exam_date)->format('F j, Y'), // Formats as "Month Day, Year"
+                'exam_duration' => "$examStartTime to $examEndTime",
+                'consultancy_name' => $student->user->name,
+                'consultancy_address' => $student->user->consultancy->address,
+                'registration_number' => $student->slug
+            ];
+            Mail::to($request['email'])->send(new StudentCreatedMail($data));
 
             return redirect()->route('student.index')->with('success', "Applicant updated successfully!");
         } catch (\Throwable $th) {
@@ -179,14 +215,23 @@ class StudentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy($slug)
     {
         try {
-            $student = Students::findOrFail($id);
+            $student = Students::with('admit_cards')->where('slug', $slug)->first();
+            if ($student->status) {
+                return response()->json(['message' => 'You cannot delete the approved applicants.'], 500);
+            }
             // Ensure the path is relative to the 'public' disk
             $relativeReceiptPath = str_replace('Storage/', 'public/', $student->receipt_image);
             $relativeProfilePath = str_replace('Storage/', 'public/', $student->profile);
-
+            // delete admit card if present
+            if ($student->admit_cards) {
+                $relativeAdmitCardPath = str_replace('Storage/', 'public/', $student->admit_cards->admit_card);
+                if ($student->admit_cards->admit_card && Storage::exists($relativeAdmitCardPath)) {
+                    Storage::delete($relativeAdmitCardPath);
+                }
+            }
             // Delete the receipt if it exists
             if ($student->receipt_image && Storage::exists($relativeReceiptPath)) {
                 Storage::delete($relativeReceiptPath);
@@ -197,7 +242,7 @@ class StudentController extends Controller
             }
             $student->delete();
 
-            return response()->json(['message' => 'Student deleted successfully.'], 200);
+            return response()->json(['message' => 'Applicant deleted successfully.'], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Failed to delete student.'], 500);
         }
@@ -216,7 +261,7 @@ class StudentController extends Controller
             $student->update([
                 'status' => $request['status']
             ]);
-            return back()->with('success', 'Status changed successfully!');
+            return redirect()->route('student.index')->with('success', 'Status changed successfully!');
         } catch (\Throwable $th) {
             return back()->with('error', $th->getMessage());
         }
@@ -290,7 +335,7 @@ class StudentController extends Controller
         } else {
             return; // If the user does not have a valid role, return nothing
         }
-    
+
         return datatables()
             ->of($students)
             ->addIndexColumn()
@@ -302,28 +347,53 @@ class StudentController extends Controller
             ->addColumn('admit_card', function ($row) {
                 if ($row->admit_cards) {
                     $admitCardUrl = asset($row->admit_cards->admit_card);
-                    return '<a href="' . $admitCardUrl . '" target="_blank" class="btn btn-info btn-sm">View Admit Card</a>';
+                    return '<a href="' . $admitCardUrl . '" download class="btn btn-success btn-sm" style="color: #fff; background-color: #28a745; border: 1px solid #28a745;" title="Download Admit Card">
+                    <i class="fa-solid fa-download"></i> Download
+                </a>';
                 } else {
-                    return 'No Admit Card Available';
+                    return '<a href="javascript:void(0)" class="btn btn-light btn-sm" style="color: white; background-color: #ff9800; border: 1px solid #ff9800;" title="Pending">
+    <i class="fa-solid fa-hourglass-half"></i> Pending
+</a>';
                 }
             })
             ->addColumn('action', function ($row) {
                 $viewUrl = route('student.show', $row->slug);
+
+                // Admin Role Logic
                 if (Auth::user()->hasRole('admin')) {
-                    return '
-                    <a href="' . $viewUrl . '" class="btn btn-info btn-sm">View</a>
-                    <button class="btn btn-primary btn-sm upload-admit-card-btn" data-slug="' . $row->slug . '">Upload Admit Card</button>
-                ';
-                } else {
-                    $editUrl = route('student.edit', $row->slug);
-                    $deleteUrl = route('student.destroy', $row->id);
-                    return '
-                    <a href="' . $viewUrl . '" class="btn btn-info btn-sm">View</a>
-                    <a href="' . $editUrl . '" class="btn btn-warning btn-sm">Edit</a>
-                    <button class="btn btn-danger btn-sm delete-btn" data-url="' . $deleteUrl . '" data-id="' . $row->id . '">Delete</button>
-                ';
+                    // If the status is true, show only the View and Upload Admit Card buttons
+                    if ($row->status) {
+                        return '
+                            <a href="' . $viewUrl . '" class="btn btn-primary text-white btn-sm" title="view applicant details"><i class="fa-regular fa-eye"></i></a>
+                            <button class="btn btn-success btn-sm upload-admit-card-btn" data-slug="' . $row->slug . '" title="upload admit card"><i class="fa-solid fa-upload"></i></button>
+                        ';
+                    }
+
+                    // If the status is not true, show only the View button
+                    return '<a href="' . $viewUrl . '" class="btn btn-primary text-white btn-sm" title="view applicant details"><i class="fa-regular fa-eye"></i></a>';
                 }
+
+                // Consultancy Manager Role Logic
+                if (Auth::user()->hasRole('consultancy_manager')) {
+                    // If the status is true, show only the View button
+                    if ($row->status) {
+                        return '<a href="' . $viewUrl . '" class="btn btn-primary text-white btn-sm" title="view applicant details"><i class="fa-regular fa-eye"></i></a>';
+                    }
+
+                    // If the status is not true, show View, Edit, and Delete buttons
+                    $editUrl = route('student.edit', $row->slug);
+                    $deleteUrl = route('student.destroy', $row->slug);
+                    return '
+                        <a href="' . $viewUrl . '" class="btn btn-primary btn-sm text-white" title="view applicant details"><i class="fa-regular fa-eye"></i></a>
+                        <a href="' . $editUrl . '" class="btn btn-warning btn-sm text-white" title="update applicant"><i class="fa-solid fa-pencil"></i></a>
+                        <button class="btn btn-danger btn-sm delete-btn" data-url="' . $deleteUrl . '" data-id="' . $row->id . '" title="delete applicant"><i class="fa-solid fa-trash"></i></button>
+                    ';
+                }
+
+                return ''; // No action buttons for users without valid roles
             })
+
+
             ->editColumn('is_appeared_previously', function ($row) {
                 return $row->is_appeared_previously ? 'Yes' : 'No';
             })
@@ -349,7 +419,7 @@ class StudentController extends Controller
             ->rawColumns(['receipt_image', 'status', 'action', 'admit_card']) // Add admit_card to rawColumns
             ->make(true);
     }
-    
+
 
 
     /**
