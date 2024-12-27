@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AdmitCard;
 use App\Models\Consultancy;
 use App\Models\Notice;
 use App\Models\Students;
@@ -18,13 +19,15 @@ class HomeController extends Controller
             $totalEducationConsultancy=null;
             $totalApplicants=null;
             $totalNotice=null;
+            $totalAdmitCard=null;
             if(Auth::user()->hasRole('admin')){
                 $totalTestCenter=TestCenter::count();
                 $totalEducationConsultancy=Consultancy::count();
                 $totalApplicants=Students::count();
                 $totalNotice=Notice::count();
+                $totalAdmitCard=AdmitCard::count();
             }
-            return view('admin.home.index',compact('totalTestCenter','totalEducationConsultancy','totalApplicants','totalNotice'));
+            return view('admin.home.index',compact('totalTestCenter','totalEducationConsultancy','totalApplicants','totalNotice','totalAdmitCard'));
         }catch(\Throwable $th){
             return back()->with('error',$th->getMessage());
         }

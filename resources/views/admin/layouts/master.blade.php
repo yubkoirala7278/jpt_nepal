@@ -345,7 +345,7 @@
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('student.index') || request()->routeIs('student.create') ? '' : 'collapsed' }}"
                         data-bs-target="#icons-nav-third" data-bs-toggle="collapse" href="#">
-                        <i class="fa-solid fa-laptop-file"></i><span>Students/Applicants</span><i
+                        <i class="fa-solid fa-laptop-file"></i><span>Applicants</span><i
                             class="fas fa-chevron-down ms-auto"></i>
                     </a>
                     <ul id="icons-nav-third" class="nav-content collapse" data-bs-parent="#sidebar-nav">
@@ -375,30 +375,55 @@
                 </li><!-- End Icons Nav -->
             @endif
 
+            @if ( Auth::user()->hasRole('consultancy_manager') || Auth::user()->hasRole('admin'))
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="{{ route('admin.admit-card') }}">
+                    <i class="fa-solid fa-ticket"></i>
+                    <span>Admit Card</span>
+                </a>
+            </li><!-- End Profile Page Nav -->
 
             <li class="nav-item">
-                <a class="nav-link collapsed" data-bs-target="#icons-nav-fourth" data-bs-toggle="collapse"
-                    href="#">
-                    <i class="fa-solid fa-newspaper"></i><span>News & Notice</span><i
-                        class="fas fa-chevron-down ms-auto"></i>
+                <a class="nav-link collapsed" href="{{route('admin.applicant-result')}}">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                    <span>Results</span>
                 </a>
-                <ul id="icons-nav-fourth" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                    @if (Auth::user()->hasRole('admin'))
+            </li><!-- End Profile Page Nav -->
+        @endif
+
+            @if (Auth::user()->hasRole('admin'))
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="{{ route('transaction') }}">
+                        <i class="fa-solid fa-sack-dollar"></i>
+                        <span>Transaction</span>
+                    </a>
+                </li><!-- End Profile Page Nav -->
+
+                <li class="nav-item">
+                    <a class="nav-link collapsed" data-bs-target="#icons-nav-fourth" data-bs-toggle="collapse"
+                        href="#">
+                        <i class="fa-solid fa-newspaper"></i><span>News & Notice</span><i
+                            class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="icons-nav-fourth" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                        @if (Auth::user()->hasRole('admin'))
+                            <li>
+                                <a href="{{ route('notice.create') }}">
+                                    <i class="fas fa-circle"></i><span>Add New</span>
+                                </a>
+                            </li>
+                        @endif
                         <li>
-                            <a href="{{ route('notice.create') }}">
-                                <i class="fas fa-circle"></i><span>Add New</span>
+                            <a href="{{ route('notice.index') }}">
+                                <i class="fas fa-circle"></i><span>List All</span>
                             </a>
                         </li>
-                    @endif
-                    <li>
-                        <a href="{{ route('notice.index') }}">
-                            <i class="fas fa-circle"></i><span>List All</span>
-                        </a>
-                    </li>
-                </ul>
-            </li><!-- End Icons Nav -->
+                    </ul>
+                </li><!-- End Icons Nav -->
+            @endif
 
-            <li class="nav-item">
+
+            {{-- <li class="nav-item">
                 <a class="nav-link collapsed" data-bs-target="#icons-nav-fifth" data-bs-toggle="collapse" href="#">
                     <i class="fa-solid fa-file"></i><span>Static Pages</span><i class="fas fa-chevron-down ms-auto"></i>
                 </a>
@@ -439,29 +464,8 @@
                         </a>
                     </li>
                 </ul>
-            </li><!-- End Icons Nav -->
+            </li><!-- End Icons Nav --> --}}
 
-            {{-- <li class="nav-item">
-                <a class="nav-link collapsed" href="#">
-                    <i class="fa-solid fa-sack-dollar"></i>
-                    <span>Payments</span>
-                </a>
-            </li><!-- End Profile Page Nav --> --}}
-
-          
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="{{route('admin.admit-card')}}">
-                    <i class="fa-solid fa-ticket"></i>
-                    <span>Admit Card</span>
-                </a>
-            </li><!-- End Profile Page Nav -->
-
-            {{-- <li class="nav-item">
-                <a class="nav-link collapsed" href="#">
-                    <i class="fa-solid fa-graduation-cap"></i>
-                    <span>Results</span>
-                </a>
-            </li><!-- End Profile Page Nav --> --}}
 
             {{-- <li class="nav-item">
                 <a class="nav-link collapsed" href="#">

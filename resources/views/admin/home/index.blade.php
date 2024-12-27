@@ -40,7 +40,7 @@
                     <div class="card custom-test-card shadow-sm">
                         <div class="card-body text-center">
                             <h2 class="custom-test-card-title">Admit Card</h2>
-                            <p class="custom-test-card-count">9</p>
+                            <p class="custom-test-card-count">{{$totalAdmitCard}}</p>
                         </div>
                     </div>
                 </div>

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->string('name');
             $table->string('address');
+            $table->decimal('amount', 8, 2);
             $table->string('profile');
             $table->string('phone');
             $table->date('dob')->nullable();

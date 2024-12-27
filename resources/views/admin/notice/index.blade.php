@@ -3,7 +3,9 @@
 @section('content')
     <div class="d-flex align-items-center justify-content-between mb-3">
         <h2>News & Notice</h2>
-        <a class="btn btn-secondary btn-sm" href="{{ route('notice.create') }}">Add New</a>
+        @if (Auth::user()->hasRole('admin'))
+            <a class="btn btn-secondary btn-sm" href="{{ route('notice.create') }}">Add New</a>
+        @endif
     </div>
 
     <div class="table-responsive">
@@ -24,22 +26,21 @@
 @endsection
 
 @section('modal')
-   <!-- Modal for Image Preview -->
-<div class="modal fade" id="noticeModal" tabindex="-1" aria-labelledby="noticeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="noticeModalLabel">Notice Preview</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body text-center">
-                <!-- Modal Image -->
-                <img id="modal-notice" src="" alt="Notice Preview" class="img-fluid">
+    <!-- Modal for Image Preview -->
+    <div class="modal fade" id="noticeModal" tabindex="-1" aria-labelledby="noticeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="noticeModalLabel">Notice Preview</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <!-- Modal Image -->
+                    <img id="modal-notice" src="" alt="Notice Preview" class="img-fluid">
+                </div>
             </div>
         </div>
     </div>
-</div>
-
 @endsection
 
 @push('script')
@@ -130,7 +131,7 @@
                 var noticeUrl = $(this).data('url'); // Get the image URL from the data-url attribute
                 $('#modal-notice').attr('src', noticeUrl); // Set the image source in the modal
                 var myModal = new bootstrap.Modal(document.getElementById(
-                'noticeModal')); // Initialize the modal
+                    'noticeModal')); // Initialize the modal
                 myModal.show(); // Show the modal
             });
         });

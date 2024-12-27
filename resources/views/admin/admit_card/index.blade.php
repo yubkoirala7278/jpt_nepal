@@ -15,6 +15,7 @@
                     <th>Phone No.</th>
                     <th>DOB</th>
                     <th>Email</th>
+                    <th>Registration Number</th>
                     <th>Admit Card</th>
                 </tr>
             </thead>
@@ -44,6 +45,7 @@
                 { data: 'phone', name: 'phone' },
                 { data: 'dob', name: 'dob' },
                 { data: 'email', name: 'email' },
+                { data: 'slug', name: 'slug' },
                 { data: 'admit_card', name: 'admit_card', orderable: false, searchable: false }
             ]
         });

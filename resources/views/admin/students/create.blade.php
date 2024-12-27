@@ -67,6 +67,15 @@
         </div>
 
         <div class="mb-3">
+            <label for="amount" class="form-label">Amount</label>
+            <input type="number" class="form-control" id="amount" name="amount"
+                placeholder="Enter Receipt Amount" value="{{ old('amount') }}">
+            @if ($errors->has('amount'))
+                <span class="text-danger">{{ $errors->first('amount') }}</span>
+            @endif
+        </div>
+
+        <div class="mb-3">
             <label for="exam_date" class="form-label">Select Exam Date</label>
             <select class="form-select" name="exam_date">
                 <option selected disabled>Select Exam Date</option>

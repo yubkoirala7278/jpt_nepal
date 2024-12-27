@@ -6,22 +6,28 @@
         @if (Auth::user()->hasRole('consultancy_manager'))
             <a class="btn btn-secondary btn-sm" href="{{ route('student.create') }}">Add New</a>
         @endif
+        @if (Auth::user()->hasRole('admin'))
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                Export
+            </button>
+        @endif
     </div>
     <div class="table-responsive">
-        <table class="table applicants-datatable table-hover pt-3" id="studentsTable" style="white-space: nowrap;">
+        <table class="table applicants-datatable table-hover pt-3 " id="studentsTable" style="white-space: nowrap;">
             <thead>
                 <tr>
                     <th>S.N</th>
                     <th>Name</th>
                     <th>Address</th>
-                    @if(Auth::user()->hasRole('admin'))
-                    <th>Consultancy Name</th>
-                    <th>Consultancy Address</th>
+                    @if (Auth::user()->hasRole('admin'))
+                        <th>Consultancy Name</th>
+                        <th>Consultancy Address</th>
                     @endif
                     <th>Phone Number</th>
                     <th>DOB</th>
                     <th>Email</th>
                     <th>Receipt</th>
+                    <th>Amount</th>
                     <th>Status</th>
                     <th>Exam Date</th>
                     <th>Exam Duration</th>
@@ -79,12 +85,71 @@
             </div>
         </div>
     </div>
+    {{-- export applicants --}}
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form action="{{ route('applicants.export') }}" method="POST">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Export Applicants</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  
+                        @csrf
+                        <div class="mb-3">
+                            <label class="form-label">Select Exam Date</label>
+                            <select class="form-select" name="date" required>
+                                <option selected disabled>Select Date</option>
+                                @if (count($examDates) > 0)
+                                    @foreach ($examDates as $examDate)
+                                        <option value="{{ $examDate->id }}">{{ $examDate->exam_date }}</option>
+                                    @endforeach
+                                @endif
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Export File To</label>
+                            <div class="d-flex align-items-center" style="column-gap: 20px">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="export" id="excel" checked>
+                                    <label class="form-check-label" for="excel">
+                                        Excel
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="export" id="csv">
+                                    <label class="form-check-label" for="csv">
+                                        CSV
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="export" id="pdf">
+                                    <label class="form-check-label" for="pdf">
+                                        PDF
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                   
+                    {{-- <a class="btn btn-secondary btn-sm" href="{{route('applicants.export')}}">Export Excel</a> --}}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Export</button>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @push('script')
     <script>
         $(document).ready(function() {
-            // ======display applicants in data table============
+            // ====== Display Applicants in Data Table ======
             var userRole = "{{ Auth::user()->getRoleNames()->first() }}";
 
             // Define the common columns
@@ -119,12 +184,17 @@
                     name: 'receipt_image'
                 },
                 {
+                    data: 'amount',
+                    name: 'amount'
+                },
+                {
                     data: 'status',
                     name: 'status'
                 },
                 {
                     data: 'exam_date',
-                    name: 'exam_date'
+                    name: 'exam_date',
+                    searchable: true
                 },
                 {
                     data: 'exam_duration',
@@ -169,7 +239,8 @@
                     [1, 'desc']
                 ] // Default sorting on the "name" column
             });
-            // =========end of displaying applicants in data table====
+            // ====== End of Display Applicants in Data Table ======
+
 
             // =======displaying receipt in modal============
             $(document).on('click', '.receipt-image', function() {
@@ -212,7 +283,8 @@
                             error: function(xhr) {
                                 Swal.fire(
                                     'Error!',
-                                    xhr.responseJSON.message || 'An unexpected error occurred.',
+                                    xhr.responseJSON.message ||
+                                    'An unexpected error occurred.',
                                     'error'
                                 );
                             }

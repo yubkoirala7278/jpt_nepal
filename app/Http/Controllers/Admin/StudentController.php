@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\StudentsExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StudentRequest;
 use App\Mail\StudentCreatedMail;
@@ -13,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 
 class StudentController extends Controller
 {
@@ -25,11 +27,12 @@ class StudentController extends Controller
      */
     public function index(Request $request)
     {
+        $examDates = ExamDate::latest()->get();
         if ($request->ajax()) {
             // Return the data for approved students
             return $this->getPendingOrApprovedStudents(null);
         }
-        return view('admin.students.index');
+        return view('admin.students.index', compact('examDates'));
     }
 
 
@@ -81,7 +84,8 @@ class StudentController extends Controller
                 'is_appeared_previously' => $request['is_appeared_previously'] ? true : false,
                 'receipt_image' => $receiptPath,
                 'user_id' => Auth::user()->id,
-                'exam_date_id' => $request['exam_date']
+                'exam_date_id' => $request['exam_date'],
+                'amount' => $request['amount']
             ]);
             // send email to applicant
             $examStartTime = \Carbon\Carbon::parse($student->exam_date->exam_start_time)->format('h:i A');
@@ -187,6 +191,7 @@ class StudentController extends Controller
                 'receipt_image' => $receiptPath,
                 'user_id' => Auth::user()->id,
                 'exam_date_id' => $request['exam_date'],
+                'amount' => $request['amount']
             ]);
             // sending updated mail to applicant
             $examStartTime = \Carbon\Carbon::parse($student->exam_date->exam_start_time)->format('h:i A');
@@ -321,102 +326,78 @@ class StudentController extends Controller
      */
     public function getPendingOrApprovedStudents($status)
     {
-        if (Auth::user()->hasRole('admin')) {
-            $students = Students::with('user', 'exam_date', 'admit_cards')
-                ->when($status !== null, function ($query) use ($status) {
-                    return $query->where('status', $status);
-                });
-        } else if (Auth::user()->hasRole('consultancy_manager')) {
-            $students = Students::with('user', 'exam_date', 'admit_cards')
-                ->where('user_id', Auth::user()->id)
-                ->when($status !== null, function ($query) use ($status) {
-                    return $query->where('status', $status);
-                });
-        } else {
-            return; // If the user does not have a valid role, return nothing
-        }
+        $students = Students::with('user', 'exam_date', 'admit_cards')
+            ->when($status !== null, function ($query) use ($status) {
+                return $query->where('status', $status);
+            })
+            ->when(Auth::user()->hasRole('consultancy_manager'), function ($query) {
+                return $query->where('user_id', Auth::user()->id);
+            })
+            // Search in both students table and related exam_dates table
+            ->when(request()->has('search') && request('search')['value'], function ($query) {
+                $searchTerm = request('search')['value'];
+
+                // Search in the students table
+                $query->where(function ($query) use ($searchTerm) {
+                    $query->where('name', 'like', "%$searchTerm%")
+                        ->orWhere('email', 'like', "%$searchTerm%")
+                        ->orWhere('status', 'like', "%$searchTerm%")
+                        ->orWhere('phone', 'like', "%$searchTerm%")
+                        ->orWhere('dob', 'like', "%$searchTerm%")
+                    ;
+                })
+                    // Search in the related exam_dates table using `orWhereHas`
+                    ->orWhereHas('exam_date', function ($query) use ($searchTerm) {
+                        $query->where('exam_date', 'like', "%$searchTerm%")
+                            ->orWhere('exam_start_time', 'like', "%$searchTerm%")
+                            ->orWhere('exam_end_time', 'like', "%$searchTerm%");
+                    });
+            });
 
         return datatables()
             ->of($students)
             ->addIndexColumn()
-            ->addColumn(
-                'receipt_image',
-                fn($row) =>
-                '<img src="' . asset($row->receipt_image) . '" alt="Logo" height="30" class="receipt-image" data-url="' . asset($row->receipt_image) . '" style="cursor:pointer;" loading="lazy" />'
-            )
+            ->addColumn('receipt_image', fn($row) => '<img src="' . asset($row->receipt_image) . '" alt="Logo" height="30" class="receipt-image" data-url="' . asset($row->receipt_image) . '" style="cursor:pointer;" loading="lazy" />')
             ->addColumn('admit_card', function ($row) {
                 if ($row->admit_cards) {
                     $admitCardUrl = asset($row->admit_cards->admit_card);
-                    return '<a href="' . $admitCardUrl . '" download class="btn btn-success btn-sm" style="color: #fff; background-color: #28a745; border: 1px solid #28a745;" title="Download Admit Card">
-                    <i class="fa-solid fa-download"></i> Download
-                </a>';
-                } else {
-                    return '<a href="javascript:void(0)" class="btn btn-light btn-sm" style="color: white; background-color: #ff9800; border: 1px solid #ff9800;" title="Pending">
-    <i class="fa-solid fa-hourglass-half"></i> Pending
-</a>';
+                    return '<a href="' . $admitCardUrl . '" download class="btn btn-success btn-sm" title="Download Admit Card"><i class="fa-solid fa-download"></i> Download</a>';
                 }
+                return '<a href="javascript:void(0)" class="btn btn-light btn-sm" title="Pending"><i class="fa-solid fa-hourglass-half"></i> Pending</a>';
             })
             ->addColumn('action', function ($row) {
                 $viewUrl = route('student.show', $row->slug);
-
-                // Admin Role Logic
                 if (Auth::user()->hasRole('admin')) {
-                    // If the status is true, show only the View and Upload Admit Card buttons
-                    if ($row->status) {
-                        return '
-                            <a href="' . $viewUrl . '" class="btn btn-primary text-white btn-sm" title="view applicant details"><i class="fa-regular fa-eye"></i></a>
-                            <button class="btn btn-success btn-sm upload-admit-card-btn" data-slug="' . $row->slug . '" title="upload admit card"><i class="fa-solid fa-upload"></i></button>
-                        ';
-                    }
-
-                    // If the status is not true, show only the View button
-                    return '<a href="' . $viewUrl . '" class="btn btn-primary text-white btn-sm" title="view applicant details"><i class="fa-regular fa-eye"></i></a>';
+                    return $row->status
+                        ? '<a href="' . $viewUrl . '" class="btn btn-primary text-white btn-sm" title="view applicant details"><i class="fa-regular fa-eye"></i></a>
+                           <button class="btn btn-success btn-sm upload-admit-card-btn" data-slug="' . $row->slug . '" title="upload admit card"><i class="fa-solid fa-upload"></i></button>'
+                        : '<a href="' . $viewUrl . '" class="btn btn-primary text-white btn-sm" title="view applicant details"><i class="fa-regular fa-eye"></i></a>';
                 }
-
-                // Consultancy Manager Role Logic
                 if (Auth::user()->hasRole('consultancy_manager')) {
-                    // If the status is true, show only the View button
-                    if ($row->status) {
-                        return '<a href="' . $viewUrl . '" class="btn btn-primary text-white btn-sm" title="view applicant details"><i class="fa-regular fa-eye"></i></a>';
-                    }
-
-                    // If the status is not true, show View, Edit, and Delete buttons
                     $editUrl = route('student.edit', $row->slug);
                     $deleteUrl = route('student.destroy', $row->slug);
-                    return '
-                        <a href="' . $viewUrl . '" class="btn btn-primary btn-sm text-white" title="view applicant details"><i class="fa-regular fa-eye"></i></a>
-                        <a href="' . $editUrl . '" class="btn btn-warning btn-sm text-white" title="update applicant"><i class="fa-solid fa-pencil"></i></a>
-                        <button class="btn btn-danger btn-sm delete-btn" data-url="' . $deleteUrl . '" data-id="' . $row->id . '" title="delete applicant"><i class="fa-solid fa-trash"></i></button>
-                    ';
+                    return !$row->status
+                        ? '<a href="' . $viewUrl . '" class="btn btn-primary text-white btn-sm" title="view applicant details"><i class="fa-regular fa-eye"></i></a>
+                           <a href="' . $editUrl . '" class="btn btn-warning text-white btn-sm" title="update applicant"><i class="fa-solid fa-pencil"></i></a>
+                           <button class="btn btn-danger btn-sm delete-btn" data-url="' . $deleteUrl . '" data-id="' . $row->id . '" title="delete applicant"><i class="fa-solid fa-trash"></i></button>'
+                        : '<a href="' . $viewUrl . '" class="btn btn-primary text-white btn-sm" title="view applicant details"><i class="fa-regular fa-eye"></i></a>';
                 }
-
-                return ''; // No action buttons for users without valid roles
+                return '';
             })
-
-
-            ->editColumn('is_appeared_previously', function ($row) {
-                return $row->is_appeared_previously ? 'Yes' : 'No';
-            })
-            ->editColumn('status', function ($row) {
-                return $row->status
-                    ? '<span class="badge text-bg-success">Approved</span>'
-                    : '<span class="badge text-bg-danger">Pending</span>';
-            })
-            ->addColumn('exam_date', function ($row) {
-                return $row->exam_date->exam_date;
-            })
-            ->addColumn('consultancy_name', function ($row) {
-                return $row->user->name;
-            })
-            ->addColumn('consultancy_address', function ($row) {
-                return $row->user->consultancy->address ?? 'N/A';
-            })
+            ->editColumn('is_appeared_previously', fn($row) => $row->is_appeared_previously ? 'Yes' : 'No')
+            ->editColumn('status', fn($row) => $row->status
+                ? '<span class="badge text-bg-success">Approved</span>'
+                : '<span class="badge text-bg-danger">Pending</span>')
+            ->addColumn('exam_date', fn($row) => $row->exam_date ? $row->exam_date->exam_date : 'N/A')
+            ->addColumn('consultancy_name', fn($row) => $row->user->name)
+            ->addColumn('consultancy_address', fn($row) => $row->user->consultancy->address ?? 'N/A')
             ->addColumn('exam_duration', function ($row) {
-                $startTime = Carbon::parse($row->exam_date->exam_start_time);
-                $endTime = Carbon::parse($row->exam_date->exam_end_time);
-                return $startTime->format('h:i A') . ' - ' . $endTime->format('h:i A');
+                if ($row->exam_date && $row->exam_date->exam_start_time && $row->exam_date->exam_end_time) {
+                    return Carbon::parse($row->exam_date->exam_start_time)->format('h:i A') . ' - ' . Carbon::parse($row->exam_date->exam_end_time)->format('h:i A');
+                }
+                return 'N/A';
             })
-            ->rawColumns(['receipt_image', 'status', 'action', 'admit_card']) // Add admit_card to rawColumns
+            ->rawColumns(['receipt_image', 'status', 'action', 'admit_card'])
             ->make(true);
     }
 
@@ -444,5 +425,26 @@ class StudentController extends Controller
             return $this->getPendingOrApprovedStudents(true);
         }
         return view('admin.students.approved');
+    }
+
+    /**
+     * Export applicants to excel
+     */
+    public function exportApplicantsToExcel(Request $request)
+    {
+        try {
+            // Get the selected exam date ID from the form input
+            $examDateId = $request->input('date');
+
+            // Fetch students filtered by the selected exam date
+            $students = Students::with('exam_date')
+                ->where('exam_date_id', $examDateId)
+                ->get();
+
+            // Export the students to Excel
+            return Excel::download(new StudentsExport($students), 'applicants.xlsx');
+        } catch (\Throwable $th) {
+            return back()->with('error', $th->getMessage());
+        }
     }
 }

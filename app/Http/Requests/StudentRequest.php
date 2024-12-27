@@ -35,6 +35,7 @@ class StudentRequest extends FormRequest
             ],
             'is_appeared_previously' => 'nullable',
             'exam_date' => 'required',
+            'amount'=>'required|numeric'
         ];
 
         // profile is required only for store, optional for update

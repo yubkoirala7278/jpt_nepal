@@ -18,6 +18,7 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     {{-- custom css --}}
     <link rel="stylesheet" href="{{ asset('frontend/css/style.css') }}">
+    @yield('header-links')
 </head>
 
 <body>
@@ -217,6 +218,8 @@
 
     {{-- custom script --}}
     <script src="{{ asset('frontend/js/script.js') }}"></script>
+    {{-- custom script --}}
+    @stack('script')
 </body>
 
 </html>

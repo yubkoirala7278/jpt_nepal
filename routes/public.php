@@ -12,6 +12,7 @@ Route::get('/',[HomeController::class,'index'])->name('home');
 Route::get('/blog',[BlogController::class,'index'])->name('blog');
 Route::get('/blog-detail/{slug}',[BlogController::class,'blogDetails'])->name('blog-detail');
 Route::get('/admit-card',[AdmitCardController::class,'index'])->name('admit-card');
+Route::post('/my-admit-card',[AdmitCardController::class,'getAdmitCard'])->name('my-admit-card');
 Route::get('/applicant-result',[AdmitCardController::class,'getApplicantResult'])->name('applicant-result');
 Route::get('/about',[AboutController::class,'index'])->name('about');
 Route::get('/contact',[ContactController::class,'index'])->name('contact');

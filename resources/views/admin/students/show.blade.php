@@ -56,19 +56,23 @@
         <div class="col-md-6">
             <div class="card mb-3 h-100">
                 <div class="card-body">
-                    <h5 class="card-title mark px-2  rounded-2">Documents</h5>
+                    <h5 class="card-title mark px-2 rounded-2">Documents</h5>
+        
                     <div class="mb-3">
                         <strong>Profile Image:</strong>
                         <div class="text-center">
-                            <img src="{{ asset($student->profile) }}" alt="Applicant Profile" class="img-fluid"
-                                style="max-height: 300px; object-fit: cover;">
+                            <img src="{{ asset($student->profile) }}" alt="Applicant Profile" class="img-fluid" 
+                                style="max-height: 300px; object-fit: cover;cursor:pointer" 
+                                data-bs-toggle="modal" data-bs-target="#imageModal" data-bs-image="{{ asset($student->profile) }}">
                         </div>
                     </div>
+        
                     <div class="mb-3">
                         <strong>Receipt Image:</strong>
                         <div class="text-center">
-                            <img src="{{ asset($student->receipt_image) }}" alt="Receipt Image" class="img-fluid"
-                                style="max-height: 300px; object-fit: cover;">
+                            <img src="{{ asset($student->receipt_image) }}" alt="Receipt Image" class="img-fluid" 
+                                style="max-height: 300px; object-fit: cover;cursor: pointer;" 
+                                data-bs-toggle="modal" data-bs-target="#imageModal" data-bs-image="{{ asset($student->receipt_image) }}">
                         </div>
                     </div>
                 </div>
@@ -101,7 +105,33 @@
 @endsection
 
 @section('modal')
+{{-- modal to display receipt image or profile image --}}
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imageModalLabel">Image View</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalImage" src="" alt="Image" class="img-fluid" style="max-height: 500px; object-fit: contain;">
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('script')
+<script>
+    // JavaScript to handle the image change in the modal
+    var modalImage = document.getElementById('modalImage');
+    var imageElements = document.querySelectorAll('[data-bs-toggle="modal"]');
+
+    imageElements.forEach(function (imgElement) {
+        imgElement.addEventListener('click', function () {
+            var imageUrl = this.getAttribute('data-bs-image');
+            modalImage.src = imageUrl;
+        });
+    });
+</script>
 @endpush
