@@ -20,8 +20,9 @@ Route::middleware(['role:admin'])->group(function () {
     Route::resource('test_center', TestCenterController::class);
     Route::resource('exam_date', ExamDateController::class);
     Route::resource('testimonial', TestimonialController::class);
-    Route::get('/transaction',[TransactionController::class,'index'])->name('transaction');
-    Route::post('/applicants/export',[StudentController::class,'exportApplicantsToExcel'])->name('applicants.export');
+    Route::get('/transaction', [TransactionController::class, 'index'])->name('transaction');
+    Route::post('/applicants/export', [StudentController::class, 'exportApplicants'])->name('applicants.export');
+    Route::post('/applicant-result/import', [ResultController::class, 'import'])->name('results.import');
 });
 
 // =========accessible by test centers and admin only============
@@ -37,9 +38,10 @@ Route::group(['middleware' => ['role:admin|consultancy_manager']], function () {
     Route::put('/student/status/{slug}', [StudentController::class, 'updateStatus'])->name('update.status');
     Route::post('/student/upload-admit-card/{slug}', [StudentController::class, 'uploadAdmitCard'])
         ->name('student.uploadAdmitCard.store');
+    Route::get('/admit-card', [AdmitCardController::class, 'index'])->name('admin.admit-card');
+    Route::get('/applicant-result', [ResultController::class, 'index'])->name('admin.applicant-result');
+    Route::post('/applicant-result-export', [ResultController::class, 'export'])->name('admin.applicant-result-export');
 });
 
-Route::get('/admit-card',[AdmitCardController::class,'index'])->name('admin.admit-card');
-Route::get('/applicant-result',[ResultController::class,'index'])->name('admin.applicant-result');
-Route::post('/applicant-result/import',[ResultController::class,'import'])->name('results.import');
+
 

@@ -10,6 +10,9 @@
                 <tr>
                     <th>S.N</th>
                     <th>Name</th>
+                    <th>Address</th>
+                    <th>Consultancy Name</th>
+                    <th>Consultancy Address</th>
                     <th>Phone Number</th>
                     <th>Amount</th>
                     <th>Exam Date</th>
@@ -39,12 +42,15 @@
             columns: [
                 { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },  // S.N column
                 { data: 'name', name: 'name' },
+                { data: 'address', name: 'address' },
+                { data: 'consultancy_name', name: 'consultancy_name' },
+                { data: 'consultancy_address', name: 'consultancy_address' },
                 { data: 'phone', name: 'phone' },
                 { data: 'amount', name: 'amount' },
                 { data: 'exam_date', name: 'exam_date' },
                 { data: 'slug', name: 'slug' },
             ],
-            order: [[0, 'asc']]  // Sorting by first column (S.N)
+            order: [[1, 'desc']]  // Sorting by first column (S.N)
         });
     });
 </script>

@@ -15,7 +15,8 @@
                     <th>Phone No.</th>
                     <th>DOB</th>
                     <th>Email</th>
-                    <th>Registration Number</th>
+                    <th>Registration No.</th>
+                    <th>Exam Date</th>
                     <th>Admit Card</th>
                 </tr>
             </thead>
@@ -46,6 +47,7 @@
                 { data: 'dob', name: 'dob' },
                 { data: 'email', name: 'email' },
                 { data: 'slug', name: 'slug' },
+                { data: 'exam_date', name: 'exam_date' },
                 { data: 'admit_card', name: 'admit_card', orderable: false, searchable: false }
             ]
         });

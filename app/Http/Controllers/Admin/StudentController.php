@@ -9,6 +9,7 @@ use App\Mail\StudentCreatedMail;
 use App\Models\AdmitCard;
 use App\Models\ExamDate;
 use App\Models\Students;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -344,6 +345,7 @@ class StudentController extends Controller
                         ->orWhere('status', 'like', "%$searchTerm%")
                         ->orWhere('phone', 'like', "%$searchTerm%")
                         ->orWhere('dob', 'like', "%$searchTerm%")
+                        ->orWhere('slug', 'like', "%$searchTerm%")
                     ;
                 })
                     // Search in the related exam_dates table using `orWhereHas`
@@ -408,11 +410,12 @@ class StudentController extends Controller
      */
     public function getPendingStudents(Request $request)
     {
+        $examDates = ExamDate::latest()->get();
         if ($request->ajax()) {
             // Return the data for pending students
             return $this->getPendingOrApprovedStudents(false);
         }
-        return view('admin.students.pending');
+        return view('admin.students.pending',compact('examDates'));
     }
 
     /**
@@ -420,29 +423,108 @@ class StudentController extends Controller
      */
     public function getApprovedStudents(Request $request)
     {
+        $examDates = ExamDate::latest()->get();
         if ($request->ajax()) {
             // Return the data for approved students
             return $this->getPendingOrApprovedStudents(true);
         }
-        return view('admin.students.approved');
+        return view('admin.students.approved',compact('examDates'));
     }
 
     /**
-     * Export applicants to excel
+     * Export applicants
      */
-    public function exportApplicantsToExcel(Request $request)
+    public function exportApplicants(Request $request)
     {
         try {
-            // Get the selected exam date ID from the form input
-            $examDateId = $request->input('date');
+            // Validate the request
+            $request->validate([
+                'export' => 'required|in:excel,csv,pdf', // Ensure valid export types
+                'date' => 'required|exists:exam_dates,id', // Ensure the date exists
+                'status' => 'required'
+            ], [
+                'export.required' => 'Please select an export option.',
+                'export.in' => 'Invalid export type selected.',
+                'date.required' => 'Exam date is required.',
+                'date.exists' => 'Invalid exam date selected.',
+            ]);
 
+            // Handle the export based on the selected type
+            if ($request->export === 'excel') {
+                return $this->exportApplicantsToExcel($request->date, $request->status);
+            } elseif ($request->export === 'csv') {
+                return $this->exportApplicantsToCSV($request->date, $request->status);
+            } elseif ($request->export === 'pdf') {
+                return $this->exportApplicantsToPDF($request->date, $request->status);
+            }
+
+            return back()->with('error', 'Invalid export option.');
+        } catch (\Throwable $th) {
+            return back()->with('error', $th->getMessage());
+        }
+    }
+
+    /**
+     * Export applicants to Excel
+     */
+    public function exportApplicantsToExcel($exam_date_id, $status)
+    {
+        try {
             // Fetch students filtered by the selected exam date
             $students = Students::with('exam_date')
-                ->where('exam_date_id', $examDateId)
-                ->get();
+            ->where('exam_date_id', $exam_date_id)
+            ->when($status == 0 || $status == 1, function ($query) use ($status) {
+                $query->where('status', $status);
+            })
+            ->get();
 
-            // Export the students to Excel
+            // Export the students to Excel using Laravel Excel
             return Excel::download(new StudentsExport($students), 'applicants.xlsx');
+        } catch (\Throwable $th) {
+            // Return error message
+            return back()->with('error', $th->getMessage());
+        }
+    }
+
+    /**
+     * Export applicants to csv
+     */
+    public function exportApplicantsToCSV($exam_date_id, $status)
+    {
+        try {
+            // Fetch students filtered by the selected exam date
+            $students = Students::with('exam_date')
+                ->where('exam_date_id', $exam_date_id)
+                ->when($status == 0 || $status == 1, function ($query) use ($status) {
+                    $query->where('status', $status);
+                })
+                ->get();
+    
+            // Trigger the CSV export and download the file
+            return Excel::download(new StudentsExport($students), 'applicants.csv');
+        } catch (\Throwable $th) {
+            return back()->with('error', $th->getMessage());
+        }
+    }
+    
+     /**
+     * Export applicants to pdf
+     */
+    public function exportApplicantsToPDF($exam_date_id, $status)
+    {
+        try {
+            // Fetch students filtered by the selected exam date
+            $students = Students::with('exam_date','user')
+            ->where('exam_date_id', $exam_date_id)
+            ->when($status == 0 || $status == 1, function ($query) use ($status) {
+                $query->where('status', $status);
+            })
+            ->get();
+
+            // load the view and pass the data to it
+            $pdf=PDF::loadView('admin.exports.applicants',compact('students'));
+            // return the generated pdf to download
+            return $pdf->download('applicant_list.pdf');
         } catch (\Throwable $th) {
             return back()->with('error', $th->getMessage());
         }

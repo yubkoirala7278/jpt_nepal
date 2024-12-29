@@ -7,8 +7,8 @@
             <a class="btn btn-secondary btn-sm" href="{{ route('student.create') }}">Add New</a>
         @endif
         @if (Auth::user()->hasRole('admin'))
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                Export
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exportApplicants">
+                Export Applicants
             </button>
         @endif
     </div>
@@ -86,13 +86,13 @@
         </div>
     </div>
     {{-- export applicants --}}
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal fade" id="exportApplicants" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="exportApplicantsLabel" aria-hidden="true">
         <div class="modal-dialog">
             <form action="{{ route('applicants.export') }}" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Export Applicants</h1>
+                    <h1 class="modal-title fs-5" id="exportApplicantsLabel">Export Applicants</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -113,31 +113,53 @@
                             <label class="form-label">Export File To</label>
                             <div class="d-flex align-items-center" style="column-gap: 20px">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="export" id="excel" checked>
+                                    <input class="form-check-input" type="radio" name="export" value="excel" id="excel" checked>
                                     <label class="form-check-label" for="excel">
                                         Excel
                                     </label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="export" id="csv">
+                                    <input class="form-check-input" type="radio" name="export" value="csv" id="csv">
                                     <label class="form-check-label" for="csv">
                                         CSV
                                     </label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="export" id="pdf">
+                                    <input class="form-check-input" type="radio" name="export" value="pdf" id="pdf">
                                     <label class="form-check-label" for="pdf">
                                         PDF
                                     </label>
                                 </div>
                             </div>
                         </div>
-                   
-                    {{-- <a class="btn btn-secondary btn-sm" href="{{route('applicants.export')}}">Export Excel</a> --}}
+
+                        <div class="mb-3">
+                            <label class="form-label">Status</label>
+                            <div class="d-flex align-items-center" style="column-gap: 20px">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="status" value="1" id="approved" checked>
+                                    <label class="form-check-label" for="approved">
+                                        Approved
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="status" value="0" id="pending">
+                                    <label class="form-check-label" for="pending">
+                                        Pending
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="status" value="2" id="both">
+                                    <label class="form-check-label" for="both">
+                                        Both
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Export</button>
+                    <button type="submit" class="btn btn-success">Export</button>
                 </div>
             </form>
             </div>

@@ -48,7 +48,7 @@
                     <div class="card custom-test-card shadow-sm">
                         <div class="card-body text-center">
                             <h2 class="custom-test-card-title">Results</h2>
-                            <p class="custom-test-card-count">19</p>
+                            <p class="custom-test-card-count">{{$totalResults}}</p>
                         </div>
                     </div>
                 </div>

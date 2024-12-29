@@ -12,7 +12,7 @@ class TransactionController extends Controller
     public function index()
     {
         try {
-            $students = Students::with('exam_date')->latest();
+            $students = Students::with('exam_date', 'user');
     
             if (request()->ajax()) {
                 return DataTables::of($students)
@@ -20,22 +20,37 @@ class TransactionController extends Controller
                     ->addColumn('exam_date', function($student) {
                         return $student->exam_date->exam_date;
                     })
+                    ->addColumn('consultancy_name', function($student) {
+                        return $student->user->name;
+                    })
+                    ->addColumn('consultancy_address', function($student) {
+                        return $student->user->consultancy->address;
+                    })
                     ->addColumn('action', function($student) {
-                        // You can add action buttons here if needed (Edit, Delete, etc.)
                         return '';
+                    })
+                    ->filterColumn('exam_date', function($query, $keyword) {
+                        // Add filtering for exam_date if needed
+                        $query->whereHas('exam_date', function($query) use ($keyword) {
+                            $query->where('exam_date', 'like', "%$keyword%");
+                        });
+                    })
+                    ->filterColumn('consultancy_name', function($query, $keyword) {
+                        $query->whereHas('user', function($query) use ($keyword) {
+                            $query->where('name', 'like', "%$keyword%");  // Search by consultancy name
+                        });
                     })
                     ->make(true);
             }
     
-            // For the first load, return the view with the total values
             $totalAmount = $students->sum('amount');
             $totalStudents = $students->count();
     
             return view('admin.transactions.index', compact('totalAmount', 'totalStudents'));
-    
         } catch (\Throwable $th) {
             return back()->with('error', $th->getMessage());
         }
     }
+    
     
 }

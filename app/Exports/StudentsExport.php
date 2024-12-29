@@ -26,7 +26,8 @@ class StudentsExport implements FromCollection, WithHeadings
                 $student->name,
                 $student->dob,
                 $student->email,
-                $student->exam_date->exam_date
+                $student->exam_date->exam_date,
+                 $student->status == 1 ? 'Approved' : 'Pending'
             ];
         });
     }
@@ -37,14 +38,15 @@ class StudentsExport implements FromCollection, WithHeadings
     public function headings(): array
     {
         return [
-            'id',
-            'Registration Number',
-            'Name',
-            'Date of Birth',
-            'Email',
-            'Exam Date',
-            'marks',
-            'result'
+            'applicant_id',
+            'registration_number',
+            'applicant_name',
+            'applicant_dob',
+            'applicant_email',
+            'applicant_exam_date',
+            'applicant_status',
+            'applicant_marks',
+            'applicant_result',
         ];
     }
 }

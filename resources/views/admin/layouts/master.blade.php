@@ -398,29 +398,28 @@
                         <span>Transaction</span>
                     </a>
                 </li><!-- End Profile Page Nav -->
-
-                <li class="nav-item">
-                    <a class="nav-link collapsed" data-bs-target="#icons-nav-fourth" data-bs-toggle="collapse"
-                        href="#">
-                        <i class="fa-solid fa-newspaper"></i><span>News & Notice</span><i
-                            class="fas fa-chevron-down ms-auto"></i>
-                    </a>
-                    <ul id="icons-nav-fourth" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                        @if (Auth::user()->hasRole('admin'))
-                            <li>
-                                <a href="{{ route('notice.create') }}">
-                                    <i class="fas fa-circle"></i><span>Add New</span>
-                                </a>
-                            </li>
-                        @endif
+            @endif
+            <li class="nav-item">
+                <a class="nav-link collapsed" data-bs-target="#icons-nav-fourth" data-bs-toggle="collapse"
+                    href="#">
+                    <i class="fa-solid fa-newspaper"></i><span>News & Notice</span><i
+                        class="fas fa-chevron-down ms-auto"></i>
+                </a>
+                <ul id="icons-nav-fourth" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                    @if (Auth::user()->hasRole('admin'))
                         <li>
-                            <a href="{{ route('notice.index') }}">
-                                <i class="fas fa-circle"></i><span>List All</span>
+                            <a href="{{ route('notice.create') }}">
+                                <i class="fas fa-circle"></i><span>Add New</span>
                             </a>
                         </li>
-                    </ul>
-                </li><!-- End Icons Nav -->
-            @endif
+                    @endif
+                    <li>
+                        <a href="{{ route('notice.index') }}">
+                            <i class="fas fa-circle"></i><span>List All</span>
+                        </a>
+                    </li>
+                </ul>
+            </li><!-- End Icons Nav -->
 
 
             {{-- <li class="nav-item">
@@ -466,13 +465,6 @@
                 </ul>
             </li><!-- End Icons Nav --> --}}
 
-
-            {{-- <li class="nav-item">
-                <a class="nav-link collapsed" href="#">
-                    <i class="fa-solid fa-file-zipper"></i>
-                    <span>Upcoming Test</span>
-                </a>
-            </li><!-- End Profile Page Nav --> --}}
 
             @if (Auth::user()->hasRole('admin'))
                 <li class="nav-item">

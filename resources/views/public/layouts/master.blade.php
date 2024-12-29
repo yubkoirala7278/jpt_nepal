@@ -114,6 +114,7 @@
 
     {{-- content --}}
     @yield('content')
+    @yield('modal')
     {{-- end content --}}
 
     {{-- footer --}}

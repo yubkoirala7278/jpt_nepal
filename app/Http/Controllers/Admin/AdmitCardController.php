@@ -14,9 +14,9 @@ class AdmitCardController extends Controller
     {
         try {
             if (Auth::user()->hasRole('admin')) {
-                $students = Students::has('admit_cards')->with('admit_cards')->latest()->get();
+                $students = Students::has('admit_cards')->with('admit_cards','exam_date')->latest()->get();
             } else if (Auth::user()->hasRole('consultancy_manager')) {
-                $students = Students::with('admit_cards') 
+                $students = Students::with('admit_cards','exam_date') 
                 ->where('user_id', Auth::user()->id) 
                 ->has('admit_cards')
                 ->get();
@@ -30,6 +30,10 @@ class AdmitCardController extends Controller
                     ->addColumn('admit_card', function ($student) {
                         // Add download button for the admit card
                         return '<a href="' . asset($student->admit_cards->admit_card) . '" class="btn btn-success btn-sm" download><i class="fa-solid fa-download me-1"></i>Download</a>';
+                    })
+                    ->addColumn('exam_date', function ($examDate) {
+                        // Add download button for the admit card
+                        return $examDate->exam_date->exam_date;
                     })
                     ->rawColumns(['admit_card'])
                     ->make(true);
