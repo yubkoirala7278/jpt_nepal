@@ -82,7 +82,7 @@ class AdmitCardController extends Controller
             ->first();
 
         if (!$student || !$student->results) {
-            return response()->json(['error' => 'Result not found.'], 404);
+            return response()->json(['error' => 'Invalid Date of Birth or Registration Number. Please check your input and try again.'], 404);
         }
 
         return response()->json([

@@ -5,6 +5,9 @@ use App\Http\Controllers\Frontend\AdmitCardController;
 use App\Http\Controllers\Frontend\BlogController;
 use App\Http\Controllers\Frontend\ContactController;
 use App\Http\Controllers\Frontend\HomeController;
+use App\Http\Controllers\Frontend\NoticeController;
+use App\Http\Controllers\Frontend\ResourcesController;
+use App\Http\Controllers\Frontend\TestDetailController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -17,3 +20,9 @@ Route::get('/applicant-result',[AdmitCardController::class,'getApplicantResult']
 Route::post('/my-result',[AdmitCardController::class,'getResult'])->name('my-result');
 Route::get('/about',[AboutController::class,'index'])->name('about');
 Route::get('/contact',[ContactController::class,'index'])->name('contact');
+Route::get('/test-detail',[TestDetailController::class,'index'])->name('test.detail');
+Route::get('/registration',[TestDetailController::class,'registration'])->name('registration');
+Route::get('/resources',[ResourcesController::class,'index'])->name('resources');
+Route::get('/notice',[NoticeController::class,'index'])->name('notice');
+Route::get('/notice-detail/{slug}',[NoticeController::class,'getNoticeDetail'])->name('notice.detail');
+Route::post('/test-center-detail',[HomeController::class,'getTestCenterDetails'])->name('test-center-details');

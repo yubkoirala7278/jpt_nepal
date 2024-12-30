@@ -45,8 +45,8 @@
             </div>
         </div>
         <!-- <div class="logo"></div> -->
-
-
+    
+    
         <div class="my-navbar">
             <div class="container">
                 <nav class="navbar navbar-expand-lg">
@@ -59,7 +59,7 @@
                         </div>
                         <div class="top-logo d-block d-lg-none ">
                             <a href="{{route('home')}}" class="text-decoration-none"><span
-                                    class="top-logo-text">JPTNepal</span></a>
+                                    class="top-logo-text">JPT</span></a>
                         </div>
                         </button>
                         <div class="collapse navbar-collapse" id="navbarNavDropdown">
@@ -69,46 +69,63 @@
                                     <a href="{{route('home')}}" class="text-decoration-none"><span
                                             class="top-logo-text">JPT</span></a>
                                 </div>
-
+    
                                 <div class="d-none d-lg-block"></div>
-
+    
                                 <ul class="navbar-nav d-flex align-items-center gap-3">
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{route('home')}}">Home</a>
                                     </li>
                                     <li class="nav-item">
+                                        <a class="nav-link" href="{{route('about')}}">About JPT</a>
+                                    </li>
+    
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{route('test.detail')}}">Test Detail</a>
+                                    </li>
+    
+                                    <li class="nav-item">
+                                        {{-- <a class="nav-link" href="{{route('registration')}}">Registration</a> --}}
+                                        <a class="nav-link" href="#">Registration</a>
+                                    </li>
+    
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{route('resources')}}">Resources</a>
+                                    </li>
+    
+                                    {{-- <li class="nav-item">
                                         <a class="nav-link" href="{{route('admit-card')}}">Admit Card</a>
-                                    </li>
-                                    <li class="nav-item">
+                                    </li> --}}
+                                    {{-- <li class="nav-item">
                                         <a class="nav-link" href="{{route('applicant-result')}}">Check Result</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="{{route('about')}}">About</a>
-                                    </li>
-
+                                    </li> --}}
+    
+    
                                     <!-- <li class="nav-item">
                                         <a class="nav-link" href="event.html">Event</a>
                                     </li> -->
-
+    
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{route('blog')}}">Blog</a>
                                     </li>
+    
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{route('contact')}}">Contact</a>
                                     </li>
+    
                                     <li class="nav-item">
                                         <a href="{{route('login')}}" class="login-btn text-decoration-none">Login</a>
                                     </li>
-
+    
                                 </ul>
-
+    
                             </div>
                         </div>
                     </div>
                 </nav>
             </div>
         </div>
-
+    
     </header>
     {{-- end of header --}}
 
