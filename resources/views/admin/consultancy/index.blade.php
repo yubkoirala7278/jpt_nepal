@@ -7,7 +7,7 @@
     </div>
 
     <div class="table-responsive"> <!-- Wrapper for horizontal scroll -->
-        <table class="table consultancy-datatable table-hover pt-3">
+        <table class="table consultancy-datatable table-hover pt-3 w-100">
             <thead>
                 <tr>
                     <th>S.N</th>

@@ -9,7 +9,7 @@
         </button>
 
     </div>
-    <table class="table testimonial-datatable table-hover pt-3">
+    <table class="table testimonial-datatable table-hover pt-3 w-100">
         <thead>
             <tr>
                 <th>S.N</th>

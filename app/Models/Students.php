@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Students extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'address','amount', 'profile', 'phone', 'slug', 'dob', 'email', 'is_appeared_previously', 'receipt_image', 'user_id','exam_date_id','status'];
+    protected $fillable = ['name', 'address','amount', 'profile', 'phone', 'slug', 'dob', 'email', 'is_appeared_previously', 'receipt_image', 'user_id','exam_date_id','status','is_viewed'];
     // Boot method to hook into the model's lifecycle events
     protected static function boot()
     {

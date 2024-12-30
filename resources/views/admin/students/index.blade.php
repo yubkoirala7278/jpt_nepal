@@ -13,7 +13,7 @@
         @endif
     </div>
     <div class="table-responsive">
-        <table class="table applicants-datatable table-hover pt-3 " id="studentsTable" style="white-space: nowrap;">
+        <table class="table applicants-datatable table-hover pt-3 w-100" id="studentsTable" style="white-space: nowrap;">
             <thead>
                 <tr>
                     <th>S.N</th>

@@ -5,7 +5,7 @@
         <h2>Test Centers</h2>
         <a class="btn btn-secondary btn-sm" href="{{ route('test_center.create') }}">Add New</a>
     </div>
-    <table class="table test-center-datatable table-hover pt-3">
+    <table class="table test-center-datatable table-hover pt-3 w-100">
         <thead>
             <tr>
                 <th>S.N</th>

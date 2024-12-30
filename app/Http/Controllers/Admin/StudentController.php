@@ -116,6 +116,9 @@ class StudentController extends Controller
     public function show(Students $student)
     {
         try {
+            $student->update([
+                'is_viewed'=>true
+            ]);
             return view('admin.students.show', compact('student'));
         } catch (\Throwable $th) {
             return back()->with('error', $th->getMessage());

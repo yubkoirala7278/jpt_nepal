@@ -16,7 +16,7 @@
     </div>
 
     <div class="table-responsive">
-        <table id="studentsTable" class="table table-hover pt-3">
+        <table id="studentsTable" class="table table-hover pt-3 w-100">
             <thead>
                 <tr>
                     <th>S.N</th>

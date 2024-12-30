@@ -55,23 +55,24 @@
             <i class="fas fa-bars toggle-sidebar-btn"></i>
         </div><!-- End Logo -->
 
-        <div class="search-bar">
+        {{-- <div class="search-bar">
             <form class="search-form d-flex align-items-center" method="POST" action="#">
                 <input type="text" name="query" placeholder="Search" title="Enter search keyword">
                 <button type="submit" title="Search"><i class="fas fa-search"></i></button>
             </form>
-        </div><!-- End Search Bar -->
+        </div><!-- End Search Bar --> --}}
 
         <nav class="header-nav ms-auto">
             <ul class="d-flex align-items-center">
 
-                <li class="nav-item d-block d-lg-none">
+                {{-- <li class="nav-item d-block d-lg-none">
                     <a class="nav-link nav-icon search-bar-toggle " href="#">
                         <i class="fas fa-search"></i>
                     </a>
-                </li><!-- End Search Icon-->
+                </li><!-- End Search Icon--> --}}
 
-                <li class="nav-item dropdown">
+
+                {{-- <li class="nav-item dropdown">
 
                     <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
                         <i class="fas fa-bell"></i>
@@ -144,134 +145,20 @@
 
                     </ul><!-- End Notification Dropdown Items -->
 
-                </li><!-- End Notification Nav -->
+                </li><!-- End Notification Nav --> --}}
 
-                <li class="nav-item dropdown">
-
-                    <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
-                        <i class="fas fa-comment-dots"></i>
-                        <span class="badge bg-success badge-number">3</span>
-                    </a><!-- End Messages Icon -->
-
-                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow messages">
-                        <li class="dropdown-header">
-                            You have 3 new messages
-                            <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-
-                        <li class="message-item">
-                            <a href="#">
-                                <img src="{{ asset('admin/assets/img/messages-1.jpg') }}" alt=""
-                                    class="rounded-circle">
-                                <div>
-                                    <h4>Maria Hudson</h4>
-                                    <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
-                                    <p>4 hrs. ago</p>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-
-                        <li class="message-item">
-                            <a href="#">
-                                <img src="{{ asset('admin/assets/img/messages-2.jpg') }}" alt=""
-                                    class="rounded-circle">
-                                <div>
-                                    <h4>Anna Nelson</h4>
-                                    <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
-                                    <p>6 hrs. ago</p>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-
-                        <li class="message-item">
-                            <a href="#">
-                                <img src="{{ asset('admin/assets/img/messages-3.jpg') }}" alt=""
-                                    class="rounded-circle">
-                                <div>
-                                    <h4>David Muldon</h4>
-                                    <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
-                                    <p>8 hrs. ago</p>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-
-                        <li class="dropdown-footer">
-                            <a href="#">Show all messages</a>
-                        </li>
-
-                    </ul><!-- End Messages Dropdown Items -->
-
-                </li><!-- End Messages Nav -->
-
-                <li class="nav-item dropdown pe-3">
-
+                <li class="nav-item pe-5">
                     <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#"
-                        data-bs-toggle="dropdown">
-                        <img src="{{ asset('admin/assets/img/profile-img.jpg') }}" alt="Profile"
-                            class="rounded-circle">
-                        <span class="d-none d-md-block dropdown-toggle ps-2">{{ Auth::user()->name }}</span>
-                    </a><!-- End Profile Iamge Icon -->
-
-                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-                        <li class="dropdown-header">
-                            <h6>Kevin Anderson</h6>
-                            <span>Web Designer</span>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-
-                        <li>
-                            <a class="dropdown-item d-flex align-items-center" href="#">
-                                <i class="fas fa-user"></i>
-                                <span>My Profile</span>
-                            </a>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-
-                        <li>
-                            <a class="dropdown-item d-flex align-items-center" href="#">
-                                <i class="fas fa-cogs"></i>
-                                <span>Account Settings</span>
-                            </a>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-
-                        <li>
-                            <a class="dropdown-item d-flex align-items-center" href="#">
-                                <i class="fas fa-question-circle"></i>
-                                <span>Need Help?</span>
-                            </a>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-
-                        <li>
-                            <a class="dropdown-item d-flex align-items-center" href="#">
-                                <i class="fas fa-sign-out-alt"></i>
-                                <span>Sign Out</span>
-                            </a>
-                        </li>
-
-                    </ul><!-- End Profile Dropdown Items -->
-                </li><!-- End Profile Nav -->
+                        style="text-decoration: none;">
+                        <div class="rounded-circle bg-success d-flex justify-content-center align-items-center"
+                            style="width: 40px; height: 40px;">
+                            <i class="fa-solid fa-user text-white"></i>
+                        </div>
+                        <span class="d-none d-md-block ps-3 text-success fw-bold">
+                            {{ Auth::user()->name }}
+                        </span>
+                    </a>
+                </li>
 
             </ul>
         </nav><!-- End Icons Navigation -->
@@ -375,21 +262,21 @@
                 </li><!-- End Icons Nav -->
             @endif
 
-            @if ( Auth::user()->hasRole('consultancy_manager') || Auth::user()->hasRole('admin'))
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="{{ route('admin.admit-card') }}">
-                    <i class="fa-solid fa-ticket"></i>
-                    <span>Admit Card</span>
-                </a>
-            </li><!-- End Profile Page Nav -->
+            @if (Auth::user()->hasRole('consultancy_manager') || Auth::user()->hasRole('admin'))
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="{{ route('admin.admit-card') }}">
+                        <i class="fa-solid fa-ticket"></i>
+                        <span>Admit Card</span>
+                    </a>
+                </li><!-- End Profile Page Nav -->
 
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="{{route('admin.applicant-result')}}">
-                    <i class="fa-solid fa-graduation-cap"></i>
-                    <span>Results</span>
-                </a>
-            </li><!-- End Profile Page Nav -->
-        @endif
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="{{ route('admin.applicant-result') }}">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                        <span>Results</span>
+                    </a>
+                </li><!-- End Profile Page Nav -->
+            @endif
 
             @if (Auth::user()->hasRole('admin'))
                 <li class="nav-item">

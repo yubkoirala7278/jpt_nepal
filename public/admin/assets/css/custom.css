@@ -2,7 +2,8 @@
 .custom-test-card {
     border-radius: 15px;
     background-color: #f8f9fa; /* Light background color */
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.3s ease, 
+    box-shadow 0.3s ease;
 }
 
 .custom-test-card:hover {
@@ -38,6 +39,7 @@ mark {
     font-weight: bold;
     padding: 0 5px;
     text-shadow: 0 0 10px rgba(255, 255, 0, 0.7); /* Yellow glow */
-    
   }
+
+  
 

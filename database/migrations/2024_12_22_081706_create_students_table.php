@@ -28,6 +28,7 @@ return new class extends Migration
             $table->unsignedBigInteger('exam_date_id');
             $table->foreign('exam_date_id')->references('id')->on('exam_dates')->cascadeOnDelete()->cascadeOnUpdate();
             $table->boolean('status')->default(false);
+            $table->boolean('is_viewed')->default(false);
             $table->timestamps();
         });
     }
