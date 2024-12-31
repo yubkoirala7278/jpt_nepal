@@ -232,7 +232,7 @@
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('student.index') || request()->routeIs('student.create') ? '' : 'collapsed' }}"
                         data-bs-target="#icons-nav-third" data-bs-toggle="collapse" href="#">
-                        <i class="fa-solid fa-laptop-file"></i><span>Applicants</span><i
+                        <i class="fa-solid fa-laptop-file"></i><span>Students/Applicants</span><i
                             class="fas fa-chevron-down ms-auto"></i>
                     </a>
                     <ul id="icons-nav-third" class="nav-content collapse" data-bs-parent="#sidebar-nav">

@@ -21,7 +21,7 @@ class HomeController extends Controller
         try {
             $totalTestCenter = null;
             $totalEducationConsultancy = null;
-            $totalApplicants = null;
+            $totalApplicants = 0;
             $totalNotice = null;
             $totalAdmitCard = null;
             $totalResults = null;
@@ -30,14 +30,17 @@ class HomeController extends Controller
             $upcomingTests = [];
             $jptApplicants = 0;
             $pendingApplicants = 0;
+            $upcomingTestCount=0;
             if (Auth::user()->hasRole('admin')) {
                 $totalTestCenter = TestCenter::count();
                 $totalEducationConsultancy = Consultancy::count();
                 $totalApplicants = Students::count();
+                $pendingApplicants = Students::where('status', false)->count();
                 $totalNotice = Notice::count();
                 $totalAdmitCard = AdmitCard::count();
                 $totalResults = Result::count();
                 $students = Students::where('is_viewed', false)->with('user')->latest()->paginate(10);
+                $upcomingTestCount = ExamDate::where('exam_date', '>', Carbon::today())->count();
             } elseif (Auth::user()->hasRole('consultancy_manager') || Auth::user()->hasRole('test_center_manager')) {
                 $notices = Notice::latest()->paginate(10);
                 $upcomingTests = ExamDate::where('exam_date', '>', Carbon::now()->toDateString())
@@ -55,7 +58,7 @@ class HomeController extends Controller
                     $pendingApplicants = Students::whereIn('user_id', $educationConsultancy)->where('status', false)->count();
                 }
             }
-            return view('admin.home.index', compact('totalTestCenter', 'totalEducationConsultancy', 'totalApplicants', 'totalNotice', 'totalAdmitCard', 'totalResults', 'students', 'notices', 'upcomingTests', 'jptApplicants', 'pendingApplicants'));
+            return view('admin.home.index', compact('totalTestCenter', 'totalEducationConsultancy', 'totalApplicants', 'totalNotice', 'totalAdmitCard', 'totalResults', 'students', 'notices', 'upcomingTests', 'jptApplicants', 'pendingApplicants','upcomingTestCount'));
         } catch (\Throwable $th) {
             return back()->with('error', $th->getMessage());
         }
