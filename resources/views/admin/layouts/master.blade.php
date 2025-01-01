@@ -228,39 +228,37 @@
                 </li><!-- End Icons Nav -->
             @endif
 
-            @if (Auth::user()->hasRole('consultancy_manager') || Auth::user()->hasRole('admin'))
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('student.index') || request()->routeIs('student.create') ? '' : 'collapsed' }}"
-                        data-bs-target="#icons-nav-third" data-bs-toggle="collapse" href="#">
-                        <i class="fa-solid fa-laptop-file"></i><span>Students/Applicants</span><i
-                            class="fas fa-chevron-down ms-auto"></i>
-                    </a>
-                    <ul id="icons-nav-third" class="nav-content collapse" data-bs-parent="#sidebar-nav">
-                        @if (Auth::user()->hasRole('consultancy_manager'))
-                            <li>
-                                <a href="{{ route('student.create') }}">
-                                    <i class="fas fa-circle"></i><span>Add New</span>
-                                </a>
-                            </li>
-                        @endif
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('student.index') || request()->routeIs('student.create') ? '' : 'collapsed' }}"
+                    data-bs-target="#icons-nav-third" data-bs-toggle="collapse" href="#">
+                    <i class="fa-solid fa-laptop-file"></i><span>Students/Applicants</span><i
+                        class="fas fa-chevron-down ms-auto"></i>
+                </a>
+                <ul id="icons-nav-third" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+                    @if (Auth::user()->hasRole('consultancy_manager'))
                         <li>
-                            <a href="{{ route('student.index') }}">
-                                <i class="fas fa-circle"></i><span>List All</span>
+                            <a href="{{ route('student.create') }}">
+                                <i class="fas fa-circle"></i><span>Add New</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="{{ route('student.pending') }}">
-                                <i class="fas fa-circle"></i><span>Pending</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('student.approved') }}">
-                                <i class="fas fa-circle"></i><span>Approved</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li><!-- End Icons Nav -->
-            @endif
+                    @endif
+                    <li>
+                        <a href="{{ route('student.index') }}">
+                            <i class="fas fa-circle"></i><span>List All</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('student.pending') }}">
+                            <i class="fas fa-circle"></i><span>Pending</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('student.approved') }}">
+                            <i class="fas fa-circle"></i><span>Approved</span>
+                        </a>
+                    </li>
+                </ul>
+            </li><!-- End Icons Nav -->
 
             @if (Auth::user()->hasRole('consultancy_manager') || Auth::user()->hasRole('admin'))
                 <li class="nav-item">
@@ -361,6 +359,13 @@
                     </a>
                 </li><!-- End Profile Page Nav -->
             @endif
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="">
+                    <i class="fa-solid fa-blog"></i>
+                    <span>Blogs</span>
+                </a>
+            </li><!-- End Profile Page Nav -->
 
             <li class="nav-item">
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">

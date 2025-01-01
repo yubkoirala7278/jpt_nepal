@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdmitCardController;
+use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\ConsultancyController;
 use App\Http\Controllers\Admin\ExamDateController;
 use App\Http\Controllers\Admin\HomeController;
@@ -31,7 +32,7 @@ Route::group(['middleware' => ['role:admin|test_center_manager']], function () {
 });
 
 // =======accessible by consultancy and admin only===============
-Route::group(['middleware' => ['role:admin|consultancy_manager']], function () {
+Route::group(['middleware' => ['role:admin|consultancy_manager|test_center_manager']], function () {
     Route::get('/student/pending-applicants', [StudentController::class, 'getPendingStudents'])->name('student.pending');
     Route::get('/student/approved-applicants', [StudentController::class, 'getApprovedStudents'])->name('student.approved');
     Route::resource('student', StudentController::class);
@@ -42,6 +43,3 @@ Route::group(['middleware' => ['role:admin|consultancy_manager']], function () {
     Route::get('/applicant-result', [ResultController::class, 'index'])->name('admin.applicant-result');
     Route::post('/applicant-result-export', [ResultController::class, 'export'])->name('admin.applicant-result-export');
 });
-
-
-

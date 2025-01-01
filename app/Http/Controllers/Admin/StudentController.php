@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StudentRequest;
 use App\Mail\StudentCreatedMail;
 use App\Models\AdmitCard;
+use App\Models\Consultancy;
 use App\Models\ExamDate;
 use App\Models\Students;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -16,12 +17,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
+use Yajra\DataTables\Facades\DataTables;
 
 class StudentController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('check.student.access')->only(['edit', 'update', 'create', 'store', 'show']);
+        $this->middleware('check.student.access')->only(['edit', 'update', 'create', 'store']);
     }
     /**
      * Display a listing of the resource.
@@ -30,8 +32,7 @@ class StudentController extends Controller
     {
         $examDates = ExamDate::latest()->get();
         if ($request->ajax()) {
-            // Return the data for approved students
-            return $this->getPendingOrApprovedStudents(null);
+            return $this->getPendingOrApprovedStudents($request, null);
         }
         return view('admin.students.index', compact('examDates'));
     }
@@ -117,7 +118,7 @@ class StudentController extends Controller
     {
         try {
             $student->update([
-                'is_viewed'=>true
+                'is_viewed' => true
             ]);
             return view('admin.students.show', compact('student'));
         } catch (\Throwable $th) {
@@ -325,88 +326,6 @@ class StudentController extends Controller
         }
     }
 
-    /**
-     * Get pending or approved students
-     */
-    public function getPendingOrApprovedStudents($status)
-    {
-        $students = Students::with('user', 'exam_date', 'admit_cards')
-            ->when($status !== null, function ($query) use ($status) {
-                return $query->where('status', $status);
-            })
-            ->when(Auth::user()->hasRole('consultancy_manager'), function ($query) {
-                return $query->where('user_id', Auth::user()->id);
-            })
-            // Search in both students table and related exam_dates table
-            ->when(request()->has('search') && request('search')['value'], function ($query) {
-                $searchTerm = request('search')['value'];
-
-                // Search in the students table
-                $query->where(function ($query) use ($searchTerm) {
-                    $query->where('name', 'like', "%$searchTerm%")
-                        ->orWhere('email', 'like', "%$searchTerm%")
-                        ->orWhere('status', 'like', "%$searchTerm%")
-                        ->orWhere('phone', 'like', "%$searchTerm%")
-                        ->orWhere('dob', 'like', "%$searchTerm%")
-                        ->orWhere('slug', 'like', "%$searchTerm%")
-                    ;
-                })
-                    // Search in the related exam_dates table using `orWhereHas`
-                    ->orWhereHas('exam_date', function ($query) use ($searchTerm) {
-                        $query->where('exam_date', 'like', "%$searchTerm%")
-                            ->orWhere('exam_start_time', 'like', "%$searchTerm%")
-                            ->orWhere('exam_end_time', 'like', "%$searchTerm%");
-                    });
-            });
-
-        return datatables()
-            ->of($students)
-            ->addIndexColumn()
-            ->addColumn('receipt_image', fn($row) => '<img src="' . asset($row->receipt_image) . '" alt="Logo" height="30" class="receipt-image" data-url="' . asset($row->receipt_image) . '" style="cursor:pointer;" loading="lazy" />')
-            ->addColumn('admit_card', function ($row) {
-                if ($row->admit_cards) {
-                    $admitCardUrl = asset($row->admit_cards->admit_card);
-                    return '<a href="' . $admitCardUrl . '" download class="btn btn-success btn-sm" title="Download Admit Card"><i class="fa-solid fa-download"></i> Download</a>';
-                }
-                return '<a href="javascript:void(0)" class="btn btn-light btn-sm" title="Pending"><i class="fa-solid fa-hourglass-half"></i> Pending</a>';
-            })
-            ->addColumn('action', function ($row) {
-                $viewUrl = route('student.show', $row->slug);
-                if (Auth::user()->hasRole('admin')) {
-                    return $row->status
-                        ? '<a href="' . $viewUrl . '" class="btn btn-primary text-white btn-sm" title="view applicant details"><i class="fa-regular fa-eye"></i></a>
-                           <button class="btn btn-success btn-sm upload-admit-card-btn" data-slug="' . $row->slug . '" title="upload admit card"><i class="fa-solid fa-upload"></i></button>'
-                        : '<a href="' . $viewUrl . '" class="btn btn-primary text-white btn-sm" title="view applicant details"><i class="fa-regular fa-eye"></i></a>';
-                }
-                if (Auth::user()->hasRole('consultancy_manager')) {
-                    $editUrl = route('student.edit', $row->slug);
-                    $deleteUrl = route('student.destroy', $row->slug);
-                    return !$row->status
-                        ? '<a href="' . $viewUrl . '" class="btn btn-primary text-white btn-sm" title="view applicant details"><i class="fa-regular fa-eye"></i></a>
-                           <a href="' . $editUrl . '" class="btn btn-warning text-white btn-sm" title="update applicant"><i class="fa-solid fa-pencil"></i></a>
-                           <button class="btn btn-danger btn-sm delete-btn" data-url="' . $deleteUrl . '" data-id="' . $row->id . '" title="delete applicant"><i class="fa-solid fa-trash"></i></button>'
-                        : '<a href="' . $viewUrl . '" class="btn btn-primary text-white btn-sm" title="view applicant details"><i class="fa-regular fa-eye"></i></a>';
-                }
-                return '';
-            })
-            ->editColumn('is_appeared_previously', fn($row) => $row->is_appeared_previously ? 'Yes' : 'No')
-            ->editColumn('status', fn($row) => $row->status
-                ? '<span class="badge text-bg-success">Approved</span>'
-                : '<span class="badge text-bg-danger">Pending</span>')
-            ->addColumn('exam_date', fn($row) => $row->exam_date ? $row->exam_date->exam_date : 'N/A')
-            ->addColumn('consultancy_name', fn($row) => $row->user->name)
-            ->addColumn('consultancy_address', fn($row) => $row->user->consultancy->address ?? 'N/A')
-            ->addColumn('exam_duration', function ($row) {
-                if ($row->exam_date && $row->exam_date->exam_start_time && $row->exam_date->exam_end_time) {
-                    return Carbon::parse($row->exam_date->exam_start_time)->format('h:i A') . ' - ' . Carbon::parse($row->exam_date->exam_end_time)->format('h:i A');
-                }
-                return 'N/A';
-            })
-            ->rawColumns(['receipt_image', 'status', 'action', 'admit_card'])
-            ->make(true);
-    }
-
-
 
     /**
      * Get pending students
@@ -415,10 +334,9 @@ class StudentController extends Controller
     {
         $examDates = ExamDate::latest()->get();
         if ($request->ajax()) {
-            // Return the data for pending students
-            return $this->getPendingOrApprovedStudents(false);
+            return $this->getPendingOrApprovedStudents($request, false);
         }
-        return view('admin.students.pending',compact('examDates'));
+        return view('admin.students.pending', compact('examDates'));
     }
 
     /**
@@ -428,10 +346,107 @@ class StudentController extends Controller
     {
         $examDates = ExamDate::latest()->get();
         if ($request->ajax()) {
-            // Return the data for approved students
-            return $this->getPendingOrApprovedStudents(true);
+            return $this->getPendingOrApprovedStudents($request, true);
         }
-        return view('admin.students.approved',compact('examDates'));
+        return view('admin.students.approved', compact('examDates'));
+    }
+
+    /**
+     * Get pending or approved students
+     */
+    public function getPendingOrApprovedStudents($request, $status)
+    {
+        if ($request->ajax()) {
+            $query = Students::with('user.consultancy', 'exam_date', 'admit_cards')
+                ->latest();
+
+            // Apply status filter if provided
+            if ($status !== null) {
+                $query->where('status', $status);
+            }
+
+            if (Auth::user()->hasRole('consultancy_manager')) {
+                $query->where('user_id', Auth::user()->id);
+            } else if (Auth::user()->hasRole('test_center_manager')) {
+                $consultanciesUserIds = Consultancy::where('test_center_id', Auth::user()->id)
+                    ->pluck('user_id')
+                    ->toArray();
+                $query->whereIn('user_id', $consultanciesUserIds);
+            }
+
+            $students = $query->get();
+
+            return DataTables::of($students)
+                ->addIndexColumn()
+                ->addColumn('receipt', function ($row) {
+                    $modalId = 'modal-' . $row->id; // Unique modal ID for each row
+                    $imageUrl = asset($row->receipt_image);
+
+                    return '
+                        <img src="' . $imageUrl . '" alt="Receipt Image" height="30" loading="lazy" 
+                             style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#' . $modalId . '">
+                        <!-- Modal -->
+                        <div class="modal fade" id="' . $modalId . '" tabindex="-1" aria-labelledby="' . $modalId . '-label" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="' . $modalId . '-label">Receipt Image</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body text-center">
+                                        <img src="' . $imageUrl . '" alt="Receipt Image" class="img-fluid">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>';
+                })
+                ->addColumn('action', function ($row) {
+                    $buttons = '
+                    <a href="' . route('student.show', $row->slug) . '" class="btn btn-info text-white btn-sm" title="view">
+                        <i class="fa-regular fa-eye"></i>
+                    </a>';
+
+                    // Only show edit and delete buttons if status is false
+                    if (auth()->user()->hasRole('consultancy_manager') && !$row->status) {
+                        $buttons .= '
+                        <a href="' . route('student.edit', $row->slug) . '" class="btn btn-warning text-white btn-sm" title="edit">
+                            <i class="fa-solid fa-pencil"></i>
+                        </a>
+                        <button type="button" class="btn btn-danger btn-sm text-white delete-student" data-slug="' . $row->slug . '" title="Delete">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>';
+                    }
+
+                    // Show the upload admit card button only for admin and if status is false
+                    if (auth()->user()->hasRole('admin') && $row->status) {
+                        $buttons .= '
+                        <button type="button" class="btn btn-success btn-sm text-white upload-admit-card-btn" title="Upload Admit Card" 
+                                data-slug="' . $row->slug . '"><i class="fa-solid fa-upload"></i>
+                        </button>';
+                    }
+
+                    return $buttons;
+                })
+
+
+                ->editColumn('status', function ($row) {
+                    return $row->status
+                        ? '<span class="badge text-bg-success">Approved</span>'
+                        : '<span class="badge text-bg-danger">Pending</span>';
+                })
+                ->editColumn('exam_duration', function ($row) {
+                    return $row->exam_date
+                        ? $row->exam_date->exam_start_time->format('h:i A') . ' - ' . $row->exam_date->exam_end_time->format('h:i A')
+                        : 'N/A';
+                })
+                ->editColumn('admit_card', function ($row) {
+                    return $row->admit_cards
+                        ? '<a href="' . asset($row->admit_cards->admit_card) . '" download class="btn btn-success btn-sm"><i class="fa-solid fa-download"></i> Download</a>'
+                        : '<a href="javascript:void(0);" class="btn btn-secondary btn-sm"><i class="fa-solid fa-hourglass-half"></i> Pending</a>';
+                })
+                ->rawColumns(['receipt', 'action', 'status', 'admit_card'])
+                ->make(true);
+        }
     }
 
     /**
@@ -475,11 +490,11 @@ class StudentController extends Controller
         try {
             // Fetch students filtered by the selected exam date
             $students = Students::with('exam_date')
-            ->where('exam_date_id', $exam_date_id)
-            ->when($status == 0 || $status == 1, function ($query) use ($status) {
-                $query->where('status', $status);
-            })
-            ->get();
+                ->where('exam_date_id', $exam_date_id)
+                ->when($status == 0 || $status == 1, function ($query) use ($status) {
+                    $query->where('status', $status);
+                })
+                ->get();
 
             // Export the students to Excel using Laravel Excel
             return Excel::download(new StudentsExport($students), 'applicants.xlsx');
@@ -502,30 +517,30 @@ class StudentController extends Controller
                     $query->where('status', $status);
                 })
                 ->get();
-    
+
             // Trigger the CSV export and download the file
             return Excel::download(new StudentsExport($students), 'applicants.csv');
         } catch (\Throwable $th) {
             return back()->with('error', $th->getMessage());
         }
     }
-    
-     /**
+
+    /**
      * Export applicants to pdf
      */
     public function exportApplicantsToPDF($exam_date_id, $status)
     {
         try {
             // Fetch students filtered by the selected exam date
-            $students = Students::with('exam_date','user')
-            ->where('exam_date_id', $exam_date_id)
-            ->when($status == 0 || $status == 1, function ($query) use ($status) {
-                $query->where('status', $status);
-            })
-            ->get();
+            $students = Students::with('exam_date', 'user')
+                ->where('exam_date_id', $exam_date_id)
+                ->when($status == 0 || $status == 1, function ($query) use ($status) {
+                    $query->where('status', $status);
+                })
+                ->get();
 
             // load the view and pass the data to it
-            $pdf=PDF::loadView('admin.exports.applicants',compact('students'));
+            $pdf = PDF::loadView('admin.exports.applicants', compact('students'));
             // return the generated pdf to download
             return $pdf->download('applicant_list.pdf');
         } catch (\Throwable $th) {

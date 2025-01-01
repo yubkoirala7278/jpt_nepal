@@ -70,92 +70,175 @@
         .custom-test-card {
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+
+        .widgets-icons-2 {
+            width: 46px;
+            height: 46px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #ededed;
+            font-size: 21px;
+        }
     </style>
 @endsection
 
 @section('content')
     @if (Auth::user()->hasRole('admin'))
-        <div class="container-fluid text-center">
-            <div class="row">
+        <div class="container-fluid ">
+            <div class="row ">
                 <div class="col-12 col-md-6 col-lg-4">
-                    <div class="card custom-test-card shadow-mdrounded-lg overflow-hidden">
-                        <div class="card-body d-flex flex-column align-items-center bg-gradient-primary text-white">
-                            <h2 class="custom-test-card-title font-weight-bold mb-3">Upcoming Test</h2>
-                            <p class="custom-test-card-count display-4 mb-3">{{ $upcomingTestCount }}</p>
+                    <div class="card radius-10 border-start border-0 border-4 border-primary">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <p class="mb-0 text-secondary">Upcoming Test</p>
+                                    <h4 class="my-1 text-primary fw-bold">{{ $upcomingTestCount }}</h4>
+                                </div>
+                                <div class="widgets-icons-2 rounded-circle bg-gradient-blues text-white ms-auto"
+                                    style="background: linear-gradient(to right, #FF5733, #FFC300);">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="col-12 col-md-6 col-lg-4">
-                    <div class="card custom-test-card shadow-sm rounded-3 overflow-hidden">
-                        <div class="card-body d-flex flex-column align-items-center bg-custom-primary text-custom-light">
-                            <h2 class="custom-test-card-title font-weight-bold mb-3">Test Centers</h2>
-                            <p class="custom-test-card-count display-4 mb-3 ">{{ $totalTestCenter ?? '0' }}</p>
+                    <div class="card radius-10 border-start border-0 border-4 border-success">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <p class="mb-0 text-secondary">Test Centers</p>
+                                    <h4 class="my-1 text-success fw-bold">{{ $totalTestCenter ?? '0' }}</h4>
+                                </div>
+                                <div class="widgets-icons-2 rounded-circle bg-gradient-blues text-white ms-auto"
+                                    style="background: linear-gradient(to right, #28a745, #6c757d);">
+                                    <i class="fas fa-building"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="col-12 col-md-6 col-lg-4">
-                    <div class="card custom-test-card shadow-sm rounded-3 overflow-hidden">
-                        <div class="card-body d-flex flex-column align-items-center text-custom-light">
-                            <h2 class="custom-test-card-title font-weight-bold mb-3">Education Consultancy</h2>
-                            <p class="custom-test-card-count display-4 mb-3 ">{{ $totalEducationConsultancy ?? '0' }}</p>
+                    <div class="card radius-10 border-start border-0 border-4 border-danger">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <p class="mb-0 text-secondary">Education Consultancy</p>
+                                    <h4 class="my-1 text-danger fw-bold">{{ $totalEducationConsultancy ?? '0' }}</h4>
+                                </div>
+                                <div class="widgets-icons-2 rounded-circle bg-gradient-blues text-white ms-auto"
+                                    style="background: linear-gradient(to right, #dc3545, #ff5733);">
+                                    <i class="fas fa-graduation-cap"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="col-12 col-md-6 col-lg-4">
-                    <div class="card custom-test-card shadow-sm rounded-3 overflow-hidden">
-                        <div class="card-body d-flex flex-column align-items-center text-custom-light">
-                            <h2 class="custom-test-card-title font-weight-bold mb-3">Total Applicants</h2>
-                            <p class="custom-test-card-count display-4 mb-3 ">{{ $totalApplicants }}</p>
+                    <div class="card radius-10 border-start border-0 border-4 border-warning">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <p class="mb-0 text-secondary">Total Applicants</p>
+                                    <h4 class="my-1 text-warning fw-bold">{{ $totalApplicants }}</h4>
+                                </div>
+                                <div class="widgets-icons-2 rounded-circle bg-gradient-blues text-white ms-auto"
+                                    style="background: linear-gradient(to right, #ffc107, #ff8c00);">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+
                 <div class="col-12 col-md-6 col-lg-4">
-                    <div class="card custom-test-card shadow-sm rounded-3 overflow-hidden">
-                        <div class="card-body d-flex flex-column align-items-center text-custom-light">
-                            <h2 class="custom-test-card-title font-weight-bold mb-3">Pending Applicants</h2>
-                            <p class="custom-test-card-count display-4 mb-3 ">{{ $pendingApplicants }}</p>
+                    <div class="card radius-10 border-start border-0 border-4 border-secondary">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <p class="mb-0 text-secondary">Pending Applicants</p>
+                                    <h4 class="my-1 text-secondary fw-bold">{{ $pendingApplicants }}</h4>
+                                </div>
+                                <div class="widgets-icons-2 rounded-circle bg-gradient-blues text-white ms-auto"
+                                    style="background: linear-gradient(to right, #6c757d, #495057);">
+                                    <i class="fas fa-hourglass-half"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+
                 <div class="col-12 col-md-6 col-lg-4">
-                    <div class="card custom-test-card shadow-sm rounded-3 overflow-hidden">
-                        <div class="card-body d-flex flex-column align-items-center text-custom-light">
-                            <h2 class="custom-test-card-title font-weight-bold mb-3">Approved Applicants</h2>
-                            <p class="custom-test-card-count display-4 mb-3 ">{{ $totalApplicants-$pendingApplicants }}</p>
+                    <div class="card radius-10 border-start border-0 border-4 border-info">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <p class="mb-0 text-secondary">Approved Applicants</p>
+                                    <h4 class="my-1 text-info fw-bold">{{ $totalApplicants - $pendingApplicants }}</h4>
+                                </div>
+                                <div class="widgets-icons-2 rounded-circle bg-gradient-blues text-white ms-auto"
+                                    style="background: linear-gradient(to right, #17a2b8, #007bff);">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="col-12 col-md-6 col-lg-4">
-                    <div class="card custom-test-card shadow-sm rounded-3 overflow-hidden">
-                        <div class="card-body d-flex flex-column align-items-center  text-custom-light">
-                            <h2 class="custom-test-card-title font-weight-bold mb-3">News & Notices</h2>
-                            <p class="custom-test-card-count display-4 mb-3 ">{{ $totalNotice }}</p>
+                    <div class="card radius-10 border-start border-0 border-4 border-dark">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <p class="mb-0 text-secondary">News & Notices</p>
+                                    <h4 class="my-1 text-dark fw-bold">{{ $totalNotice }}</h4>
+                                </div>
+                                <div class="widgets-icons-2 rounded-circle bg-gradient-blues text-white ms-auto"
+                                    style="background: linear-gradient(to right, #343a40, #212529);">
+                                    <i class="fas fa-bell"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="col-12 col-md-6 col-lg-4">
-                    <div class="card custom-test-card shadow-sm rounded-3 overflow-hidden">
-                        <div class="card-body d-flex flex-column align-items-center bg-custom-warning">
-                            <h2 class="custom-test-card-title font-weight-bold mb-3">Admit Card</h2>
-                            <p class="custom-test-card-count display-4 mb-3">{{ $totalAdmitCard }}</p>
+                    <div class="card radius-10 border-start border-0 border-4 border-primary">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <p class="mb-0 text-secondary">Admit Card</p>
+                                    <h4 class="my-1 text-primary fw-bold">{{ $totalAdmitCard }}</h4>
+                                </div>
+                                <div class="widgets-icons-2 rounded-circle bg-gradient-blues text-white ms-auto"
+                                    style="background: linear-gradient(to right, #007bff, #004085);">
+                                    <i class="fas fa-id-card"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="col-12 col-md-6 col-lg-4">
-                    <div class="card custom-test-card shadow-sm rounded-3 overflow-hidden">
-                        <div class="card-body d-flex flex-column align-items-center  text-custom-light">
-                            <h2 class="custom-test-card-title font-weight-bold mb-3">Results</h2>
-                            <p class="custom-test-card-count display-4 mb-3">{{ $totalResults }}</p>
+                    <div class="card radius-10 border-start border-0 border-4 border-danger">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <p class="mb-0 text-secondary">Results</p>
+                                    <h4 class="my-1 text-danger fw-bold">{{ $totalResults }}</h4>
+                                </div>
+                                <div class="widgets-icons-2 rounded-circle bg-gradient-blues text-white ms-auto"
+                                    style="background: linear-gradient(to right, #dc3545, #ff5733);">
+                                    <i class="fas fa-trophy"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                
 
                 {{-- line chart to display applicant added per month --}}
                 <div class="col-8 mt-4">
@@ -205,58 +288,103 @@
             </div>
         </div>
     @elseif(Auth::user()->hasRole('test_center_manager'))
-        <div class="container-fluid text-center">
+        <div class="container-fluid">
             <div class="row">
                 <div class="col-12 col-md-6 col-lg-4">
-                    <div class="card custom-test-card shadow-mdrounded-lg overflow-hidden">
-                        <div class="card-body d-flex flex-column align-items-center bg-gradient-primary text-white">
-                            <h2 class="custom-test-card-title font-weight-bold mb-3 ">Education Consultancy</h2>
-                            <p class="custom-test-card-count display-4 mb-3">{{ $totalEducationConsultancy ?? '0' }}</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-md-6 col-lg-4">
-                    <div class="card custom-test-card shadow-mdrounded-lg overflow-hidden">
-                        <div class="card-body d-flex flex-column align-items-center bg-gradient-primary text-white">
-                            <h2 class="custom-test-card-title font-weight-bold mb-3">Total Applicants</h2>
-                            <p class="custom-test-card-count display-4 mb-3">{{ $jptApplicants ?? '0' }}</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-md-6 col-lg-4">
-                    <div class="card custom-test-card shadow-mdrounded-lg overflow-hidden">
-                        <div class="card-body d-flex flex-column align-items-center bg-gradient-primary text-white">
-                            <h2 class="custom-test-card-title font-weight-bold mb-3">Pending Applicants</h2>
-                            <p class="custom-test-card-count display-4 mb-3">{{ $pendingApplicants ?? '0' }}</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-md-6 col-lg-4">
-                    <div class="card custom-test-card shadow-mdrounded-lg overflow-hidden">
-                        <div class="card-body d-flex flex-column align-items-center bg-gradient-primary text-white">
-                            <h2 class="custom-test-card-title font-weight-bold mb-3">Approved Applicants</h2>
-                            <p class="custom-test-card-count display-4 mb-3">{{ $jptApplicants - $pendingApplicants }}</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-md-6 col-lg-4">
-                    <div class="card custom-test-card shadow-mdrounded-lg overflow-hidden">
-                        <div class="card-body d-flex flex-column align-items-center bg-gradient-primary text-white">
-                            <h2 class="custom-test-card-title font-weight-bold mb-3">Notice</h2>
-                            <p class="custom-test-card-count display-4 mb-3">2</p>
+                    <div class="card radius-10 border-start border-0 border-4 border-danger">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <p class="mb-0 text-secondary">Education Consultancy</p>
+                                    <h4 class="my-1 text-danger fw-bold">{{ $totalEducationConsultancy ?? '0' }}</h4>
+                                </div>
+                                <div class="widgets-icons-2 rounded-circle bg-gradient-blues text-white ms-auto"
+                                    style="background: linear-gradient(to right, #dc3545, #ff5733);">
+                                    <i class="fas fa-trophy"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                 {{-- line chart to display applicant added per month --}}
-                 <div class="col-8 mt-4">
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card radius-10 border-start border-0 border-4 border-info">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <p class="mb-0 text-secondary">Total Applicants</p>
+                                    <h4 class="my-1 text-info fw-bold">{{ $jptApplicants ?? '0' }}</h4>
+                                </div>
+                                <div class="widgets-icons-2 rounded-circle bg-gradient-blues text-white ms-auto"
+                                    style="background: linear-gradient(to right, #17a2b8, #007bff);">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card radius-10 border-start border-0 border-4 border-warning">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <p class="mb-0 text-secondary">Pending Applicants</p>
+                                    <h4 class="my-1 text-warning fw-bold">{{ $pendingApplicants ?? '0' }}</h4>
+                                </div>
+                                <div class="widgets-icons-2 rounded-circle bg-gradient-blues text-white ms-auto"
+                                    style="background: linear-gradient(to right, #ff9800, #f57c00);">
+                                    <i class="fas fa-hourglass-half"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card radius-10 border-start border-0 border-4 border-success">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <p class="mb-0 text-secondary">Approved Applicants</p>
+                                    <h4 class="my-1 text-success fw-bold">{{ $jptApplicants - $pendingApplicants }}</h4>
+                                </div>
+                                <div class="widgets-icons-2 rounded-circle bg-gradient-blues text-white ms-auto"
+                                    style="background: linear-gradient(to right, #28a745, #218838);">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card radius-10 border-start border-0 border-4 border-primary">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <p class="mb-0 text-secondary">Notice</p>
+                                    <h4 class="my-1 text-primary fw-bold">2</h4>
+                                </div>
+                                <div class="widgets-icons-2 rounded-circle bg-gradient-blues text-white ms-auto"
+                                    style="background: linear-gradient(to right, #17a2b8, #138496);">
+                                    <i class="fas fa-bell"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                {{-- line chart to display applicant added per month --}}
+                <div class="col-8 mt-4">
                     <div id="students-line-chart"></div>
                 </div>
                 {{-- pie chart to display pending and approved applicants --}}
                 <div class="col-4 mt-4">
                     <div id="test-centers-pie-chart"></div>
                 </div>
-                
+
                 <div class="col-12 text-start">
                     <div class=" my-5">
                         <div class="row">
@@ -280,7 +408,9 @@
                                                     @foreach ($notices as $key => $notice)
                                                         <tr>
                                                             <td>{{ $key + 1 }}</td>
-                                                            <td style="word-wrap: break-word; white-space: normal; max-width: 200px;">{{ $notice->title }}</td>
+                                                            <td
+                                                                style="word-wrap: break-word; white-space: normal; max-width: 200px;">
+                                                                {{ $notice->title }}</td>
                                                             <td>
                                                                 <a href="{{ route('notice.show', $notice->slug) }}"
                                                                     class="btn btn-sm btn-outline-success">View</a>
@@ -336,34 +466,60 @@
             </div>
         </div>
     @elseif(Auth::user()->hasRole('consultancy_manager'))
-        <div class="container-fluid text-center">
+        <div class="container-fluid">
             <div class="row">
                 <div class="col-12 col-md-6 col-lg-4">
-                    <div class="card custom-test-card shadow-mdrounded-lg overflow-hidden">
-                        <div class="card-body d-flex flex-column align-items-center bg-gradient-primary text-white">
-                            <h2 class="custom-test-card-title font-weight-bold mb-3">Total Applicants</h2>
-                            <p class="custom-test-card-count display-4 mb-3">{{ $jptApplicants ?? '0' }}</p>
+                    <div class="card radius-10 border-start border-0 border-4 border-info">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <p class="mb-0 text-secondary">Total Applicants</p>
+                                    <h4 class="my-1 text-info fw-bold">{{ $jptApplicants ?? '0' }}</h4>
+                                </div>
+                                <div class="widgets-icons-2 rounded-circle bg-gradient-blues text-white ms-auto"
+                                    style="background: linear-gradient(to right, #17a2b8, #007bff);">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+
                 <div class="col-12 col-md-6 col-lg-4">
-                    <div class="card custom-test-card shadow-mdrounded-lg overflow-hidden">
-                        <div class="card-body d-flex flex-column align-items-center bg-gradient-primary text-white">
-                            <h2 class="custom-test-card-title font-weight-bold mb-3">Pending Applicants</h2>
-                            <p class="custom-test-card-count display-4 mb-3">{{ $pendingApplicants ?? '0' }}</p>
+                    <div class="card radius-10 border-start border-0 border-4 border-warning">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <p class="mb-0 text-secondary">Pending Applicants</p>
+                                    <h4 class="my-1 text-warning fw-bold">{{ $pendingApplicants ?? '0' }}</h4>
+                                </div>
+                                <div class="widgets-icons-2 rounded-circle bg-gradient-blues text-white ms-auto"
+                                    style="background: linear-gradient(to right, #ff9800, #f57c00);">
+                                    <i class="fas fa-hourglass-half"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+
                 <div class="col-12 col-md-6 col-lg-4">
-                    <div class="card custom-test-card shadow-mdrounded-lg overflow-hidden">
-                        <div class="card-body d-flex flex-column align-items-center bg-gradient-primary text-white">
-                            <h2 class="custom-test-card-title font-weight-bold mb-3">Approved Applicants</h2>
-                            <p class="custom-test-card-count display-4 mb-3">{{ $jptApplicants - $pendingApplicants }}</p>
+                    <div class="card radius-10 border-start border-0 border-4 border-success">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <p class="mb-0 text-secondary">Approved Applicants</p>
+                                    <h4 class="my-1 text-success fw-bold">{{ $jptApplicants - $pendingApplicants }}</h4>
+                                </div>
+                                <div class="widgets-icons-2 rounded-circle bg-gradient-blues text-white ms-auto"
+                                    style="background: linear-gradient(to right, #28a745, #218838);">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                 {{-- line chart to display applicant added per month --}}
-                 <div class="col-12 mt-4">
+                {{-- line chart to display applicant added per month --}}
+                <div class="col-12 mt-4">
                     <div id="students-line-chart"></div>
                 </div>
                 {{-- pie chart to display pending and approved applicants --}}
@@ -393,7 +549,8 @@
                                                     @foreach ($notices as $key => $notice)
                                                         <tr class="text-start">
                                                             <td>{{ $key + 1 }}</td>
-                                                            <td style="word-wrap: break-word; white-space: normal;">{{ $notice->title }}</td>
+                                                            <td style="word-wrap: break-word; white-space: normal;">
+                                                                {{ $notice->title }}</td>
                                                             <td>
                                                                 <a href="{{ route('notice.show', $notice->slug) }}"
                                                                     class="btn btn-sm btn-outline-success">View</a>

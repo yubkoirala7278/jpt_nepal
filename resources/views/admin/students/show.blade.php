@@ -24,7 +24,7 @@
                             {{ $student->status ? 'Approved' : 'Pending' }}
                         </span>
                     </p>
-                    @if (Auth::user()->hasRole('admin'))
+                    @if (Auth::user()->hasRole('test_center_manager'))
                         <div class="mt-4">
                             <h6 class="mb-3 fw-bold">Change Status</h6>
                             <form method="POST" action="{{ route('update.status', $student->slug) }}">
