@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 class TestCenter extends Model
 {
     use HasFactory;
-    protected $fillable = ['user_id', 'slug', 'phone', 'address', 'logo'];
+    protected $fillable = ['user_id', 'slug', 'phone', 'address','status','disabled_reason'];
     // Automatically boot the model
     protected static function boot()
     {

@@ -187,8 +187,8 @@
                         name: 'user.name'
                     },
                     {
-                        data: 'user.consultancy.address',
-                        name: 'user.consultancy.address'
+                        data: 'consultancy_address',
+                        name: 'consultancy_address'
                     },
                     {
                         data: 'phone',
@@ -251,7 +251,7 @@
                 columnDefs: isConsultancyManager ? [{
                         targets: [3, 4],
                         visible: false
-                    } // 3 is for Consultancy Name, 4 is for Consultancy Address
+                    } 
                 ] : []
             });
             // ====== End of Display Applicants in Data Table ======

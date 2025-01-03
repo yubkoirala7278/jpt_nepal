@@ -171,8 +171,8 @@
                         name: 'user.name'
                     },
                     {
-                        data: 'user.consultancy.address',
-                        name: 'user.consultancy.address'
+                        data: 'consultancy_address',
+                        name: 'consultancy_address'
                     },
                     {
                         data: 'phone',

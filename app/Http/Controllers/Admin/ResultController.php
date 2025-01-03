@@ -26,7 +26,7 @@ class ResultController extends Controller
                     ->with('results', 'exam_date');
             }
 
-            $examDates = ExamDate::latest()->get();
+            $examDates = ExamDate::orderBy('exam_date', 'asc')->get();
 
             if ($request->ajax()) {
                 return DataTables::of($students)

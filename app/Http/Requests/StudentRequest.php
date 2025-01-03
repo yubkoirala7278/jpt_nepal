@@ -35,7 +35,8 @@ class StudentRequest extends FormRequest
             ],
             'is_appeared_previously' => 'nullable',
             'exam_date' => 'required',
-            'amount'=>'required|numeric'
+            'amount'=>'required|numeric',
+            'receipt_image' =>'nullable|image|mimes:webp,jpeg,png,jpg,gif,svg|max:2048',
         ];
 
         // profile is required only for store, optional for update
@@ -45,11 +46,11 @@ class StudentRequest extends FormRequest
             $rules['profile'] = 'nullable|image|mimes:webp,jpeg,png,jpg,gif,svg|max:2048';
         }
 
-        // receipt_image is required only for store, optional for update
+        // citizenship is required only for store, optional for update
         if ($this->isMethod('post')) { // Store method
-            $rules['receipt_image'] = 'required|image|mimes:webp,jpeg,png,jpg,gif,svg|max:2048';
+            $rules['citizenship'] = 'required|mimes:webp,jpeg,png,jpg,svg,pdf|max:2048';
         } elseif ($this->isMethod('put') || $this->isMethod('patch')) { // Update method
-            $rules['receipt_image'] = 'nullable|image|mimes:webp,jpeg,png,jpg,gif,svg|max:2048';
+            $rules['citizenship'] = 'nullable|mimes:webp,jpeg,png,jpg,svg,pdf|max:2048';
         }
 
         return $rules;

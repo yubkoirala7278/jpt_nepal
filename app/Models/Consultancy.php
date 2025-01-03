@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 class Consultancy extends Model
 {
     use HasFactory;
-    protected $fillable = ['user_id', 'slug', 'phone', 'address', 'logo','test_center_id'];
+    protected $fillable = ['user_id', 'slug', 'phone', 'address', 'logo','test_center_id','status','disabled_reason'];
     // Automatically boot the model
     protected static function boot()
     {

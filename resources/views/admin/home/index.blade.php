@@ -252,13 +252,14 @@
                 <!-- Recent Applicants Table -->
                 <div class="col-12 text-start mt-4">
                     <div>
-                        <h2>Recent Applicants</h2>
+                        <h2>Recent Approved Applicants</h2>
                         <table class="table mt-3 table-hover table-responsive shadow-lg rounded-xl">
                             <thead class="table-success">
                                 <tr>
                                     <th scope="col">Applicant Name</th>
                                     <th scope="col">Education Consultancy</th>
                                     <th scope="col">Test Center</th>
+                                    <th scope="col">Exam Date</th>
                                     <th scope="col">Action</th>
                                 </tr>
                             </thead>
@@ -268,7 +269,8 @@
                                         <tr>
                                             <td>{{ $student->name }}</td>
                                             <td>{{ $student->user->name }}</td>
-                                            <td>{{ $student->user->consultancy->test_center->name }}</td>
+                                            <td>{{ $student->user->consultancy->test_center->name??$student->user->name }}</td>
+                                            <td>{{ $student->exam_date ? \Carbon\Carbon::parse($student->exam_date->exam_date)->format('M d, Y') : 'N/A' }}</td>
                                             <td>
                                                 <a href="{{ route('student.show', $student->slug) }}"
                                                     class="btn btn-success btn-sm">View</a>
@@ -287,7 +289,7 @@
                 </div>
             </div>
         </div>
-    @elseif(Auth::user()->hasRole('test_center_manager'))
+    @elseif(Auth::user()->hasRole('test_center_manager') && Auth::user()->test_center->status == 'active')
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12 col-md-6 col-lg-4">
@@ -388,6 +390,44 @@
                 <div class="col-12 text-start">
                     <div class=" my-5">
                         <div class="row">
+                            {{-- students details --}}
+                            <div class="col-12 mb-4">
+                                <div class="card shadow-sm border-0 rounded-xl">
+                                    <div class="card-header bg-success text-white text-center">
+                                        <h4 class="mb-0">Recent Applicants</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <table class="table table-hover text-center w-100">
+                                            <thead class="table-success table-striped">
+                                                <tr>
+                                                    <th scope="col">Applicant Name</th>
+                                                    <th scope="col">Consultancy Name</th>
+                                                    <th scope="col">Exam Date</th>
+                                                    <th scope="col">View Details</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (count($students) > 0)
+                                                    @foreach ($students as $student)
+                                                        <tr>
+                                                            <td>{{$student->name}}</td>
+                                                            <td>{{$student->user->name}}</td>
+                                                            <td>{{ $student->exam_date ? \Carbon\Carbon::parse($student->exam_date->exam_date)->format('M d, Y') : 'N/A' }}</td>
+                                                            <td>
+                                                                <a href="{{route('student.show',$student->slug)}}"
+                                                                    class="btn btn-sm btn-outline-success">View</a>
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                @endif
+
+
+                                            </tbody>
+                                        </table>
+                                        {{ $students->links('pagination::bootstrap-5') }}
+                                    </div>
+                                </div>
+                            </div>
                             <!-- News & Notice Section -->
                             <div class="col-lg-7 mb-4">
                                 <div class="card shadow-sm border-0 rounded-xl">
@@ -465,7 +505,7 @@
                 </div>
             </div>
         </div>
-    @elseif(Auth::user()->hasRole('consultancy_manager'))
+    @elseif(Auth::user()->hasRole('consultancy_manager') && Auth::user()->consultancy->status == 'active')
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12 col-md-6 col-lg-4">
@@ -614,6 +654,89 @@
                 </div>
             </div>
         </div>
+    @else
+        @if (Auth::user()->hasRole('consultancy_manager'))
+            <div class="col-12">
+                <div class="card dashboard-notice radius-10" style="background-color:#F7DDE7">
+                    <a href="javascript:void(0)" class="close-notice"><i class="bx bx-x"></i></a>
+                    <div class="card-body bg-light-danger py-4">
+                        <div class="d-flex align-items-start">
+                            <img src="{{ asset('admin/assets/img/banned.png') }}" width="90" height="auto"
+                                alt="...">
+                            <div class="flex-grow-1 ms-3">
+                                <h5 class="mt-0">Consultancy Disabled !! Contact Admin !!</h5>
+                                <p>
+                                    Hello {{ Auth::user()->name }},
+                                    <br><br>
+                                    We regret to inform you that your consultancy has been temporarily disabled.
+                                    This action has been taken due to a breach of our company policies or other significant
+                                    reasons.
+                                    <br><br>
+
+                                    <b>Reason :</b>
+                                    <strong>{{ Auth::user()->consultancy->disabled_reason }}</strong>
+                                    <br><br>
+                                    If you believe this action has been taken in error or if you'd like to discuss this
+                                    further, please contact the admin for resolution. The consultancy will remain disabled
+                                    until the issue is addressed.
+                                    <br><br>
+                                    Thank you for your understanding and cooperation.
+                                    <br><br>
+                                    Best regards,
+                                    <br>
+                                    Japanese Proficiency Test
+                                </p>
+                                <a href="https://www.yourwebsite.com" target="_blank" class="btn btn-primary">Contact
+                                    Admin</a>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        @elseif(Auth::user()->hasRole('test_center_manager'))
+            <div class="col-12">
+                <div class="card dashboard-notice radius-10" style="background-color:#F7DDE7">
+                    <a href="javascript:void(0)" class="close-notice"><i class="bx bx-x"></i></a>
+                    <div class="card-body bg-light-danger py-4">
+                        <div class="d-flex align-items-start">
+                            <img src="{{ asset('admin/assets/img/banned.png') }}" width="90" height="auto"
+                                alt="...">
+                            <div class="flex-grow-1 ms-3">
+                                <h5 class="mt-0">Test Center Disabled !! Contact Admin !!</h5>
+                                <p>
+                                    Hello {{ Auth::user()->name }},
+                                    <br><br>
+                                    We regret to inform you that your test center has been temporarily disabled.
+                                    This action has been taken due to a breach of our company policies or other significant
+                                    reasons.
+                                    <br><br>
+
+                                    <b>Reason :</b>
+                                    <strong>{{ Auth::user()->test_center->disabled_reason }}</strong>
+                                    <br><br>
+                                    If you believe this action has been taken in error or if you'd like to discuss this
+                                    further, please contact the admin for resolution. The consultancy will remain disabled
+                                    until the issue is addressed.
+                                    <br><br>
+                                    Thank you for your understanding and cooperation.
+                                    <br><br>
+                                    Best regards,
+                                    <br>
+                                    Japanese Proficiency Test
+                                </p>
+                                <a href="https://www.yourwebsite.com" target="_blank" class="btn btn-primary">Contact
+                                    Admin</a>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        @endif
+
     @endif
 @endsection
 

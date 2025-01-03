@@ -38,6 +38,7 @@
         $('.admit-card-datatable').DataTable({
             processing: true,
             serverSide: true,
+            searchDelay: 1000,
             ajax: '{{ route("admin.admit-card") }}', // Your route to fetch the data
             columns: [
                 { data: 'DT_RowIndex', name: 'DT_RowIndex' },

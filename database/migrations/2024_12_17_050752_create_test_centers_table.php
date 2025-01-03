@@ -18,7 +18,8 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->string('phone');
             $table->string('address');
-            $table->string('logo');
+            $table->enum('status', ['active', 'disabled'])->default('active');
+            $table->text('disabled_reason')->nullable();
             $table->timestamps();
         });
     }

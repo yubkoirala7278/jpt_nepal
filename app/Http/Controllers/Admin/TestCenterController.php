@@ -6,6 +6,8 @@ use App\Events\TestCenterCreatedEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TestCenterRequest;
 use App\Mail\TestCenterCreatedMail;
+use App\Mail\TestCenterDisabledMail;
+use App\Mail\TestCenterEnabledMail;
 use App\Models\TestCenter;
 use App\Models\User;
 use Carbon\Carbon;
@@ -45,20 +47,42 @@ class TestCenterController extends Controller
                 ->addIndexColumn()
                 ->addColumn('name', fn($row) => $row->user_name) // Access joined user name
                 ->addColumn('email', fn($row) => $row->user_email) // Access joined user email
-                ->addColumn('logo', fn($row) => '<img src="' . asset($row->logo) . '" alt="Logo" height="30" class="logo-image" data-url="' . asset($row->logo) . '" style="cursor:pointer;" loading="lazy" />') // Add data-url to image
+                ->addColumn('status', function ($row) {
+                    $badgeClass = $row->status === 'active' ? 'badge bg-success' : 'badge bg-danger';
+                    return '<span class="' . $badgeClass . '">' . ucfirst($row->status) . '</span>';
+                })
                 ->addColumn('action', function ($row) {
-                    $editUrl = route('test_center.edit', $row->slug);
-                    $deleteUrl = route('test_center.destroy', $row->slug);
+                    $editUrl = route('test_center.edit', $row->slug); // Route to edit test center
+                    $disableUrl = route('disable.test_center'); // Post route for disabling/enabling test center
 
-                    return '
+                    $actionButtons = '
                     <div class="d-flex align-items-center" style="column-gap:10px">
-                        <a href="' . $editUrl . '" class="btn btn-warning text-white btn-sm" title="edit test center"><i class="fa-solid fa-pencil"></i></a>
-                        <button type="button" class="btn btn-danger btn-sm delete-btn" data-url="' . $deleteUrl . '" title="delete test center"><i class="fa-solid fa-trash"></i></button>
-                    </div>';
+                        <a href="' . $editUrl . '" class="btn btn-warning btn-sm text-white" title="edit test center">
+                            <i class="fa-solid fa-pencil"></i>
+                        </a>';
+
+                    if ($row->status === 'active') {
+                        $actionButtons .= '
+                        <button type="button" class="btn btn-secondary btn-sm disable-btn" 
+                                data-slug="' . $row->slug . '" 
+                                title="disable test center">
+                            <i class="fa-solid fa-ban"></i>
+                        </button>';
+                    } else {
+                        $actionButtons .= '
+                        <button type="button" class="btn btn-success btn-sm enable-btn" 
+                                data-slug="' . $row->slug . '" 
+                                title="enable test center">
+                            <i class="fa-solid fa-check"></i>
+                        </button>';
+                    }
+
+                    $actionButtons .= '</div>';
+                    return $actionButtons;
                 })
                 ->editColumn('created_at', fn($row) => Carbon::parse($row->created_at)->format('M d, Y')) // Format date
                 ->orderColumn('created_at', 'test_centers.created_at $1') // Sorting logic
-                ->rawColumns(['logo', 'action']) // Allow raw HTML in logo and action columns
+                ->rawColumns(['action', 'status'])
                 ->make(true);
         }
 
@@ -83,16 +107,6 @@ class TestCenterController extends Controller
     public function store(TestCenterRequest $request)
     {
         try {
-            // Handle file upload for the logo
-            if ($request->hasFile('logo')) {
-                $logoPath = $request->file('logo')->storeAs(
-                    'public/TestCenter',
-                    uniqid() . '.' . $request->file('logo')->getClientOriginalExtension()
-                );
-                // Replace 'public/' with 'Storage/' to store the desired path in the database
-                $logoPath = str_replace('public/', 'Storage/', $logoPath);
-            }
-
             // Create the user
             $user = User::create([
                 'name' => $request['name'],
@@ -107,14 +121,13 @@ class TestCenterController extends Controller
                 'user_id' => $user->id,
                 'phone' => $request['phone'],
                 'address' => $request['address'],
-                'logo' => $logoPath,
             ]);
             // send mail when created test center
-            $data=[
-                'name'=>$request['name'],
-                'email'=>$request['email'],
-                'password'=>$request['password'],
-                'phone'=>$request['phone']
+            $data = [
+                'name' => $request['name'],
+                'email' => $request['email'],
+                'password' => $request['password'],
+                'phone' => $request['phone']
             ];
             Mail::to($request['email'])->send(new TestCenterCreatedMail($data));
 
@@ -150,25 +163,6 @@ class TestCenterController extends Controller
     public function update(TestCenterRequest $request, TestCenter $testCenter)
     {
         try {
-            // Handle file upload for the logo
-            if ($request->hasFile('logo')) {
-                // Delete the old logo if it exists
-                if ($testCenter->logo) {
-                    $oldLogoPath = str_replace('Storage/', 'public/', $testCenter->logo); // Adjust path
-                    if (Storage::disk('local')->exists($oldLogoPath)) {
-                        Storage::disk('local')->delete($oldLogoPath);
-                    }
-                }
-
-                // Store the new logo and update the path
-                $logoPath = $request->file('logo')->storeAs(
-                    'public/TestCenter',
-                    uniqid() . '.' . $request->file('logo')->getClientOriginalExtension()
-                );
-                $logoPath = str_replace('public/', 'Storage/', $logoPath);
-                $testCenter->logo = $logoPath;
-            }
-
             // Update user details
             $user = $testCenter->user;
             $user->name = $request->name;
@@ -198,14 +192,6 @@ class TestCenterController extends Controller
     public function destroy(TestCenter $testCenter)
     {
         try {
-            // Ensure the path is relative to the 'public' disk
-            $relativeLogoPath = str_replace('Storage/', 'public/', $testCenter->logo);
-
-            // Delete the logo file if it exists
-            if ($testCenter->logo && Storage::exists($relativeLogoPath)) {
-                Storage::delete($relativeLogoPath);
-            }
-
             // Delete the related user
             $testCenter->user()->delete();
 
@@ -215,6 +201,66 @@ class TestCenterController extends Controller
             return response()->json(['success' => 'Test Center deleted successfully!']);
         } catch (\Throwable $th) {
             return response()->json(['error' => $th->getMessage()], 500);
+        }
+    }
+
+    /**
+     * disable test center
+     */
+    public function disableTestCenter(Request $request)
+    {
+        // Validate the input data
+        $validated = $request->validate([
+            'slug' => 'required|string|exists:test_centers,slug',
+            'reason' => 'required|string|max:350',
+        ]);
+        try {
+            $testCenter = TestCenter::where('slug', $request->slug)->firstOrFail();
+            if (!$testCenter) {
+                return response()->json(['message' => 'Test Center not found.'], 404);
+            }
+            // Add the reason for disabling
+            $testCenter->status = 'disabled';
+            $testCenter->disabled_reason = $request->reason;
+            $testCenter->save();
+
+            // sending mail to test center if the test center has been disabled
+            $data = [
+                'name' => $testCenter->user->name,
+                'reason' => $request->reason
+            ];
+            Mail::to($testCenter->user->email)->send(new TestCenterDisabledMail($data));
+
+            return response()->json(['message' => 'Test center disabled successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to disable test center.'], 500);
+        }
+    }
+
+
+    /**
+     * enable test center
+     */
+    public function enableTestCenter(Request $request)
+    {
+        try {
+            $testCenter = TestCenter::where('slug', $request->slug)->firstOrFail();
+            if (!$testCenter) {
+                return response()->json(['message' => 'Test Center not found.'], 404);
+            }
+            $testCenter->status = 'active';
+            $testCenter->disabled_reason = null; // Remove the disabled reason
+            $testCenter->save();
+
+             // sending mail to test center if the test center has been enabled
+             $data = [
+                'name' => $testCenter->user->name,
+            ];
+            Mail::to($testCenter->user->email)->send(new TestCenterEnabledMail($data));
+
+            return response()->json(['message' => 'Test center enabled successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to enable test center.'], 500);
         }
     }
 }

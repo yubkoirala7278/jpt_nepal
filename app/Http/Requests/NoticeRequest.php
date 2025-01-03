@@ -22,7 +22,7 @@ class NoticeRequest extends FormRequest
     public function rules(): array
     {
         $rules= [
-            'title'=>'required',
+            'title'=>'required|max:255',
             'description'=>'required',
             'image'=>'required'
         ];

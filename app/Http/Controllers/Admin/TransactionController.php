@@ -24,7 +24,11 @@ class TransactionController extends Controller
                         return $student->user->name;
                     })
                     ->addColumn('consultancy_address', function($student) {
-                        return $student->user->consultancy->address;
+                        if($student->user->consultancy){
+                            return $student->user->consultancy->address;
+                        }else{
+                            return $student->user->test_center->address;
+                        }
                     })
                     ->addColumn('action', function($student) {
                         return '';
@@ -33,11 +37,6 @@ class TransactionController extends Controller
                         // Add filtering for exam_date if needed
                         $query->whereHas('exam_date', function($query) use ($keyword) {
                             $query->where('exam_date', 'like', "%$keyword%");
-                        });
-                    })
-                    ->filterColumn('consultancy_name', function($query, $keyword) {
-                        $query->whereHas('user', function($query) use ($keyword) {
-                            $query->where('name', 'like', "%$keyword%");  // Search by consultancy name
                         });
                     })
                     ->make(true);

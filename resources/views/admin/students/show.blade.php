@@ -57,24 +57,48 @@
             <div class="card mb-3 h-100">
                 <div class="card-body">
                     <h5 class="card-title mark px-2 rounded-2">Documents</h5>
-        
+
                     <div class="mb-3">
                         <strong>Profile Image:</strong>
                         <div class="text-center">
-                            <img src="{{ asset($student->profile) }}" alt="Applicant Profile" class="img-fluid" 
-                                style="max-height: 300px; object-fit: cover;cursor:pointer" 
-                                data-bs-toggle="modal" data-bs-target="#imageModal" data-bs-image="{{ asset($student->profile) }}">
+                            <img src="{{ asset($student->profile) }}" alt="Applicant Profile" class="img-fluid"
+                                style="max-height: 300px; object-fit: cover;cursor:pointer" data-bs-toggle="modal"
+                                data-bs-target="#imageModal" data-bs-image="{{ asset($student->profile) }}">
                         </div>
                     </div>
-        
+
                     <div class="mb-3">
                         <strong>Receipt Image:</strong>
                         <div class="text-center">
-                            <img src="{{ asset($student->receipt_image) }}" alt="Receipt Image" class="img-fluid" 
-                                style="max-height: 300px; object-fit: cover;cursor: pointer;" 
-                                data-bs-toggle="modal" data-bs-target="#imageModal" data-bs-image="{{ asset($student->receipt_image) }}">
+                            <img src="{{ asset($student->receipt_image) }}" alt="Not Available" class="img-fluid"
+                                style="max-height: 300px; object-fit: cover;cursor: pointer;" data-bs-toggle="modal"
+                                data-bs-target="#imageModal" data-bs-image="{{ asset($student->receipt_image) }}">
                         </div>
                     </div>
+
+                    <div class="mb-3">
+                        <strong>Citizenship/Passport</strong>
+                        <div class="text-center">
+                            @php
+                                $fileExtension = pathinfo($student->citizenship, PATHINFO_EXTENSION);
+                            @endphp
+
+                            @if (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'webp', 'svg']))
+                                <img src="{{ asset($student->citizenship) }}" alt="Not Available" class="img-fluid"
+                                    style="max-height: 300px; object-fit: cover;cursor: pointer;" data-bs-toggle="modal"
+                                    data-bs-target="#imageModal" data-bs-image="{{ asset($student->citizenship) }}">
+                            @elseif ($fileExtension === 'pdf')
+                                <iframe src="{{ asset($student->citizenship) }}" style="width: 100%; height: 300px;"
+                                    frameborder="0"></iframe>
+                                <!-- Or display a download link -->
+                                <a href="{{ asset($student->citizenship) }}" target="_blank"
+                                    class="btn btn-primary mt-2">View PDF</a>
+                            @else
+                                <p>File not available</p>
+                            @endif
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -95,43 +119,43 @@
                 <div class="card-body">
                     <h5 class="card-title mark px-2 rounded-2">Consultancy Information</h5>
                     <p><strong>Consultancy Name:</strong> {{ $student->user->name }}</p>
-                    <p><strong>Consultancy Address:</strong> {{ $student->user->consultancy->address }}</p>
+                    <p><strong>Consultancy Address:</strong> {{ $student->user->consultancy->address??$student->user->test_center->address }}</p>
                     <p><strong>Consultancy Email:</strong> {{ $student->user->email }}</p>
                 </div>
             </div>
         </div>
-
     </div>
 @endsection
 
 @section('modal')
-{{-- modal to display receipt image or profile image --}}
-<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="imageModalLabel">Image View</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body text-center">
-                <img id="modalImage" src="" alt="Image" class="img-fluid" style="max-height: 500px; object-fit: contain;">
+    {{-- modal to display receipt image or profile image --}}
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imageModalLabel">Image View</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="modalImage" src="" alt="Not Available" class="img-fluid"
+                        style="max-height: 500px; object-fit: contain;">
+                </div>
             </div>
         </div>
     </div>
-</div>
 @endsection
 
 @push('script')
-<script>
-    // JavaScript to handle the image change in the modal
-    var modalImage = document.getElementById('modalImage');
-    var imageElements = document.querySelectorAll('[data-bs-toggle="modal"]');
+    <script>
+        // JavaScript to handle the image change in the modal
+        var modalImage = document.getElementById('modalImage');
+        var imageElements = document.querySelectorAll('[data-bs-toggle="modal"]');
 
-    imageElements.forEach(function (imgElement) {
-        imgElement.addEventListener('click', function () {
-            var imageUrl = this.getAttribute('data-bs-image');
-            modalImage.src = imageUrl;
+        imageElements.forEach(function(imgElement) {
+            imgElement.addEventListener('click', function() {
+                var imageUrl = this.getAttribute('data-bs-image');
+                modalImage.src = imageUrl;
+            });
         });
-    });
-</script>
+    </script>
 @endpush

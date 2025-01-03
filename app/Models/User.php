@@ -56,4 +56,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Consultancy::class, 'user_id');
     }
+     // Relationship with the test center
+     public function test_center()
+     {
+         return $this->hasOne(TestCenter::class, 'user_id');
+     }
 }

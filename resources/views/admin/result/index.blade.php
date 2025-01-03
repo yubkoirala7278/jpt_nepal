@@ -133,6 +133,7 @@
             $('#studentsTable').DataTable({
                 processing: true,
                 serverSide: true,
+                searchDelay: 1000,
                 ajax: '{{ route('admin.applicant-result') }}', // Your route to get data
                 columns: [{
                         data: 'DT_RowIndex',

@@ -177,6 +177,7 @@
                 </a>
             </li><!-- End Dashboard Nav -->
 
+            @if((Auth::user()->consultancy && Auth::user()->consultancy->status=='active') || (Auth::user()->test_center && Auth::user()->test_center->status=='active') || Auth::user()->hasRole('admin'))
             @if (Auth::user()->hasRole('admin'))
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('exam_date.index') ? '' : 'collapsed' }}"
@@ -257,6 +258,13 @@
                             <i class="fas fa-circle"></i><span>Approved</span>
                         </a>
                     </li>
+                    @if(Auth::user()->hasRole('consultancy_manager'))
+                    <li>
+                        <a href="{{ route('upload.receipt') }}">
+                            <i class="fas fa-circle"></i><span>Upload Receipt</span>
+                        </a>
+                    </li>
+                    @endif
                 </ul>
             </li><!-- End Icons Nav -->
 
@@ -366,6 +374,7 @@
                     <span>Blogs</span>
                 </a>
             </li><!-- End Profile Page Nav -->
+            @endif
 
             <li class="nav-item">
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">

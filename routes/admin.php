@@ -14,32 +14,45 @@ use App\Http\Controllers\Admin\TransactionController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/home', [HomeController::class, 'index'])->name('admin.home');
-Route::resource('notice', NoticeController::class);
 
-// ==========role admin can access the below routes===========
-Route::middleware(['role:admin'])->group(function () {
-    Route::resource('test_center', TestCenterController::class);
-    Route::resource('exam_date', ExamDateController::class);
-    Route::resource('testimonial', TestimonialController::class);
-    Route::get('/transaction', [TransactionController::class, 'index'])->name('transaction');
-    Route::post('/applicants/export', [StudentController::class, 'exportApplicants'])->name('applicants.export');
-    Route::post('/applicant-result/import', [ResultController::class, 'import'])->name('results.import');
-});
+// =======check if the status of consultancy or test center is active or disabled======
+Route::middleware(['auth', 'check.consultancy.test_center'])->group(function () {
+    Route::resource('notice', NoticeController::class);
+    // ==========role admin can access the below routes===========
+    Route::middleware(['role:admin'])->group(function () {
+        Route::resource('test_center', TestCenterController::class);
+        Route::post('/disable-test-center', [TestCenterController::class, 'disableTestCenter'])->name('disable.test_center');
+        Route::post('/enable-test-center', [TestCenterController::class, 'enableTestCenter'])->name('enable.test_center');
+        Route::resource('exam_date', ExamDateController::class);
+        Route::resource('testimonial', TestimonialController::class);
+        Route::get('/transaction', [TransactionController::class, 'index'])->name('transaction');
+        Route::post('/applicants/export', [StudentController::class, 'exportApplicants'])->name('applicants.export');
+        Route::post('/applicant-result/import', [ResultController::class, 'import'])->name('results.import');
+    });
 
-// =========accessible by test centers and admin only============
-Route::group(['middleware' => ['role:admin|test_center_manager']], function () {
-    Route::resource('consultancy', ConsultancyController::class);
-});
+    // =========accessible by test centers and admin only============
+    Route::group(['middleware' => ['role:admin|test_center_manager']], function () {
+        Route::resource('consultancy', ConsultancyController::class);
+        Route::post('/disable-consultancy', [ConsultancyController::class, 'disableConsultancy'])->name('disable.consultancy');
+        Route::post('/enable-consultancy', [ConsultancyController::class, 'enableConsultancy'])->name('enable.consultancy');
+    });
 
-// =======accessible by consultancy and admin only===============
-Route::group(['middleware' => ['role:admin|consultancy_manager|test_center_manager']], function () {
-    Route::get('/student/pending-applicants', [StudentController::class, 'getPendingStudents'])->name('student.pending');
-    Route::get('/student/approved-applicants', [StudentController::class, 'getApprovedStudents'])->name('student.approved');
-    Route::resource('student', StudentController::class);
-    Route::put('/student/status/{slug}', [StudentController::class, 'updateStatus'])->name('update.status');
-    Route::post('/student/upload-admit-card/{slug}', [StudentController::class, 'uploadAdmitCard'])
-        ->name('student.uploadAdmitCard.store');
-    Route::get('/admit-card', [AdmitCardController::class, 'index'])->name('admin.admit-card');
-    Route::get('/applicant-result', [ResultController::class, 'index'])->name('admin.applicant-result');
-    Route::post('/applicant-result-export', [ResultController::class, 'export'])->name('admin.applicant-result-export');
+    // =======accessible by consultancy, admin and test_center_manager===============
+    Route::group(['middleware' => ['role:admin|consultancy_manager|test_center_manager']], function () {
+        Route::get('/student/pending-applicants', [StudentController::class, 'getPendingStudents'])->name('student.pending');
+        Route::get('/student/approved-applicants', [StudentController::class, 'getApprovedStudents'])->name('student.approved');
+        Route::resource('student', StudentController::class);
+        Route::put('/student/status/{slug}', [StudentController::class, 'updateStatus'])->name('update.status');
+        Route::post('/student/upload-admit-card/{slug}', [StudentController::class, 'uploadAdmitCard'])
+            ->name('student.uploadAdmitCard.store');
+        Route::get('/admit-card', [AdmitCardController::class, 'index'])->name('admin.admit-card');
+        Route::get('/applicant-result', [ResultController::class, 'index'])->name('admin.applicant-result');
+        Route::post('/applicant-result-export', [ResultController::class, 'export'])->name('admin.applicant-result-export');
+    });
+
+    // ===========accessible by consultancy manager only===============
+    Route::group(['middleware' => ['role:consultancy_manager']], function () {
+        Route::get('/upload-receipt', [StudentController::class, 'uploadReceipt'])->name('upload.receipt');
+        Route::post('/upload-receipt', [StudentController::class, 'storeReceiptInfo'])->name('store.receipt');
+    });
 });

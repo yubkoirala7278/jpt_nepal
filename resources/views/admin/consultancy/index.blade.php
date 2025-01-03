@@ -18,6 +18,7 @@
                     <th>Logo</th>
                     <th>Created At</th>
                     <th>Test Center Name</th>
+                    <th>Status</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -42,16 +43,46 @@
             </div>
         </div>
     </div>
+    <!-- Modal for disabling consultancy -->
+    <div class="modal fade" id="disableModal" tabindex="-1" aria-labelledby="disableModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="disableModalLabel">Disable Consultancy</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="disableForm">
+                        @csrf
+                        <input type="hidden" id="consultancySlug" name="slug">
+                        <div class="form-group">
+                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                <label for="disabled_reason">Disabled Reason</label>
+                                <span id="charCount">0/350</span>
+                            </div>
+                            <textarea id="disabled_reason" name="reason" class="form-control" rows="6" maxlength="350" placeholder="Disabled reason.."></textarea>
+                        </div>
+                        <div class="d-flex mt-3 justify-content-end">
+                            <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-danger">Disable</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('script')
     <script>
         $(function() {
-            // =======display all the consultancy in table==========
             $(document).ready(function() {
+                // =======display all the consultancy in table==========
                 $('.consultancy-datatable').DataTable({
                     processing: true,
                     serverSide: true,
+                    searchDelay: 1000,
                     ajax: {
                         url: "{{ route('consultancy.index') }}",
                         data: function(d) {
@@ -107,6 +138,10 @@
                             searchable: true
                         },
                         {
+                            data: 'status',
+                            name: 'status'
+                        },
+                        {
                             data: 'action',
                             name: 'action',
                             orderable: false,
@@ -125,70 +160,149 @@
                         }
                     }
                 });
+                // ======end of displaying all the consultancy in table======
 
-            });
+                // ========disable consultancy=============
+                // Handle Disabled Button Click
+                // Handle Disabled Button Click
+                $(document).on('click', '.disabled-btn', function() {
+                    var slug = $(this).data('slug');
+                    $('#consultancySlug').val(slug); // Set the slug value in the hidden input
+                    $('#disableModal').modal('show'); // Show the modal
+                    $('#disabled_reason').val(''); // Clear the textarea
+                    $('#charCount').text('0/350'); // Reset character count
+                });
 
+                // Handle the form submission inside the modal
+                $('#disableForm').on('submit', function(e) {
+                    e.preventDefault();
 
-            // ======end of displaying all the consultancy in table======
+                    var reason = $('#disabled_reason').val(); // Get the disabled reason input value
+                    var disableButton = $(
+                    '#disableForm button[type="submit"]'); // Reference to the submit button
 
-            // ========delete consultancy=============
-            $(document).on('click', '.delete-btn', function() {
-                let url = $(this).data('url');
+                    // Validate if the reason is provided
+                    if (reason === '') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Disabled reason is required.',
+                            confirmButtonText: 'OK'
+                        });
+                        return; // Prevent form submission if the reason is not provided
+                    }
 
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: "You won't be able to revert this!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, delete it!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: url,
-                            type: 'DELETE',
-                            data: {
-                                _token: '{{ csrf_token() }}' // Include CSRF token
-                            },
-                            success: function(response) {
-                                if (response.success) {
+                    var formData = $(this).serialize(); // Get form data
+
+                    // Disable the button and show "Disabling..."
+                    disableButton.prop('disabled', true).text('Disabling...');
+
+                    // Send AJAX request to disable consultancy
+                    $.ajax({
+                        url: '{{ route('disable.consultancy') }}', // Post route for disabling consultancy
+                        method: 'POST',
+                        data: formData,
+                        success: function(response) {
+                            $('#disableModal').modal('hide'); // Hide the modal
+
+                            // Use SweetAlert2 for success message
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: response.message,
+                                confirmButtonText: 'OK'
+                            });
+
+                            // Reload data table
+                            $('.consultancy-datatable').DataTable().ajax.reload();
+
+                            // Enable the button and reset text
+                            disableButton.prop('disabled', false).text('Disable');
+                        },
+                        error: function(xhr, status, error) {
+                            // Use SweetAlert2 for error message
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'An error occurred: ' + error,
+                                confirmButtonText: 'OK'
+                            });
+
+                            // Enable the button and reset text
+                            disableButton.prop('disabled', false).text('Disable');
+                        }
+                    });
+                });
+
+                // Real-time character counting and limit enforcement
+                $('#disabled_reason').on('input', function() {
+                    var charCount = $(this).val().length;
+                    var maxLength = 350;
+
+                    // Update the character count
+                    $('#charCount').text(charCount + '/' + maxLength);
+
+                    // Enforce the character limit
+                    if (charCount > maxLength) {
+                        $(this).val($(this).val().substring(0, maxLength));
+                        $('#charCount').text(maxLength + '/' +
+                        maxLength); // Show max count if limit is exceeded
+                    }
+                });
+
+                // ======end of disabling consultancy========
+
+                // ==========enable consultancy====================
+                $(document).on('click', '.enable-btn', function() {
+                    var slug = $(this).data('slug');
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "Do you want to enable this consultancy?",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, enable it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Send an AJAX request to enable the consultancy
+                            $.ajax({
+                                url: "{{ route('enable.consultancy') }}",
+                                type: 'POST',
+                                data: {
+                                    _token: '{{ csrf_token() }}',
+                                    slug: slug
+                                },
+                                success: function(response) {
                                     Swal.fire(
-                                        'Deleted!',
-                                        response.success,
+                                        'Enabled!',
+                                        response.message,
                                         'success'
                                     );
                                     $('.consultancy-datatable').DataTable().ajax
-                                        .reload(); // Reload DataTable
-                                } else {
+                                        .reload();
+                                },
+                                error: function(xhr) {
                                     Swal.fire(
                                         'Error!',
-                                        response.error,
+                                        'Failed to enable the consultancy.',
                                         'error'
                                     );
                                 }
-                            },
-                            error: function(xhr) {
-                                Swal.fire(
-                                    'Error!',
-                                    xhr.responseJSON?.error ||
-                                    'An unknown error occurred.',
-                                    'error'
-                                );
-                            }
-                        });
-                    }
+                            });
+                        }
+                    });
                 });
-            });
-            // ======end of deleting consultancy========
+                // ========end of enabling consultancy=============
 
-            // =======displaying logo in modal============
-            $(document).on('click', '.logo-image', function() {
-                var logoUrl = $(this).data('url'); // Get the image URL from data-url attribute
-                $('#modal-logo').attr('src', logoUrl); // Set the image source in the modal
-                $('#logoModal').modal('show'); // Show the modal
+                // =======displaying logo in modal============
+                $(document).on('click', '.logo-image', function() {
+                    var logoUrl = $(this).data('url'); // Get the image URL from data-url attribute
+                    $('#modal-logo').attr('src', logoUrl); // Set the image source in the modal
+                    $('#logoModal').modal('show'); // Show the modal
+                });
+                // ======end of displaying logo in modal========
             });
-            // ======end of displaying logo in modal========
         });
     </script>
 @endpush

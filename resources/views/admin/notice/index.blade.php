@@ -59,7 +59,10 @@
                     },
                     {
                         data: 'title',
-                        name: 'title'
+                        name: 'title',
+                        render: function(data, type, row) {
+                            return `<div style="word-wrap: break-word; white-space: normal;">${data}</div>`;
+                        }
                     },
                     {
                         data: 'image',

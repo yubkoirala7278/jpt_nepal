@@ -24,7 +24,7 @@
 <body>
     {{-- header --}}
     <header>
-        <div class="top-nab-bar">
+        <div class="top-nab-bar py-2">
             <div class="container">
                 <div class="d-flex justify-content-center justify-content-sm-between">
                     <div class="d-flex gap-4 align-items-center justify-content-center">
@@ -39,14 +39,15 @@
                         </div>
                     </div>
                     <div class="d-flex d-none d-md-block">
-                        <span>English, Japanese</span>
+                        <a href="" class="btn btn-warning btn-sm me-2">Become an Agent</a>
+                        <a href="{{route('login')}}" class="btn btn-warning btn-sm">Agent Login</a>
                     </div>
                 </div>
             </div>
         </div>
         <!-- <div class="logo"></div> -->
-    
-    
+
+
         <div class="my-navbar">
             <div class="container">
                 <nav class="navbar navbar-expand-lg">
@@ -58,7 +59,7 @@
                                 <span class="navbar-toggler-icon"></span>
                         </div>
                         <div class="top-logo d-block d-lg-none ">
-                            <a href="{{route('home')}}" class="text-decoration-none"><span
+                            <a href="{{ route('home') }}" class="text-decoration-none"><span
                                     class="top-logo-text">JPT</span></a>
                         </div>
                         </button>
@@ -66,66 +67,61 @@
                             <div
                                 class="d-flex justify-content-center justify-content-lg-between align-items-center  w-100">
                                 <div class="top-logo d-none d-lg-block ">
-                                    <a href="{{route('home')}}" class="text-decoration-none"><span
+                                    <a href="{{ route('home') }}" class="text-decoration-none"><span
                                             class="top-logo-text">JPT</span></a>
                                 </div>
-    
+
                                 <div class="d-none d-lg-block"></div>
-    
+
                                 <ul class="navbar-nav d-flex align-items-center gap-3">
                                     <li class="nav-item">
-                                        <a class="nav-link" href="{{route('home')}}">Home</a>
+                                        <a class="nav-link" href="{{ route('home') }}">Home</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="{{route('about')}}">About JPT</a>
+                                        <a class="nav-link" href="{{ route('about') }}">About JPT</a>
                                     </li>
-    
                                     <li class="nav-item">
-                                        <a class="nav-link" href="{{route('test.detail')}}">Test Detail</a>
+                                        <a class="nav-link" href="">Test Levels</a>
                                     </li>
-    
+
                                     <li class="nav-item">
-                                        {{-- <a class="nav-link" href="{{route('registration')}}">Registration</a> --}}
-                                        <a class="nav-link" href="#">Registration</a>
+                                        <a class="nav-link" href="{{ route('test.detail') }}">Test Center</a>
                                     </li>
-    
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="{{route('resources')}}">Resources</a>
-                                    </li>
-    
+
                                     {{-- <li class="nav-item">
                                         <a class="nav-link" href="{{route('admit-card')}}">Admit Card</a>
                                     </li> --}}
                                     {{-- <li class="nav-item">
                                         <a class="nav-link" href="{{route('applicant-result')}}">Check Result</a>
                                     </li> --}}
-    
-    
+
+
                                     <!-- <li class="nav-item">
                                         <a class="nav-link" href="event.html">Event</a>
                                     </li> -->
-    
                                     <li class="nav-item">
-                                        <a class="nav-link" href="{{route('blog')}}">Blog</a>
+                                        <a class="nav-link" href="">FAQ's</a>
                                     </li>
-    
+
                                     <li class="nav-item">
-                                        <a class="nav-link" href="{{route('contact')}}">Contact</a>
+                                        <a class="nav-link" href="{{ route('contact') }}">Contact Us</a>
                                     </li>
-    
+
                                     <li class="nav-item">
-                                        <a href="{{route('login')}}" class="login-btn text-decoration-none">Login</a>
+                                        <a href=""
+                                            class="login-btn text-decoration-none bg-dark bg-gradient text-white rounded-2">Student
+                                            Registration</a>
                                     </li>
-    
+
                                 </ul>
-    
+
                             </div>
                         </div>
                     </div>
                 </nav>
             </div>
         </div>
-    
+
     </header>
     {{-- end of header --}}
 
@@ -139,7 +135,7 @@
         <div class="container">
             <div class="row gy-4">
                 <div class="col-lg-3 col-md-6">
-                    <img src="{{asset('frontend/img/logo.jpg')}}" style="max-height: 200px;" alt="">
+                    <img src="{{ asset('frontend/img/logo.jpg') }}" style="max-height: 200px;" alt="">
                     <p class="text-justify mt-4 text-white"> Lorem ipsum dolor sit amet consectetur adipisicing elit.
                         Fugiat nobis
                         tenetur libero, placeat
@@ -179,19 +175,20 @@
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <h2 class="fs-5">Useful Links</h2>
-                    <p class="my-2"><a class="footer-link text-white text-decoration-none" href="{{route('about')}}">
+                    <p class="my-2"><a class="footer-link text-white text-decoration-none"
+                            href="{{ route('about') }}">
                             <i class="fa-solid fa-angle-right me-2"></i>
-                            About Us</a></p>
-                    <p class="my-2"><a class="footer-link text-white text-decoration-none" href="{{route('contact')}}">
+                            About JPT</a></p>
+                    <p class="my-2"><a class="footer-link text-white text-decoration-none" href="">
                             <i class="fa-solid fa-angle-right me-2"></i>
-                            Contact Us</a></p>
-                    <p class="my-2"><a class="footer-link text-white text-decoration-none" href="{{route('blog')}}">
+                            Practice Materials</a></p>
+                    <p class="my-2"><a class="footer-link text-white text-decoration-none" href="">
+                            <i class="fa-solid fa-angle-right me-2"></i>
+                            Resources</a></p>
+                    <p class="my-2"><a class="footer-link text-white text-decoration-none"
+                            href="{{ route('blog') }}">
                             <i class="fa-solid fa-angle-right me-2"></i>
                             Blog</a></p>
-                    <p class="my-2"><a class="footer-link text-white text-decoration-none"
-                            href="{{route('applicant-result')}}">
-                            <i class="fa-solid fa-angle-right me-2"></i>
-                            Check Result</a></p>
                     <p class="my-2"><a class="footer-link text-white text-decoration-none" href="">
                             <i class="fa-solid fa-angle-right me-2"></i>
                             Terms & Conditions</a></p>

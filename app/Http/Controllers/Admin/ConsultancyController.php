@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ConsultancyRequest;
 use App\Mail\ConsultancyCreatedMail;
+use App\Mail\ConsultancyDisabledMail;
+use App\Mail\ConsultancyEnabledMail;
 use App\Models\Consultancy;
 use App\Models\TestCenter;
 use App\Models\User;
@@ -21,7 +23,7 @@ class ConsultancyController extends Controller
 
     public function __construct()
     {
-        $this->middleware('check.consultancy.access')->only(['edit', 'update','destroy']);
+        $this->middleware('check.consultancy.access')->only(['edit', 'update', 'destroy']);
     }
     /**
      * Display a listing of the resource.
@@ -38,12 +40,12 @@ class ConsultancyController extends Controller
             ])
                 ->join('users', 'users.id', '=', 'consultancies.user_id')
                 ->leftJoin('users as test_centers', 'test_centers.id', '=', 'consultancies.test_center_id'); // Join the users table again for test center
-    
+
             // Check user role
             if (Auth::user()->hasRole('test_center_manager')) {
                 $consultancies->where('consultancies.test_center_id', Auth::user()->id);
             }
-    
+
             // Apply filters dynamically based on search term
             if ($request->has('search') && !empty($request->search)) {
                 $consultancies->where(function ($query) use ($request) {
@@ -53,32 +55,59 @@ class ConsultancyController extends Controller
                         ->orWhere('consultancies.address', 'like', '%' . $request->search . '%');
                 });
             }
-    
+
             return DataTables::of($consultancies)
                 ->addIndexColumn()
                 ->addColumn('name', fn($row) => $row->user_name) // Access joined user name
                 ->addColumn('email', fn($row) => $row->user_email) // Access joined user email
                 ->addColumn('test_center', fn($row) => $row->test_center_name) // Add test center name column
                 ->addColumn('logo', fn($row) => '<img src="' . asset($row->logo) . '" alt="Logo" height="30" class="logo-image" data-url="' . asset($row->logo) . '" style="cursor:pointer;" loading="lazy" />') // Add data-url to image
+                ->addColumn('status', function ($row) {
+                    $badgeClass = $row->status === 'active' ? 'badge bg-success' : 'badge bg-danger';
+                    return '<span class="' . $badgeClass . '">' . ucfirst($row->status) . '</span>';
+                })
                 ->addColumn('action', function ($row) {
                     $editUrl = route('consultancy.edit', $row->slug);
-                    $deleteUrl = route('consultancy.destroy', $row->slug);
-    
-                    return '
+                    $disableUrl = route('disable.consultancy');
+                    $enableUrl = route('enable.consultancy'); // Route for enabling consultancy
+
+                    $buttons = '
                     <div class="d-flex align-items-center" style="column-gap:10px">
-                        <a href="' . $editUrl . '" class="btn btn-warning btn-sm text-white" title="edit consultancy"><i class="fa-solid fa-pencil"></i></a>
-                        <button type="button" class="btn btn-danger btn-sm delete-btn" data-url="' . $deleteUrl . '" title="delete consultancy"><i class="fa-solid fa-trash"></i></button>
-                    </div>';
+                        <a href="' . $editUrl . '" class="btn btn-warning btn-sm text-white" title="edit consultancy">
+                            <i class="fa-solid fa-pencil"></i>
+                        </a>';
+
+                    if ($row->status === 'active') {
+                        $buttons .= '
+                        <button type="button" class="btn btn-secondary btn-sm disabled-btn" 
+                                data-slug="' . $row->slug . '" 
+                                data-toggle="modal" 
+                                data-target="#disableModal" 
+                                title="disable consultancy">
+                            <i class="fa-solid fa-ban"></i>
+                        </button>';
+                    } else {
+                        $buttons .= '
+                        <button type="button" class="btn btn-success btn-sm enable-btn" 
+                                data-slug="' . $row->slug . '" 
+                                title="enable consultancy">
+                            <i class="fa-solid fa-check"></i>
+                        </button>';
+                    }
+
+                    $buttons .= '</div>';
+
+                    return $buttons;
                 })
                 ->editColumn('created_at', fn($row) => Carbon::parse($row->created_at)->format('M d, Y')) // Format date
                 ->orderColumn('created_at', 'consultancies.created_at $1') // Sorting logic
-                ->rawColumns(['logo', 'action']) // Allow raw HTML in logo and action columns
+                ->rawColumns(['logo', 'action', 'status']) // Allow raw HTML in logo and action columns
                 ->make(true);
         }
-    
+
         return view('admin.consultancy.index');
     }
-    
+
 
     /**
      * Show the form for creating a new resource.
@@ -239,6 +268,72 @@ class ConsultancyController extends Controller
             return response()->json(['success' => 'Consultancy deleted successfully!']);
         } catch (\Throwable $th) {
             return response()->json(['error' => $th->getMessage()], 500);
+        }
+    }
+
+    /**
+     * disable consultancy
+     */
+    public function disableConsultancy(Request $request)
+    {
+        // Validate the input data
+        $validated = $request->validate([
+            'slug' => 'required|string|exists:consultancies,slug',  // Ensure slug is provided and exists in the consultancies table
+            'reason' => 'required|string|max:350',  // Validate reason is required and not more than 350 characters
+        ]);
+
+        try {
+            // Get the consultancy by slug
+            $consultancy = Consultancy::where('slug', $request->slug)->first();
+
+            if (!$consultancy) {
+                return response()->json(['message' => 'Consultancy not found.'], 404);
+            }
+
+            // Add the reason for disabling
+            $consultancy->status = 'disabled'; // or whatever status you use for disabling
+            $consultancy->disabled_reason = $request->reason;
+            $consultancy->save();
+
+            // sending mail to consultancy if the consultancy has been disabled
+            $data = [
+                'name' => $consultancy->user->name,
+                'reason'=>$request->reason
+            ];
+            Mail::to($consultancy->user->email)->send(new ConsultancyDisabledMail($data));
+
+            return response()->json(['message' => 'Consultancy has been disabled successfully.'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to disable consultancy.'], 500);
+        }
+    }
+
+
+    /**
+     * enable consultancy
+     */
+    public function enableConsultancy(Request $request)
+    {
+        try {
+            $consultancy = Consultancy::where('slug', $request->slug)->first();
+
+            if (!$consultancy) {
+                return response()->json(['message' => 'Consultancy not found.'], 404);
+            }
+
+            $consultancy->status = 'active';
+            $consultancy->disabled_reason = null;
+            $consultancy->save();
+
+             // sending mail to consultancy if the consultancy has been enabled
+             $data = [
+                'name' => $consultancy->user->name,
+            ];
+            Mail::to($consultancy->user->email)->send(new ConsultancyEnabledMail($data));
+
+            return response()->json(['message' => 'Consultancy enabled successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to enable consultancy.'], 500);
         }
     }
 }

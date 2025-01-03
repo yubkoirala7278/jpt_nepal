@@ -117,6 +117,7 @@
             var table = $('.exam-date-datatable').DataTable({
                 processing: true,
                 serverSide: true,
+                searchDelay: 1000, 
                 ajax: "{{ route('exam_date.index') }}",
                 columns: [{
                         data: 'DT_RowIndex',

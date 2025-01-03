@@ -53,14 +53,6 @@
                 <span class="text-danger">{{ $errors->first('password_confirmation') }}</span>
             @endif
         </div>
-        
-        <div class="mb-3">
-            <label for="logo" class="form-label">Upload Logo</label>
-            <input type="file" class="form-control" id="logo" name="logo" accept="image/jpeg, image/png, image/jpg,image/gif,image/webp,image/svg"/>
-            @if ($errors->has('logo'))
-                <span class="text-danger">{{ $errors->first('logo') }}</span>
-            @endif
-        </div>
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 @endsection

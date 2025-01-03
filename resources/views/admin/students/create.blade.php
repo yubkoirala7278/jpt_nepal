@@ -58,11 +58,20 @@
         </div>
 
         <div class="mb-3">
-            <label for="receipt_image" class="form-label">Upload Receipt</label>
+            <label for="receipt_image" class="form-label">Upload Receipt (Optional)</label>
             <input type="file" class="form-control" id="receipt_image" name="receipt_image"
                 accept="image/jpeg, image/png, image/jpg,image/gif,image/webp,image/svg" />
             @if ($errors->has('receipt_image'))
                 <span class="text-danger">{{ $errors->first('receipt_image') }}</span>
+            @endif
+        </div>
+
+        <div class="mb-3">
+            <label for="citizenship" class="form-label">Upload Citizenship/Passport</label>
+            <input type="file" class="form-control" id="citizenship" name="citizenship"
+                accept="image/jpeg, image/png, image/jpg, image/gif, image/webp, image/svg+xml, application/pdf" />
+            @if ($errors->has('citizenship'))
+                <span class="text-danger">{{ $errors->first('citizenship') }}</span>
             @endif
         </div>
 

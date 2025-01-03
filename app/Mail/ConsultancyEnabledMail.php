@@ -9,10 +9,11 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class ConsultancyCreatedMail extends Mailable implements ShouldQueue
+class ConsultancyEnabledMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
     public $mailData;
+
     /**
      * Create a new message instance.
      */
@@ -21,13 +22,14 @@ class ConsultancyCreatedMail extends Mailable implements ShouldQueue
         $this->mailData = $mailData;
     }
 
+
     /**
      * Get the message envelope.
      */
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Consultancy Created Mail',
+            subject: 'Consultancy Enabled Mail',
         );
     }
 
@@ -37,9 +39,10 @@ class ConsultancyCreatedMail extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            view: 'mail.consultancy_mail',
+            view: 'mail.consultancy_enabled_mail',
         );
     }
+
 
     /**
      * Get the attachments for the message.
@@ -50,5 +53,4 @@ class ConsultancyCreatedMail extends Mailable implements ShouldQueue
     {
         return [];
     }
-
 }

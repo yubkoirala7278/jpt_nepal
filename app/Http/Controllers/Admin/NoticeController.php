@@ -31,9 +31,6 @@ class NoticeController extends Controller
 
             return DataTables::of($notices)
                 ->addIndexColumn()
-                ->editColumn('title', function ($notice) {
-                    return \Str::limit($notice->title, 20); // Limit title length
-                })
                 ->editColumn('image', function ($notice) {
                     return '<img src="' . asset($notice->image) . '" alt="Notice Image" height="30" style="cursor:pointer;" class="notice-image" data-url="' . asset($notice->image) . '">';
                 })

@@ -51,14 +51,6 @@ class TestCenterRequest extends FormRequest
                 'confirmed',
             ];
         }
-
-        // Logo is required only for store, optional for update
-        if ($this->isMethod('post')) { // Store method
-            $rules['logo'] = 'required|image|mimes:webp,jpeg,png,jpg,gif,svg|max:2048';
-        } elseif ($this->isMethod('put') || $this->isMethod('patch')) { // Update method
-            $rules['logo'] = 'nullable|image|mimes:webp,jpeg,png,jpg,gif,svg|max:2048';
-        }
-
         return $rules;
     }
 }
