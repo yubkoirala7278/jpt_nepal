@@ -460,7 +460,9 @@
                                                 @endif
                                             </tbody>
                                         </table>
-                                        {{ $notices->links('pagination::bootstrap-5') }}
+                                        <div class="d-flex justify-content-center">
+                                        {{ $notices->onEachSide(2)->links('pagination::simple-bootstrap-5') }}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -495,7 +497,10 @@
                                                 @endif
                                             </tbody>
                                         </table>
-                                        {{ $upcomingTests->links('pagination::bootstrap-5') }}
+                                        <div class="d-flex justify-content-center">
+                                            {{ $upcomingTests->onEachSide(2)->links('pagination::simple-bootstrap-5') }}
+                                        </div>
+                                      
                                     </div>
                                 </div>
                             </div>

@@ -368,12 +368,12 @@
                 </li><!-- End Profile Page Nav -->
             @endif
 
-            <li class="nav-item">
+            {{-- <li class="nav-item">
                 <a class="nav-link collapsed" href="">
                     <i class="fa-solid fa-blog"></i>
                     <span>Blogs</span>
                 </a>
-            </li><!-- End Profile Page Nav -->
+            </li><!-- End Profile Page Nav --> --}}
             @endif
 
             <li class="nav-item">

@@ -108,7 +108,7 @@
                                     </li>
 
                                     <li class="nav-item">
-                                        <a href=""
+                                        <a href="{{route('student.register')}}"
                                             class="login-btn text-decoration-none bg-dark bg-gradient text-white rounded-2">Student
                                             Registration</a>
                                     </li>

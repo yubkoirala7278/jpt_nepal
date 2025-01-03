@@ -16,11 +16,11 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
         	AdminSeeder::class, 
             // factory
-            ExamDateSeeder::class,
-            TestCenterAndConsultancySeeder::class,
-            StudentSeeder::class,
-            AdmitCardSeeder::class,
-            ResultSeeder::class,
+            // ExamDateSeeder::class,
+            // TestCenterAndConsultancySeeder::class,
+            // StudentSeeder::class,
+            // AdmitCardSeeder::class,
+            // ResultSeeder::class,
     	]);
     }
 }

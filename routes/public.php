@@ -6,6 +6,7 @@ use App\Http\Controllers\Frontend\BlogController;
 use App\Http\Controllers\Frontend\ContactController;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\NoticeController;
+use App\Http\Controllers\Frontend\RegistrationController;
 use App\Http\Controllers\Frontend\ResourcesController;
 use App\Http\Controllers\Frontend\TestDetailController;
 use Illuminate\Support\Facades\Route;
@@ -26,3 +27,6 @@ Route::get('/resources',[ResourcesController::class,'index'])->name('resources')
 Route::get('/notice',[NoticeController::class,'index'])->name('notice');
 Route::get('/notice-detail/{slug}',[NoticeController::class,'getNoticeDetail'])->name('notice.detail');
 Route::post('/test-center-detail',[HomeController::class,'getTestCenterDetails'])->name('test-center-details');
+Route::get('/registration',[RegistrationController::class,'index'])->name('student.register');
+Route::post('/student/validate', [RegistrationController::class, 'validateForm'])->name('public.student.validate');
+Route::post('/registration',[RegistrationController::class,'store'])->name('public.student.store');
