@@ -43,11 +43,10 @@ class CheckStudentAccess
                 return back()->with('error', 'You are not authorized to access this page.');
             }
         }
-        
-    
-        // Allow 'admin' to access the 'show' method for any student
-        if ($method === 'show' && Auth::user()->hasRole('admin')) {
-            return $next($request); // Allow access for 'admin' role to show any student
+
+        // Dont allow admin to access edit,update and create method
+        if (in_array($method, ['edit', 'update','create']) && Auth::user()->hasRole('admin')) {
+            return back()->with('error', 'You are not authorized to access this page.');
         }
     
         // Proceed with the request for other actions (create, store, etc.)

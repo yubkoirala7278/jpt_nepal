@@ -14,6 +14,8 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     {{-- tiny slider --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/tiny-slider.css">
+     {{-- toastify css --}}
+     @toastifyCss
     {{-- aos animation --}}
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     {{-- custom css --}}
@@ -39,8 +41,8 @@
                         </div>
                     </div>
                     <div class="d-flex d-none d-md-block">
-                        <a href="" class="btn btn-warning btn-sm me-2">Become an Agent</a>
-                        <a href="{{route('login')}}" class="btn btn-warning btn-sm">Agent Login</a>
+                        <a href="{{route('agent.register')}}" class="btn btn-warning btn-sm me-2">Become an Agent</a>
+                        <a href="{{ route('login') }}" class="btn btn-warning btn-sm">Agent Login</a>
                     </div>
                 </div>
             </div>
@@ -81,7 +83,7 @@
                                         <a class="nav-link" href="{{ route('about') }}">About JPT</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="">Test Levels</a>
+                                        <a class="nav-link" href="{{route('test-levels')}}">Test Levels</a>
                                     </li>
 
                                     <li class="nav-item">
@@ -108,7 +110,7 @@
                                     </li>
 
                                     <li class="nav-item">
-                                        <a href="{{route('student.register')}}"
+                                        <a href="{{ route('student.register') }}"
                                             class="login-btn text-decoration-none bg-dark bg-gradient text-white rounded-2">Student
                                             Registration</a>
                                     </li>
@@ -230,6 +232,23 @@
     <script>
         AOS.init();
     </script>
+
+    {{-- toastify --}}
+    @if (session()->has('success') || session()->has('error'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                @if (session()->has('success'))
+                    toastify().success({!! json_encode(session('success')) !!});
+                @endif
+                @if (session()->has('error'))
+                    toastify().error({!! json_encode(session('error')) !!});
+                @endif
+            });
+        </script>
+    @endif
+
+    {{-- toastify js --}}
+    @toastifyJs
 
     {{-- custom script --}}
     <script src="{{ asset('frontend/js/script.js') }}"></script>

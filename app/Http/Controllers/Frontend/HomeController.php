@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ExamDate;
 use App\Models\Notice;
 use App\Models\TestCenter;
+use App\Models\Testimonial;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -21,7 +22,8 @@ class HomeController extends Controller
                 ->get();
             $notices = Notice::latest()->take(4)->get();
             $testCentreAddress = TestCenter::select('address')->distinct()->get();
-            return view('public.home.index', compact('upcomingTests', 'notices', 'testCentreAddress'));
+            $testimonials=Testimonial::where('status',true)->latest()->get();
+            return view('public.home.index', compact('upcomingTests', 'notices', 'testCentreAddress','testimonials'));
         } catch (\Throwable $th) {
             return back()->with('error', $th->getMessage());
         }

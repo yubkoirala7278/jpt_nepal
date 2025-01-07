@@ -23,6 +23,8 @@ return new class extends Migration
             $table->string('logo');
             $table->enum('status', ['active', 'disabled'])->default('active');
             $table->text('disabled_reason')->nullable();
+            $table->string('owner_name');
+            $table->string('mobile_number');
             $table->timestamps();
         });
     }

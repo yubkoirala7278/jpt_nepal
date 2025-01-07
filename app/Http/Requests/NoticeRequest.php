@@ -24,7 +24,6 @@ class NoticeRequest extends FormRequest
         $rules= [
             'title'=>'required|max:255',
             'description'=>'required',
-            'image'=>'required'
         ];
         if ($this->isMethod('post')) { // Store method
             $rules['image'] = 'required|image|mimes:webp,jpeg,png,jpg,gif,svg|max:2048';

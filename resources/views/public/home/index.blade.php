@@ -85,22 +85,18 @@
                     <img src="{{ asset('frontend/img/slider/japan-2.jpg') }}" class="slide-image d-block w-100"
                         alt="Carousel Image" loading="lazy">
                     <div class="carousel-caption d-flex flex-column h-100 align-items-start justify-content-center ">
-                        <h1 class="display-5 fw-bold " data-aos="fade-left" data-aos-duration="2000">First slide label
+                        <h1 class="display-5 fw-bold " data-aos="fade-left" data-aos-duration="2000">Introduction to JPT
                         </h1>
                         <p class="fs-4 text-start text-white " style="max-width: 600px;" data-aos="fade-right"
-                            data-aos-duration="2000">Some representative placeholder
-                            content
-                            for the first slide.</p>
+                            data-aos-duration="2000">The JPT evaluates proficiency across multiple levels, from beginners to experts.</p>
                     </div>
                 </div>
                 <div class="carousel-item">
                     <img src="{{ asset('frontend/img/slider/japan-1.jpg') }}" class="slide-image d-block w-100"
                         alt="Carousel Image" loading="lazy">
                     <div class="carousel-caption d-flex flex-column h-100 align-items-start justify-content-center ">
-                        <h1 class="display-5 fw-bold">Second slide label</h1>
-                        <p class="fs-4 text-start text-white " style="max-width: 600px;">Some representative placeholder
-                            content
-                            for the first slide.</p>
+                        <h1 class="display-5 fw-bold">Test Structure Overview</h1>
+                        <p class="fs-4 text-start text-white " style="max-width: 600px;">JPT has five levels with sections on vocabulary, grammar, and listening.</p>
                     </div>
                 </div>
             </div>
@@ -162,22 +158,18 @@
             <div class="col-md-6 order-md-0 order-1" data-aos="fade-right" data-aos-duration="1500">
                 <div class="d-flex flex-column justify-content-center h-100">
                     <div class="section-title">
-                        <span><i class="fa-solid fa-angles-right"></i> Know About Our Cources</span>
+                        <span><i class="fa-solid fa-angles-right"></i> Know About Our Courses</span>
                         <h2>About Japan</h2>
                     </div>
-                    <p> Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci, incidunt officia et impedit
-                        dolores maiores modi reiciendis, ut numquam iusto perferendis laudantium earum libero qui. Magni
-                        repellat nisi, natus quas exercitationem inventore voluptate quaerat earum delectus provident
-                        corrupti aut voluptas</p>
+                    <p> Japan is a country rich in history and culture. From its ancient temples to modern technology, it offers a unique blend of tradition and innovation. The language, customs, and values are integral to understanding the Japanese way of life.</p>
                     <p>
-                        labore. Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eligendi eius exercitationem
-                        et sapiente numquam hic architecto, nulla maiores maxime voluptatem porro reprehenderit
-                        voluptate quod dolorem ex placeat.</p>
+                        Japan's culture has influenced the world in various ways, from its art and cuisine to its technological advancements. The country is known for its polite society, respect for nature, and strong sense of community and work ethic.</p>
                     <div class="">
                         <a href="{{ route('about') }}" class="btn btn-outline-primary">Learn More</a>
                     </div>
                 </div>
             </div>
+            
 
             <div class="col-md-6 order-md-1 order-0" data-aos="fade-left" data-aos-duration="1500">
                 <img class="w-100 image-fluid rounded" src="{{ asset('frontend/img/about/about-1.png') }}" alt="About Japan"
@@ -197,22 +189,18 @@
             <div class="col-md-6" data-aos="fade-left" data-aos-duration="1500">
                 <div class="d-flex flex-column justify-content-center h-100">
                     <div class="section-title">
-                        <span><i class="fa-solid fa-angles-right"></i> Know About Our Cources</span>
+                        <span><i class="fa-solid fa-angles-right"></i> Know About Our Courses</span>
                         <h2>About Japan</h2>
                     </div>
-                    <p> Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci, incidunt officia et impedit
-                        dolores maiores modi reiciendis, ut numquam iusto perferendis laudantium earum libero qui. Magni
-                        repellat nisi, natus quas exercitationem inventore voluptate quaerat earum delectus provident
-                        corrupti aut voluptas</p>
+                    <p> Japan is an island nation in East Asia, known for its rich history, beautiful landscapes, and cutting-edge technology. The country offers a unique combination of traditional customs and modern innovations. From ancient temples to bustling cities, Japan has something for everyone.</p>
                     <p>
-                        labore. Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eligendi eius exercitationem
-                        et sapiente numquam hic architecto, nulla maiores maxime voluptatem porro reprehenderit
-                        voluptate quod dolorem ex placeat.</p>
+                        The culture of Japan emphasizes respect for nature, tradition, and community. It is a society that values hard work, politeness, and the beauty of simplicity. Japanese cuisine, arts, and innovations have influenced the world in many profound ways.</p>
                     <div class="">
                         <a href="{{ route('about') }}" class="btn btn-outline-primary">Learn More</a>
                     </div>
                 </div>
             </div>
+            
 
         </div>
     </section>
@@ -328,7 +316,7 @@
             </div>
         </div>
     </section>
-
+    @if(count($testimonials)>0)
     <section class="container" data-aos="fade-right" data-aos-duration="1500">
         <div class="section-title mb-5">
             <span><i class="fa-solid fa-angles-right"></i> Clint Opinion</span>
@@ -338,15 +326,12 @@
 
 
             <div class="testominal-slider">
-
+                @foreach ($testimonials as $testimonial)
                 <div class="col-md-4">
                     <div class="card testominal-item" style="width: 95%">
                         <div class="card-body">
-                            <h5 class="card-title text-center fw-bold">Sam Smith</h5>
-                            <p class="card-text text-center fst-italic">"Some quick example text to build on the
-                                card title and make up the
-                                bulk
-                                of the card's content. Lorem ipsum dolor sit amet consectetur adipisicing elit. "
+                            <h5 class="card-title text-center fw-bold">{{$testimonial->name}}</h5>
+                            <p class="card-text text-center fst-italic">"{{$testimonial->description}}"
                             </p>
                             <div class="hr"></div>
                             <p class="text-center fst-italic mt-2 mb-0"> <small>Good Experience</small> </p>
@@ -360,77 +345,11 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="col-md-4">
-                    <div class="card testominal-item" style="width: 95%">
-                        <div class="card-body">
-                            <h5 class="card-title text-center fw-bold">Sam Smith</h5>
-                            <p class="card-text text-center fst-italic">"Some quick example text to build on the
-                                card title and make up the
-                                bulk
-                                of the card's content. Lorem ipsum dolor sit amet consectetur adipisicing elit. "
-                            </p>
-                            <div class="hr"></div>
-                            <p class="text-center fst-italic mt-2 mb-0"> <small>Good Experience</small> </p>
-                            <div class="rating">
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="col-md-4">
-                    <div class="card testominal-item" style="width: 95%">
-                        <div class="card-body">
-                            <h5 class="card-title text-center fw-bold">Sam Smith</h5>
-                            <p class="card-text text-center fst-italic">"Some quick example text to build on the
-                                card title and make up the
-                                bulk
-                                of the card's content. Lorem ipsum dolor sit amet consectetur adipisicing elit. "
-                            </p>
-                            <div class="hr"></div>
-                            <p class="text-center fst-italic mt-2 mb-0"> <small>Good Experience</small> </p>
-                            <div class="rating">
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="card testominal-item" style="width: 95%">
-                        <div class="card-body">
-                            <h5 class="card-title text-center fw-bold">Sam Smith</h5>
-                            <p class="card-text text-center fst-italic">"Some quick example text to build on the
-                                card title and make up the
-                                bulk
-                                of the card's content. Lorem ipsum dolor sit amet consectetur adipisicing elit. "
-                            </p>
-                            <div class="hr"></div>
-                            <p class="text-center fst-italic mt-2 mb-0"> <small>Good Experience</small> </p>
-                            <div class="rating">
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+                @endforeach
             </div>
         </div>
     </section>
+    @endif
 
 @endsection
 

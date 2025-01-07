@@ -8,7 +8,7 @@
                     <img src="{{ asset('frontend/img/slider/japan-2.jpg') }}" class="slide-image d-block w-100"
                         alt="Blog Image">
                     <div class="carousel-caption d-flex flex-column h-100 align-items-start justify-content-center ">
-                        <h1 class="display-5 fw-bold" data-aos="fade-right" data-aos-duration="1500">Test Details</h1>
+                        <h1 class="display-5 fw-bold" data-aos="fade-right" data-aos-duration="1500">Test Centers</h1>
                         <p class="fs-4 text-start text-white " style="max-width: 600px;" data-aos="fade-left"
                             data-aos-duration="1500"> Lorem ipsum dolor sit amet
                             consectetur adipisicing elit.</p>
@@ -21,73 +21,34 @@
 
     <section class="container">
         <div class="section-title mb-4">
-            <span><i class="fa-solid fa-angles-right"></i> Test Detail</span>
-            <h2>Test Details</h2>
+            <span><i class="fa-solid fa-angles-right"></i> Test Centers</span>
+            <h2>Test Center Details</h2>
         </div>
         <div class="">
             <table class="table table-primary">
                 <thead>
                     <tr>
                         <th scope="col">#</th>
-                        <th scope="col">Test Date</th>
-                        <th scope="col">Test Location</th>
-                        <th scope="col">Test Levels</th>
+                        <th scope="col">Test Center Name</th>
+                        <th scope="col">Email Address</th>
+                        <th scope="col">Address</th>
+                        <th scope="col">Phone Number</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="table-active">
-                        <th scope="row">1</th>
-                        <td>Dec 29, 2024</td>
-                        <td>Kathmandu, Nepal</td>
-                        <td>N1</td>
-                    </tr>
-                    <tr class="table-active">
-                        <th scope="row">2</th>
-                        <td>Dec 29, 2024</td>
-                        <td>Kathmandu, Nepal</td>
-                        <td>N2</td>
-                    </tr>
-                    <tr class="table-active">
-                        <th scope="row">3</th>
-                        <td>Dec 29, 2024</td>
-                        <td>Kathmandu, Nepal</td>
-                        <td>N5</td>
-                    </tr>
-                    <tr class="table-active">
-                        <th scope="row">4</th>
-                        <td>Jan 29, 2025</td>
-                        <td>Kathmandu, Nepal</td>
-                        <td>N4</td>
-                    </tr>
+                    @if(count($testCenters)>0)
+                        @foreach ($testCenters as $key=>$testCenter)
+                        <tr class="table-active">
+                            <th scope="row">{{$key+1}}</th>
+                            <td>{{$testCenter->name}}</td>
+                            <td>{{$testCenter->email}}</td>
+                            <td>{{$testCenter->test_center->address}}</td>
+                            <td>{{$testCenter->test_center->phone}}</td>
+                        </tr>
+                        @endforeach
+                    @endif
                 </tbody>
             </table>
         </div>
-
-        {{-- <div class="main-pagination mt-5" data-aos="flip-right" data-aos-duration="1500">
-            <ul class="d-flex flex-wrap gap-3 justify-content-center ">
-                <li class="pagination-link">
-                    <a class="link active" href=""><i class="fa-solid fa-chevron-left"></i></a>
-                </li>
-                <li class="pagination-link">
-                    <a class="link" href="">1</a>
-                </li>
-                <li class="pagination-link">
-                    <a class="link" href="">2</a>
-                </li>
-                <li class="pagination-link">
-                    <a class="link" href="">...</a>
-                </li>
-                <li class="pagination-link">
-                    <a class="link" href="">10</a>
-                </li>
-                <li class="pagination-link">
-                    <a class="link" href="">11</a>
-                </li>
-                <li class="pagination-link">
-                    <a class="link" href=""><i class="fa-solid fa-chevron-right"></i></a>
-                </li>
-            </ul>
-        </div> --}}
-
     </section>
 @endsection

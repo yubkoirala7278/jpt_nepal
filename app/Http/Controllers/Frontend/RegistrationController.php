@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\RegistrationRequest;
 use App\Mail\StudentCreatedMail;
 use App\Models\ExamDate;
+use App\Models\Nationality;
 use App\Models\Students;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
@@ -25,7 +27,8 @@ class RegistrationController extends Controller
                 })
                 ->orderBy('name', 'asc')
                 ->get();
-            return view('public.registration.index', compact('examDates', 'testCenters'));
+                $nationalities = Nationality::orderBy('name', 'asc')->get();
+            return view('public.registration.index', compact('examDates', 'testCenters','nationalities'));
         } catch (\Throwable $th) {
             return back()->with('error', $th->getMessage());
         }
@@ -47,12 +50,14 @@ class RegistrationController extends Controller
                         'phone',
                         'dob',
                         'email',
-                        'amount',
-                        'is_appeared_previously'
+                        'is_appeared_previously',
+                        'gender',
+                        'nationality'
                     ]),
                     [
                         'exam_date' => $examDate ? $examDate->exam_date : null,
-                        'test_center'=>$testCenter?$testCenter->name:null
+                        'test_center'=>$testCenter?$testCenter->name:null,
+                        'amount'=>$request->amount??"Pay Later",
                     ]
                 ),
             ]);
@@ -88,13 +93,27 @@ class RegistrationController extends Controller
                 'receipt_image' => str_replace('public/', 'Storage/', $receiptPath),
                 'user_id' => $request->test_center,
                 'exam_date_id' => $request->exam_date,
-                'amount' => $request->amount,
+                'amount' => $request->amount??null,
+                'gender'=>$request->gender,
+                'nationality'=>$request->nationality
             ]);
 
-            Mail::to($request->email)->send(new StudentCreatedMail([
+            $examStartTime = \Carbon\Carbon::parse($student->exam_date->exam_start_time)->format('h:i A');
+            $examEndTime = \Carbon\Carbon::parse($student->exam_date->exam_end_time)->format('h:i A');
+            $data = [
                 'name' => $student->name,
-                'exam_date' => \Carbon\Carbon::parse($student->exam_date->exam_date)->format('F j, Y'),
-            ]));
+                'address' =>$student->address,
+                'phone' => $student->phone,
+                'dob' => $student->dob,
+                'email' =>$student->email,
+                'exam_date' => \Carbon\Carbon::parse($student->exam_date->exam_date)->format('F j, Y'), // Formats as "Month Day, Year"
+                'exam_duration' => "$examStartTime to $examEndTime",
+                'consultancy_name' => $student->user->name,
+                'consultancy_address' => $student->user->test_center->address,
+                'consultancy_phone_number' => $student->user->test_center->phone,
+                'registration_number' => $student->slug,
+            ];
+            Mail::to($student->email)->send(new StudentCreatedMail($data));
 
             return response()->json(['message' => 'Registration successfully done!'], 200);
         } catch (\Throwable $th) {

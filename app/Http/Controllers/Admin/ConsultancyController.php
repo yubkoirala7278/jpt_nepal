@@ -52,7 +52,9 @@ class ConsultancyController extends Controller
                     $query->where('users.name', 'like', '%' . $request->search . '%')
                         ->orWhere('users.email', 'like', '%' . $request->search . '%')
                         ->orWhere('consultancies.phone', 'like', '%' . $request->search . '%')
-                        ->orWhere('consultancies.address', 'like', '%' . $request->search . '%');
+                        ->orWhere('consultancies.address', 'like', '%' . $request->search . '%')
+                        ->orWhere('consultancies.mobile_number', 'like', '%' . $request->search . '%')
+                        ->orWhere('consultancies.owner_name', 'like', '%' . $request->search . '%');
                 });
             }
 
@@ -153,6 +155,8 @@ class ConsultancyController extends Controller
                 'phone' => $request['phone'],
                 'address' => $request['address'],
                 'logo' => $logoPath,
+                'mobile_number' => $request['mobile_number'],
+                'owner_name' => $request['owner_name'],
                 'test_center_id' => Auth::user()->hasRole('test_center_manager')
                     ? Auth::user()->id
                     : $request['test_center']
@@ -233,6 +237,8 @@ class ConsultancyController extends Controller
             $consultancy->update([
                 'phone' => $request->phone,
                 'address' => $request->address,
+                'mobile_number' => $request['mobile_number'],
+                'owner_name' => $request['owner_name'],
                 'test_center_id' => Auth::user()->hasRole('test_center_manager')
                     ? Auth::user()->id
                     : $request['test_center']
@@ -298,7 +304,7 @@ class ConsultancyController extends Controller
             // sending mail to consultancy if the consultancy has been disabled
             $data = [
                 'name' => $consultancy->user->name,
-                'reason'=>$request->reason
+                'reason' => $request->reason
             ];
             Mail::to($consultancy->user->email)->send(new ConsultancyDisabledMail($data));
 
@@ -325,8 +331,8 @@ class ConsultancyController extends Controller
             $consultancy->disabled_reason = null;
             $consultancy->save();
 
-             // sending mail to consultancy if the consultancy has been enabled
-             $data = [
+            // sending mail to consultancy if the consultancy has been enabled
+            $data = [
                 'name' => $consultancy->user->name,
             ];
             Mail::to($consultancy->user->email)->send(new ConsultancyEnabledMail($data));
@@ -335,5 +341,91 @@ class ConsultancyController extends Controller
         } catch (\Exception $e) {
             return response()->json(['message' => 'Failed to enable consultancy.'], 500);
         }
+    }
+
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function getPendingConsultancy(Request $request)
+    {
+        if ($request->ajax()) {
+            $consultancies = Consultancy::select([
+                'consultancies.*',
+                'users.name as user_name',
+                'users.email as user_email',
+                'test_centers.name as test_center_name', // Add the test center name
+                'consultancies.created_at'
+            ])->where('status','disabled')
+                ->join('users', 'users.id', '=', 'consultancies.user_id')
+                ->leftJoin('users as test_centers', 'test_centers.id', '=', 'consultancies.test_center_id'); // Join the users table again for test center
+
+            // Check user role
+            if (Auth::user()->hasRole('test_center_manager')) {
+                $consultancies->where('consultancies.test_center_id', Auth::user()->id);
+            }
+
+            // Apply filters dynamically based on search term
+            if ($request->has('search') && !empty($request->search)) {
+                $consultancies->where(function ($query) use ($request) {
+                    $query->where('users.name', 'like', '%' . $request->search . '%')
+                        ->orWhere('users.email', 'like', '%' . $request->search . '%')
+                        ->orWhere('consultancies.phone', 'like', '%' . $request->search . '%')
+                        ->orWhere('consultancies.address', 'like', '%' . $request->search . '%')
+                        ->orWhere('consultancies.mobile_number', 'like', '%' . $request->search . '%')
+                        ->orWhere('consultancies.owner_name', 'like', '%' . $request->search . '%');
+                });
+            }
+
+            return DataTables::of($consultancies)
+                ->addIndexColumn()
+                ->addColumn('name', fn($row) => $row->user_name) // Access joined user name
+                ->addColumn('email', fn($row) => $row->user_email) // Access joined user email
+                ->addColumn('test_center', fn($row) => $row->test_center_name) // Add test center name column
+                ->addColumn('logo', fn($row) => '<img src="' . asset($row->logo) . '" alt="Logo" height="30" class="logo-image" data-url="' . asset($row->logo) . '" style="cursor:pointer;" loading="lazy" />') // Add data-url to image
+                ->addColumn('status', function ($row) {
+                    $badgeClass = $row->status === 'active' ? 'badge bg-success' : 'badge bg-danger';
+                    return '<span class="' . $badgeClass . '">' . ucfirst($row->status) . '</span>';
+                })
+                ->addColumn('action', function ($row) {
+                    $editUrl = route('consultancy.edit', $row->slug);
+                    $disableUrl = route('disable.consultancy');
+                    $enableUrl = route('enable.consultancy'); // Route for enabling consultancy
+
+                    $buttons = '
+                    <div class="d-flex align-items-center" style="column-gap:10px">
+                        <a href="' . $editUrl . '" class="btn btn-warning btn-sm text-white" title="edit consultancy">
+                            <i class="fa-solid fa-pencil"></i>
+                        </a>';
+
+                    if ($row->status === 'active') {
+                        $buttons .= '
+                        <button type="button" class="btn btn-secondary btn-sm disabled-btn" 
+                                data-slug="' . $row->slug . '" 
+                                data-toggle="modal" 
+                                data-target="#disableModal" 
+                                title="disable consultancy">
+                            <i class="fa-solid fa-ban"></i>
+                        </button>';
+                    } else {
+                        $buttons .= '
+                        <button type="button" class="btn btn-success btn-sm enable-btn" 
+                                data-slug="' . $row->slug . '" 
+                                title="enable consultancy">
+                            <i class="fa-solid fa-check"></i>
+                        </button>';
+                    }
+
+                    $buttons .= '</div>';
+
+                    return $buttons;
+                })
+                ->editColumn('created_at', fn($row) => Carbon::parse($row->created_at)->format('M d, Y')) // Format date
+                ->orderColumn('created_at', 'consultancies.created_at $1') // Sorting logic
+                ->rawColumns(['logo', 'action', 'status']) // Allow raw HTML in logo and action columns
+                ->make(true);
+        }
+
+        return view('admin.consultancy.pending');
     }
 }

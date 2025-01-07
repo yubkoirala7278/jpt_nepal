@@ -147,17 +147,66 @@
 
                 </li><!-- End Notification Nav --> --}}
 
-                <li class="nav-item pe-5">
+                <li class="nav-item dropdown pe-3">
                     <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#"
-                        style="text-decoration: none;">
-                        <div class="rounded-circle bg-success d-flex justify-content-center align-items-center"
-                            style="width: 40px; height: 40px;">
-                            <i class="fa-solid fa-user text-white"></i>
-                        </div>
-                        <span class="d-none d-md-block ps-3 text-success fw-bold">
-                            {{ Auth::user()->name }}
-                        </span>
-                    </a>
+                        data-bs-toggle="dropdown">
+                        <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
+                        <span class="d-none d-md-block dropdown-toggle ps-2">{{ Auth::user()->name }}</span>
+                    </a><!-- End Profile Iamge Icon -->
+
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                        <li class="dropdown-header">
+                            <h6>{{ Auth::user()->name }}</h6>
+                            @if (Auth::user()->getRoleNames()->first() == 'admin')
+                                <h6>Admin</h6>
+                            @elseif(Auth::user()->getRoleNames()->first() == 'consultancy_manager')
+                                <h6>Consultancy Manager</h6>
+                            @elseif(Auth::user()->getRoleNames()->first() == 'test_center_manager')
+                                <h6>Test Center Manager</h6>
+                            @endif
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
+                                <i class="bi bi-person"></i>
+                                <span>My Profile</span>
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
+                                <i class="bi bi-gear"></i>
+                                <span>Account Settings</span>
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="pages-faq.html">
+                                <i class="bi bi-question-circle"></i>
+                                <span>Need Help?</span>
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="#">
+                                <i class="bi bi-box-arrow-right"></i>
+                                <span>Sign Out</span>
+                            </a>
+                        </li>
+
+                    </ul><!-- End Profile Dropdown Items -->
                 </li>
 
             </ul>
@@ -177,203 +226,220 @@
                 </a>
             </li><!-- End Dashboard Nav -->
 
-            @if((Auth::user()->consultancy && Auth::user()->consultancy->status=='active') || (Auth::user()->test_center && Auth::user()->test_center->status=='active') || Auth::user()->hasRole('admin'))
-            @if (Auth::user()->hasRole('admin'))
+            @if (
+                (Auth::user()->consultancy && Auth::user()->consultancy->status == 'active') ||
+                    (Auth::user()->test_center && Auth::user()->test_center->status == 'active') ||
+                    Auth::user()->hasRole('admin'))
+                @if (Auth::user()->hasRole('admin'))
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('exam_date.index') ? '' : 'collapsed' }}"
+                            href="{{ route('exam_date.index') }}">
+                            <i class="fa-solid fa-calendar"></i>
+                            <span>Exam Dates</span>
+                        </a>
+                    </li><!-- End Profile Page Nav -->
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('test_center.create') || request()->routeIs('test_center.index') ? '' : 'collapsed' }}"
+                            data-bs-target="#icons-nav" data-bs-toggle="collapse" href="{{route('test_center.index')}}">
+                            <i class="fa-solid fa-building-columns"></i><span>Test Centers</span><i
+                                class="fas fa-chevron-down ms-auto"></i>
+                        </a>
+                        <ul id="icons-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                            <li>
+                                <a href="{{ route('test_center.create') }}">
+                                    <i class="fas fa-circle"></i><span>Add New</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('test_center.index') }}">
+                                    <i class="fas fa-circle"></i><span>List All</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li><!-- End Icons Nav -->
+                @endif
+
+                @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('test_center_manager'))
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('consultancy.create') || request()->routeIs('consultancy.index') ? '' : 'collapsed' }}"
+                            data-bs-target="#icons-nav-second" data-bs-toggle="collapse" href="#">
+                            <i class="fa-solid fa-user-graduate"></i><span>Education Consultancy</span><i
+                                class="fas fa-chevron-down ms-auto"></i>
+                        </a>
+                        <ul id="icons-nav-second" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                            <li>
+                                <a href="{{ route('consultancy.create') }}">
+                                    <i class="fas fa-circle"></i><span>Add New</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('consultancy.index') }}">
+                                    <i class="fas fa-circle"></i><span>List All</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('pending.consultancy') }}">
+                                    <i class="fas fa-circle"></i><span>Pending</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li><!-- End Icons Nav -->
+                @endif
+
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('exam_date.index') ? '' : 'collapsed' }}"
-                        href="{{ route('exam_date.index') }}">
-                        <i class="fa-solid fa-calendar"></i>
-                        <span>Exam Dates</span>
-                    </a>
-                </li><!-- End Profile Page Nav -->
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('test_center.create') || request()->routeIs('test_center.index') ? '' : 'collapsed' }}"
-                        data-bs-target="#icons-nav" data-bs-toggle="collapse" href="#">
-                        <i class="fa-solid fa-building-columns"></i><span>Test Centers</span><i
+                    <a class="nav-link {{ request()->routeIs('student.index') || request()->routeIs('student.create') ? '' : 'collapsed' }}"
+                        data-bs-target="#icons-nav-third" data-bs-toggle="collapse" href="#">
+                        <i class="fa-solid fa-laptop-file"></i><span>Students/Applicants</span><i
                             class="fas fa-chevron-down ms-auto"></i>
                     </a>
-                    <ul id="icons-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                    <ul id="icons-nav-third" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+                        @if (Auth::user()->hasRole('consultancy_manager'))
+                            <li>
+                                <a href="{{ route('student.create') }}">
+                                    <i class="fas fa-circle"></i><span>Add New</span>
+                                </a>
+                            </li>
+                        @endif
                         <li>
-                            <a href="{{ route('test_center.create') }}">
-                                <i class="fas fa-circle"></i><span>Add New</span>
+                            <a href="{{ route('student.index') }}">
+                                <i class="fas fa-circle"></i><span>List All</span>
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('test_center.index') }}">
+                            <a href="{{ route('student.pending') }}">
+                                <i class="fas fa-circle"></i><span>Pending</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('student.approved') }}">
+                                <i class="fas fa-circle"></i><span>Approved</span>
+                            </a>
+                        </li>
+                        @if (Auth::user()->hasRole('consultancy_manager') || Auth::user()->hasRole('test_center_manager'))
+                            <li>
+                                <a href="{{ route('upload.receipt') }}">
+                                    <i class="fas fa-circle"></i><span>Upload Receipt</span>
+                                </a>
+                            </li>
+                        @endif
+                    </ul>
+                </li><!-- End Icons Nav -->
+
+                @if (Auth::user()->hasRole('consultancy_manager') || Auth::user()->hasRole('admin'))
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="{{ route('admin.admit-card') }}">
+                            <i class="fa-solid fa-ticket"></i>
+                            <span>Admit Card</span>
+                        </a>
+                    </li><!-- End Profile Page Nav -->
+
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="{{ route('admin.applicant-result') }}">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                            <span>Results</span>
+                        </a>
+                    </li><!-- End Profile Page Nav -->
+                @endif
+
+                @if (Auth::user()->hasRole('admin'))
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="{{ route('transaction') }}">
+                            <i class="fa-solid fa-sack-dollar"></i>
+                            <span>Transaction</span>
+                        </a>
+                    </li><!-- End Profile Page Nav -->
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="{{ route('admin.contact') }}">
+                            <i class="fa-solid fa-address-book"></i>
+                            <span>Contact</span>
+                        </a>
+                    </li><!-- End Profile Page Nav -->
+                @endif
+                <li class="nav-item">
+                    <a class="nav-link collapsed" data-bs-target="#icons-nav-fourth" data-bs-toggle="collapse"
+                        href="#">
+                        <i class="fa-solid fa-newspaper"></i><span>News & Notice</span><i
+                            class="fas fa-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="icons-nav-fourth" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                        @if (Auth::user()->hasRole('admin'))
+                            <li>
+                                <a href="{{ route('notice.create') }}">
+                                    <i class="fas fa-circle"></i><span>Add New</span>
+                                </a>
+                            </li>
+                        @endif
+                        <li>
+                            <a href="{{ route('notice.index') }}">
                                 <i class="fas fa-circle"></i><span>List All</span>
                             </a>
                         </li>
                     </ul>
                 </li><!-- End Icons Nav -->
-            @endif
 
-            @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('test_center_manager'))
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('consultancy.create') || request()->routeIs('consultancy.index') ? '' : 'collapsed' }}"
-                        data-bs-target="#icons-nav-second" data-bs-toggle="collapse" href="#">
-                        <i class="fa-solid fa-user-graduate"></i><span>Education Consultancy</span><i
+
+                {{-- <li class="nav-item">
+                    <a class="nav-link collapsed" data-bs-target="#icons-nav-fifth" data-bs-toggle="collapse"
+                        href="#">
+                        <i class="fa-solid fa-file"></i><span>Static Pages</span><i
                             class="fas fa-chevron-down ms-auto"></i>
                     </a>
-                    <ul id="icons-nav-second" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                    <ul id="icons-nav-fifth" class="nav-content collapse " data-bs-parent="#sidebar-nav">
                         <li>
-                            <a href="{{ route('consultancy.create') }}">
-                                <i class="fas fa-circle"></i><span>Add New</span>
+                            <a href="#">
+                                <i class="fas fa-circle"></i><span>Header</span>
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('consultancy.index') }}">
-                                <i class="fas fa-circle"></i><span>List All</span>
+                            <a href="#">
+                                <i class="fas fa-circle"></i><span>Footer</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fas fa-circle"></i><span>Home Page</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fas fa-circle"></i><span>Contact Page</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fas fa-circle"></i><span>F.A.Q</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fas fa-circle"></i><span>Privacy & Policy</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fas fa-circle"></i><span>Help Desk</span>
                             </a>
                         </li>
                     </ul>
-                </li><!-- End Icons Nav -->
-            @endif
-
-            <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('student.index') || request()->routeIs('student.create') ? '' : 'collapsed' }}"
-                    data-bs-target="#icons-nav-third" data-bs-toggle="collapse" href="#">
-                    <i class="fa-solid fa-laptop-file"></i><span>Students/Applicants</span><i
-                        class="fas fa-chevron-down ms-auto"></i>
-                </a>
-                <ul id="icons-nav-third" class="nav-content collapse" data-bs-parent="#sidebar-nav">
-                    @if (Auth::user()->hasRole('consultancy_manager'))
-                        <li>
-                            <a href="{{ route('student.create') }}">
-                                <i class="fas fa-circle"></i><span>Add New</span>
-                            </a>
-                        </li>
-                    @endif
-                    <li>
-                        <a href="{{ route('student.index') }}">
-                            <i class="fas fa-circle"></i><span>List All</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('student.pending') }}">
-                            <i class="fas fa-circle"></i><span>Pending</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('student.approved') }}">
-                            <i class="fas fa-circle"></i><span>Approved</span>
-                        </a>
-                    </li>
-                    @if(Auth::user()->hasRole('consultancy_manager'))
-                    <li>
-                        <a href="{{ route('upload.receipt') }}">
-                            <i class="fas fa-circle"></i><span>Upload Receipt</span>
-                        </a>
-                    </li>
-                    @endif
-                </ul>
-            </li><!-- End Icons Nav -->
-
-            @if (Auth::user()->hasRole('consultancy_manager') || Auth::user()->hasRole('admin'))
-                <li class="nav-item">
-                    <a class="nav-link collapsed" href="{{ route('admin.admit-card') }}">
-                        <i class="fa-solid fa-ticket"></i>
-                        <span>Admit Card</span>
-                    </a>
-                </li><!-- End Profile Page Nav -->
-
-                <li class="nav-item">
-                    <a class="nav-link collapsed" href="{{ route('admin.applicant-result') }}">
-                        <i class="fa-solid fa-graduation-cap"></i>
-                        <span>Results</span>
-                    </a>
-                </li><!-- End Profile Page Nav -->
-            @endif
-
-            @if (Auth::user()->hasRole('admin'))
-                <li class="nav-item">
-                    <a class="nav-link collapsed" href="{{ route('transaction') }}">
-                        <i class="fa-solid fa-sack-dollar"></i>
-                        <span>Transaction</span>
-                    </a>
-                </li><!-- End Profile Page Nav -->
-            @endif
-            <li class="nav-item">
-                <a class="nav-link collapsed" data-bs-target="#icons-nav-fourth" data-bs-toggle="collapse"
-                    href="#">
-                    <i class="fa-solid fa-newspaper"></i><span>News & Notice</span><i
-                        class="fas fa-chevron-down ms-auto"></i>
-                </a>
-                <ul id="icons-nav-fourth" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                    @if (Auth::user()->hasRole('admin'))
-                        <li>
-                            <a href="{{ route('notice.create') }}">
-                                <i class="fas fa-circle"></i><span>Add New</span>
-                            </a>
-                        </li>
-                    @endif
-                    <li>
-                        <a href="{{ route('notice.index') }}">
-                            <i class="fas fa-circle"></i><span>List All</span>
-                        </a>
-                    </li>
-                </ul>
-            </li><!-- End Icons Nav -->
+                </li><!-- End Icons Nav --> --}}
 
 
-            {{-- <li class="nav-item">
-                <a class="nav-link collapsed" data-bs-target="#icons-nav-fifth" data-bs-toggle="collapse" href="#">
-                    <i class="fa-solid fa-file"></i><span>Static Pages</span><i class="fas fa-chevron-down ms-auto"></i>
-                </a>
-                <ul id="icons-nav-fifth" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                    <li>
-                        <a href="#">
-                            <i class="fas fa-circle"></i><span>Header</span>
+                @if (Auth::user()->hasRole('admin'))
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="{{ route('testimonial.index') }}">
+                            <i class="fas fa-comment"></i>
+                            <span>Testimonial</span>
                         </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <i class="fas fa-circle"></i><span>Footer</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <i class="fas fa-circle"></i><span>Home Page</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <i class="fas fa-circle"></i><span>Contact Page</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <i class="fas fa-circle"></i><span>F.A.Q</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <i class="fas fa-circle"></i><span>Privacy & Policy</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <i class="fas fa-circle"></i><span>Help Desk</span>
-                        </a>
-                    </li>
-                </ul>
-            </li><!-- End Icons Nav --> --}}
+                    </li><!-- End Profile Page Nav -->
 
 
-            @if (Auth::user()->hasRole('admin'))
-                <li class="nav-item">
-                    <a class="nav-link collapsed" href="{{ route('testimonial.index') }}">
-                        <i class="fas fa-comment"></i>
-                        <span>Testimonial</span>
-                    </a>
-                </li><!-- End Profile Page Nav -->
-            @endif
-
-            {{-- <li class="nav-item">
-                <a class="nav-link collapsed" href="">
-                    <i class="fa-solid fa-blog"></i>
-                    <span>Blogs</span>
-                </a>
-            </li><!-- End Profile Page Nav --> --}}
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="{{ route('blog.index') }}">
+                            <i class="fa-solid fa-blog"></i>
+                            <span>Blogs</span>
+                        </a>
+                    </li><!-- End Profile Page Nav -->
+                @endif
             @endif
 
             <li class="nav-item">

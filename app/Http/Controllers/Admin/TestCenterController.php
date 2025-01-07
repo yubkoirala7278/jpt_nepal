@@ -8,6 +8,8 @@ use App\Http\Requests\TestCenterRequest;
 use App\Mail\TestCenterCreatedMail;
 use App\Mail\TestCenterDisabledMail;
 use App\Mail\TestCenterEnabledMail;
+use App\Models\Consultancy;
+use App\Models\Students;
 use App\Models\TestCenter;
 use App\Models\User;
 use Carbon\Carbon;
@@ -80,9 +82,12 @@ class TestCenterController extends Controller
                     $actionButtons .= '</div>';
                     return $actionButtons;
                 })
+                ->addColumn('dashboard', function ($row) {
+                    return '<button class="btn btn-success btn-sm text-white view-dashboard" data-id="' . $row->user->id . '">View</button>';
+                })
                 ->editColumn('created_at', fn($row) => Carbon::parse($row->created_at)->format('M d, Y')) // Format date
                 ->orderColumn('created_at', 'test_centers.created_at $1') // Sorting logic
-                ->rawColumns(['action', 'status'])
+                ->rawColumns(['action', 'status', 'dashboard'])
                 ->make(true);
         }
 
@@ -252,8 +257,8 @@ class TestCenterController extends Controller
             $testCenter->disabled_reason = null; // Remove the disabled reason
             $testCenter->save();
 
-             // sending mail to test center if the test center has been enabled
-             $data = [
+            // sending mail to test center if the test center has been enabled
+            $data = [
                 'name' => $testCenter->user->name,
             ];
             Mail::to($testCenter->user->email)->send(new TestCenterEnabledMail($data));
@@ -263,4 +268,22 @@ class TestCenterController extends Controller
             return response()->json(['message' => 'Failed to enable test center.'], 500);
         }
     }
+
+    public function fetchConsultancies(Request $request)
+    {
+        if ($request->ajax()) {
+            // Fetch consultancies with their users
+            $consultancies = Consultancy::with(['user', 'students']) // Assuming 'students' relationship exists
+                ->where('test_center_id', $request->test_center_id)
+                ->get();
+    
+            return response()->json([
+                'status' => 'success',
+                'consultancies' => $consultancies,
+            ]);
+        }
+    
+        return response()->json(['status' => 'error', 'message' => 'Invalid request'], 400);
+    }
+    
 }

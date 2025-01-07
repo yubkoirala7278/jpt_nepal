@@ -23,140 +23,33 @@
         <h2>Our Latest Blog</h2>
     </div>
     <div class="row gy-4 gx-4">
-        <div class="col-xl-3 col-lg-4 col-md-6" data-aos="flip-right" data-aos-duration="1500">
-            <div class="card blog-card" style="width: 100%;">
-                <div class="blog-card-head">
-                    <img src="{{asset('frontend/img/about/about-1.png')}}" class="card-img-top" alt="About Image" loading="lazy">
-                    <div class="create-date">
-                        <p class="m-0 fw-normal text-white" >12</p>
-                        <p class="m-0 fw-normal text-white">Dec</p>
-                        <p class="m-0 fw-normal text-white">2024</p>
+        @if(count($blogs)>0)
+            @foreach ($blogs as $blog)
+            <div class="col-xl-3 col-lg-4 col-md-6" data-aos="flip-right" data-aos-duration="1500">
+                <div class="card blog-card" style="width: 100%;">
+                    <div class="blog-card-head">
+                        <img src="{{asset($blog->image)}}" class="card-img-top" alt="About Image" loading="lazy">
+                        <div class="create-date">
+                            <p class="m-0 fw-normal text-white">{{ $blog->created_at->format('d') }}</p>
+                            <p class="m-0 fw-normal text-white">{{ $blog->created_at->format('M') }}</p>
+                            <p class="m-0 fw-normal text-white">{{ $blog->created_at->format('Y') }}</p>
+                        </div>
                     </div>
-                </div>
-                <div class="card-body">
-                  <h5 class="card-title fw-bold">Blog title</h5>
-                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content...</p>
-                  <a href="{{route('blog-detail','khdud')}}" class="btn text-primary">Read More</a>
-                </div>
-              </div>
-        </div>
-
-        <div class="col-xl-3 col-lg-4 col-md-6" data-aos="flip-right" data-aos-duration="1500">
-            <div class="card blog-card" style="width: 100%;">
-                <div class="blog-card-head">
-                    <img src="{{asset('frontend/img/about/about-1.png')}}" class="card-img-top" alt="About Image" loading="lazy">
-                    <div class="create-date">
-                        <p class="m-0 fw-normal text-white" >12</p>
-                        <p class="m-0 fw-normal text-white">Dec</p>
-                        <p class="m-0 fw-normal text-white">2024</p>
+                    <div class="card-body">
+                      <h5 class="card-title fw-bold">{{$blog->title}}</h5>
+                      <p class="card-text">{!! \Illuminate\Support\Str::limit(strip_tags($blog->description), 60) !!}</p>
+                      <a href="{{route('blog-detail',$blog->slug)}}" class="btn text-primary">Read More</a>
                     </div>
-                </div>
-                <div class="card-body">
-                  <h5 class="card-title fw-bold">Blog title</h5>
-                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content...</p>
-                  <a href="blog-detail.html" class="btn text-primary">Read More</a>
-                </div>
-              </div>
-        </div>
-
-
-        <div class="col-xl-3 col-lg-4 col-md-6" data-aos="flip-right" data-aos-duration="1500">
-            <div class="card blog-card" style="width: 100%;">
-                <div class="blog-card-head">
-                    <img src="{{asset('frontend/img/about/about-1.png')}}" class="card-img-top" alt="About Image" loading="lazy">
-                    <div class="create-date">
-                        <p class="m-0 fw-normal text-white" >12</p>
-                        <p class="m-0 fw-normal text-white">Dec</p>
-                        <p class="m-0 fw-normal text-white">2024</p>
-                    </div>
-                </div>
-                <div class="card-body">
-                  <h5 class="card-title fw-bold">Blog title</h5>
-                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content...</p>
-                  <a href="blog-detail.html" class="btn text-primary">Read More</a>
-                </div>
-              </div>
-        </div>
-
-
-        <div class="col-xl-3 col-lg-4 col-md-6" data-aos="flip-right" data-aos-duration="1500">
-            <div class="card blog-card" style="width: 100%;">
-                <div class="blog-card-head">
-                    <img src="{{asset('frontend/img/about/about-1.png')}}" class="card-img-top" alt="About Image" loading="lazy">
-                    <div class="create-date">
-                        <p class="m-0 fw-normal text-white" >12</p>
-                        <p class="m-0 fw-normal text-white">Dec</p>
-                        <p class="m-0 fw-normal text-white">2024</p>
-                    </div>
-                </div>
-                <div class="card-body">
-                  <h5 class="card-title fw-bold">Blog title</h5>
-                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content...</p>
-                  <a href="blog-detail.html" class="btn text-primary">Read More</a>
-                </div>
-              </div>
-        </div>
-
-
-        <div class="col-xl-3 col-lg-4 col-md-6" data-aos="flip-right" data-aos-duration="1500">
-            <div class="card blog-card" style="width: 100%;">
-                <div class="blog-card-head">
-                    <img src="{{asset('frontend/img/about/about-1.png')}}" class="card-img-top" alt="About Image" loading="lazy">
-                    <div class="create-date">
-                        <p class="m-0 fw-normal text-white" >12</p>
-                        <p class="m-0 fw-normal text-white">Dec</p>
-                        <p class="m-0 fw-normal text-white">2024</p>
-                    </div>
-                </div>
-                <div class="card-body">
-                  <h5 class="card-title fw-bold">Blog title</h5>
-                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content...</p>
-                  <a href="blog-detail.html" class="btn text-primary">Read More</a>
-                </div>
-              </div>
-        </div>
-
-
-        <div class="col-xl-3 col-lg-4 col-md-6" data-aos="flip-right" data-aos-duration="1500">
-            <div class="card blog-card" style="width: 100%;">
-                <div class="blog-card-head">
-                    <img src="{{asset('frontend/img/about/about-1.png')}}" class="card-img-top" alt="About Image" loading="lazy">
-                    <div class="create-date">
-                        <p class="m-0 fw-normal text-white" >12</p>
-                        <p class="m-0 fw-normal text-white">Dec</p>
-                        <p class="m-0 fw-normal text-white">2024</p>
-                    </div>
-                </div>
-                <div class="card-body">
-                  <h5 class="card-title fw-bold">Blog title</h5>
-                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content...</p>
-                  <a href="blog-detail.html" class="btn text-primary">Read More</a>
-                </div>
-              </div>
-        </div>
-
-
-        <div class="col-xl-3 col-lg-4 col-md-6" data-aos="flip-right" data-aos-duration="1500">
-            <div class="card blog-card" style="width: 100%;">
-                <div class="blog-card-head">
-                    <img src="{{asset('frontend/img/about/about-1.png')}}" class="card-img-top" alt="About Image" loading="lazy">
-                    <div class="create-date">
-                        <p class="m-0 fw-normal text-white" >12</p>
-                        <p class="m-0 fw-normal text-white">Dec</p>
-                        <p class="m-0 fw-normal text-white">2024</p>
-                    </div>
-                </div>
-                <div class="card-body">
-                  <h5 class="card-title fw-bold">Blog title</h5>
-                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content...</p>
-                  <a href="blog-detail.html" class="btn text-primary">Read More</a>
-                </div>
-              </div>
-        </div>
-
+                  </div>
+            </div>
+            @endforeach
+            {{$blogs->links('pagination::bootstrap-5')}}
+        @else
+        <p>No Blogs to display..</p>
+        @endif
     </div>
      
-    <div class="main-pagination mt-5" data-aos="flip-right" data-aos-duration="1500">
+    {{-- <div class="main-pagination mt-5" data-aos="flip-right" data-aos-duration="1500">
         <ul class="d-flex flex-wrap gap-3 justify-content-center ">
             <li class="pagination-link">
                 <a class="link active" href=""><i class="fa-solid fa-chevron-left"></i></a>
@@ -180,7 +73,7 @@
                 <a class="link" href=""><i class="fa-solid fa-chevron-right"></i></a>
             </li>
         </ul>
-    </div>
+    </div> --}}
 
 </section>
 @endsection

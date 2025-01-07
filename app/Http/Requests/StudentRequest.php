@@ -35,22 +35,36 @@ class StudentRequest extends FormRequest
             ],
             'is_appeared_previously' => 'nullable',
             'exam_date' => 'required',
-            'amount'=>'required|numeric',
-            'receipt_image' =>'nullable|image|mimes:webp,jpeg,png,jpg,gif,svg|max:2048',
+            'gender'=>'required',
+            'nationality'=>'required'
         ];
 
         // profile is required only for store, optional for update
         if ($this->isMethod('post')) { // Store method
             $rules['profile'] = 'required|image|mimes:webp,jpeg,png,jpg,gif,svg|max:2048';
+            // Add custom dimension validation
+            $rules['profile'] .= '|dimensions:width=120,height=160'; // 3cm x 4cm (approximately 120x160px)
         } elseif ($this->isMethod('put') || $this->isMethod('patch')) { // Update method
             $rules['profile'] = 'nullable|image|mimes:webp,jpeg,png,jpg,gif,svg|max:2048';
+            // Add custom dimension validation
+            $rules['profile'] .= '|dimensions:width=120,height=160'; // 3cm x 4cm (approximately 120x160px)
         }
+        
 
         // citizenship is required only for store, optional for update
         if ($this->isMethod('post')) { // Store method
             $rules['citizenship'] = 'required|mimes:webp,jpeg,png,jpg,svg,pdf|max:2048';
         } elseif ($this->isMethod('put') || $this->isMethod('patch')) { // Update method
             $rules['citizenship'] = 'nullable|mimes:webp,jpeg,png,jpg,svg,pdf|max:2048';
+        }
+
+        // amount and receipt_image depend on each
+        if ($this->isMethod('post')) {
+            $rules['amount'] =  'nullable|numeric|required_with:receipt_image';
+            $rules['receipt_image'] = 'nullable|image|mimes:webp,jpeg,png,jpg,gif,svg|max:2048|required_with:amount';
+        } elseif ($this->isMethod('put') || $this->isMethod('patch')) { // Update method
+            $rules['amount'] =  'nullable|numeric|required_with:receipt_image';
+            $rules['receipt_image'] = 'nullable|image|mimes:webp,jpeg,png,jpg,gif,svg|max:2048';
         }
 
         return $rules;

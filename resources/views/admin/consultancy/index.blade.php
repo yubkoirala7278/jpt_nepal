@@ -11,8 +11,10 @@
             <thead>
                 <tr>
                     <th>S.N</th>
-                    <th>Name</th>
+                    <th>Consultancy Name</th>
+                    <th>Proprietor</th>
                     <th>Phone No.</th>
+                    <th>Mobile No.</th>
                     <th>Address</th>
                     <th>Email</th>
                     <th>Logo</th>
@@ -102,8 +104,20 @@
                             searchable: true
                         },
                         {
+                            data: 'owner_name',
+                            name: 'owner_name',
+                            orderable: true,
+                            searchable: true
+                        },
+                        {
                             data: 'phone',
                             name: 'phone',
+                            orderable: true,
+                            searchable: true
+                        },
+                        {
+                            data: 'mobile_number',
+                            name: 'mobile_number',
                             orderable: true,
                             searchable: true
                         },

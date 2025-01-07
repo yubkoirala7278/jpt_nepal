@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->string('name');
             $table->string('address');
-            $table->decimal('amount', 8, 2);
+            $table->decimal('amount', 8, 2)->nullable();
             $table->string('profile');
             $table->string('phone');
             $table->date('dob')->nullable();
@@ -31,6 +31,8 @@ return new class extends Migration
             $table->boolean('status')->default(false);
             $table->boolean('is_viewed_by_test_center_manager')->default(false);
             $table->boolean('is_viewed_by_admin')->default(false);
+            $table->enum('gender', ['male', 'female', 'other']);
+            $table->string('nationality');
             $table->timestamps();
         });
     }

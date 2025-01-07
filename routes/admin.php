@@ -3,7 +3,9 @@
 use App\Http\Controllers\Admin\AdmitCardController;
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\ConsultancyController;
+use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\ExamDateController;
+use App\Http\Controllers\Admin\HeaderController;
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\NoticeController;
 use App\Http\Controllers\Admin\ResultController;
@@ -17,10 +19,12 @@ Route::get('/home', [HomeController::class, 'index'])->name('admin.home');
 
 // =======check if the status of consultancy or test center is active or disabled======
 Route::middleware(['auth', 'check.consultancy.test_center'])->group(function () {
+
     Route::resource('notice', NoticeController::class);
     // ==========role admin can access the below routes===========
     Route::middleware(['role:admin'])->group(function () {
         Route::resource('test_center', TestCenterController::class);
+        Route::post('/test-center/consultancies', [TestCenterController::class, 'fetchConsultancies'])->name('test_center.consultancies');
         Route::post('/disable-test-center', [TestCenterController::class, 'disableTestCenter'])->name('disable.test_center');
         Route::post('/enable-test-center', [TestCenterController::class, 'enableTestCenter'])->name('enable.test_center');
         Route::resource('exam_date', ExamDateController::class);
@@ -28,11 +32,17 @@ Route::middleware(['auth', 'check.consultancy.test_center'])->group(function () 
         Route::get('/transaction', [TransactionController::class, 'index'])->name('transaction');
         Route::post('/applicants/export', [StudentController::class, 'exportApplicants'])->name('applicants.export');
         Route::post('/applicant-result/import', [ResultController::class, 'import'])->name('results.import');
+        Route::resource('blog', BlogController::class);
+        Route::resource('header', HeaderController::class);
+        Route::get('/contact', [ContactController::class, 'index'])->name('admin.contact');
+        Route::delete('/contact/{slug}', [ContactController::class, 'destroy'])->name('contact.destroy');
+        Route::get('/contact/{id}', [ContactController::class, 'show'])->name('contact.show');
     });
 
     // =========accessible by test centers and admin only============
     Route::group(['middleware' => ['role:admin|test_center_manager']], function () {
         Route::resource('consultancy', ConsultancyController::class);
+        Route::get('/pending-consultancy', [ConsultancyController::class, 'getPendingConsultancy'])->name('pending.consultancy');
         Route::post('/disable-consultancy', [ConsultancyController::class, 'disableConsultancy'])->name('disable.consultancy');
         Route::post('/enable-consultancy', [ConsultancyController::class, 'enableConsultancy'])->name('enable.consultancy');
     });
@@ -51,7 +61,7 @@ Route::middleware(['auth', 'check.consultancy.test_center'])->group(function () 
     });
 
     // ===========accessible by consultancy manager only===============
-    Route::group(['middleware' => ['role:consultancy_manager']], function () {
+    Route::group(['middleware' => ['role:consultancy_manager|test_center_manager']], function () {
         Route::get('/upload-receipt', [StudentController::class, 'uploadReceipt'])->name('upload.receipt');
         Route::post('/upload-receipt', [StudentController::class, 'storeReceiptInfo'])->name('store.receipt');
     });

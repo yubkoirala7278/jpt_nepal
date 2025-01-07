@@ -12,8 +12,8 @@ class TransactionController extends Controller
     public function index()
     {
         try {
-            $students = Students::with('exam_date', 'user');
-    
+            $students = Students::with('exam_date', 'user')
+            ->whereNotNull('amount');
             if (request()->ajax()) {
                 return DataTables::of($students)
                     ->addIndexColumn() // Automatically adds a serial number

@@ -36,6 +36,8 @@ class ConsultancyRequest extends FormRequest
                 'regex:/^\+?[0-9\s\-\(\)]+$/',
             ],
             'address' => 'required|max:255',
+            'owner_name'=>'required|max:255',
+            'mobile_number'=>'required|max:255'
         ];
 
         // Password is required only for store, optional for update
@@ -61,7 +63,7 @@ class ConsultancyRequest extends FormRequest
         }
 
         // assign to test center 
-        if(Auth::user()->hasRole('admin')){
+        if((Auth::user() && Auth::user()->hasRole('admin')) || !Auth::user()){
             $rules['test_center']='required';
         }
 

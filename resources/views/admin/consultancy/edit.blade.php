@@ -17,11 +17,27 @@
             @endif
         </div>
         <div class="mb-3">
-            <label for="phone" class="form-label">Phone</label>
+            <label for="owner_name" class="form-label">Owner/Proprietor Name</label>
+            <input type="text" class="form-control" id="owner_name" name="owner_name" placeholder="Enter Proprietor Name"
+                value="{{ old('owner_name',$consultancy->owner_name) }}">
+            @if ($errors->has('owner_name'))
+                <span class="text-danger">{{ $errors->first('owner_name') }}</span>
+            @endif
+        </div>
+        <div class="mb-3">
+            <label for="phone" class="form-label">Phone Number</label>
             <input type="tel" class="form-control" id="phone" name="phone" placeholder="Phone number.."
                 value="{{ old('phone', $consultancy->phone) }}">
             @if ($errors->has('phone'))
                 <span class="text-danger">{{ $errors->first('phone') }}</span>
+            @endif
+        </div>
+        <div class="mb-3">
+            <label for="mobile_number" class="form-label">Mobile Number</label>
+            <input type="tel" class="form-control" id="mobile_number" name="mobile_number" placeholder="Enter Mobile Number"
+                value="{{ old('mobile_number',$consultancy->mobile_number) }}">
+            @if ($errors->has('mobile_number'))
+                <span class="text-danger">{{ $errors->first('mobile_number') }}</span>
             @endif
         </div>
         <div class="mb-3">

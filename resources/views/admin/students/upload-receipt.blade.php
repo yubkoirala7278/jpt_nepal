@@ -67,6 +67,16 @@
                 <span class="text-danger">{{ $errors->first('students') }}</span>
             @endif
         </div>
+
+          <!-- Amount Section -->
+          <div class="mb-3">
+            <label for="amount" class="form-label">Total Receipt Amount</label>
+            <input type="number" class="form-control" id="amount" name="amount" placeholder="Enter Receipt Amount"
+                value="{{ old('amount') }}">
+            @if ($errors->has('amount'))
+                <span class="text-danger">{{ $errors->first('amount') }}</span>
+            @endif
+        </div>
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 @endsection

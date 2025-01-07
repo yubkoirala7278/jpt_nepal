@@ -21,6 +21,8 @@
                     <th>Address</th>
                     <th>Consultancy Name</th>
                     <th>Consultancy Address</th>
+                    <th>Gender</th>
+                    <th>Nationality</th>
                     <th>Phone Number</th>
                     <th>DOB</th>
                     <th>Email</th>
@@ -189,6 +191,14 @@
                     {
                         data: 'consultancy_address',
                         name: 'consultancy_address'
+                    },
+                    {
+                        data: 'gender',
+                        name: 'gender'
+                    },
+                    {
+                        data: 'nationality',
+                        name: 'nationality'
                     },
                     {
                         data: 'phone',

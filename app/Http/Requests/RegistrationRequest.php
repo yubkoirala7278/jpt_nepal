@@ -35,13 +35,22 @@ class RegistrationRequest extends FormRequest
             ],
             'is_appeared_previously' => 'nullable',
             'exam_date' => 'required',
-            'amount' => 'required|numeric',
-            'receipt_image' => 'required|image|mimes:webp,jpeg,png,jpg,gif,svg|max:2048',
-            'profile' => 'required|image|mimes:webp,jpeg,png,jpg,gif,svg|max:2048',
+            'amount' => 'nullable|numeric|required_with:receipt_image',
+            'receipt_image' => 'nullable|image|mimes:webp,jpeg,png,jpg,gif,svg|max:2048|required_with:amount',
+            'profile' => 'required|image|mimes:webp,jpeg,png,jpg,gif,svg|max:2048|dimensions:width=120,height=160',
             'citizenship' => 'required|mimes:webp,jpeg,png,jpg,svg,pdf|max:2048',
-            'test_center'=>'required'
+            'test_center' => 'required',
+            'gender' => 'required',
+            'nationality' => 'required'
         ];
 
         return $rules;
+    }
+
+    public function messages()
+    {
+        return [
+            'profile.dimensions' => 'The profile image must have dimensions of 120px by 160px (3cm x 4cm).',
+        ];
     }
 }

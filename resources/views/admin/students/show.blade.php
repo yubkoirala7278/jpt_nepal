@@ -19,8 +19,10 @@
                     <p><strong>Date of Birth:</strong> {{ $student->dob }}</p>
                     <p><strong>Is Appeared Previously:</strong> {{ $student->is_appeared_previously ? 'Yes' : 'No' }}</p>
                     <p class="mt-4"><strong>Registration Number:</strong> {{ $student->slug }}</p>
+                    <p class="mt-4"><strong>Gender:</strong> {{ $student->gender }}</p>
+                    <p class="mt-4"><strong>Nationality:</strong> {{ $student->nationality }}</p>
                     <p><strong>Status:</strong>
-                        <span class="badge {{ $student->status ? 'bg-success' : 'bg-warning' }}">
+                        <span class="badge {{ $student->status ? 'bg-success' : 'bg-danger' }}">
                             {{ $student->status ? 'Approved' : 'Pending' }}
                         </span>
                     </p>

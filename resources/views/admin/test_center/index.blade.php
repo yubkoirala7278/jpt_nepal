@@ -6,21 +6,22 @@
         <a class="btn btn-secondary btn-sm" href="{{ route('test_center.create') }}">Add New</a>
     </div>
     <div class="table-responsive">
-    <table class="table test-center-datatable table-hover pt-3 w-100">
-        <thead>
-            <tr>
-                <th>S.N</th>
-                <th>Name</th>
-                <th>Phone No.</th>
-                <th>Address</th>
-                <th>Email</th>
-                <th>Created At</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+        <table class="table test-center-datatable table-hover pt-3 w-100">
+            <thead>
+                <tr>
+                    <th>S.N</th>
+                    <th>Name</th>
+                    <th>Phone No.</th>
+                    <th>Address</th>
+                    <th>Email</th>
+                    <th>Created At</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                    {{-- <th>Dashboard</th> --}}
+                </tr>
+            </thead>
+            <tbody style="vertical-align: middle"></tbody>
+        </table>
     </div>
 @endsection
 
@@ -53,6 +54,26 @@
                     </div>
                 </div>
             </form>
+        </div>
+    </div>
+    <!-- Consultancies Modal -->
+    <div class="modal fade" id="consultanciesModal" tabindex="-1" aria-labelledby="consultanciesModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="consultanciesModalLabel">Consultancies</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="consultanciesList">
+                        <!-- Dynamic content will be loaded here -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
         </div>
     </div>
 @endsection
@@ -117,7 +138,11 @@
                             name: 'action',
                             orderable: false,
                             searchable: false
-                        }
+                        },
+                        // {
+                        //     data: 'dashboard',
+                        //     name: 'dashboard',
+                        // }
                     ],
                     order: [
                         [6, 'desc']
@@ -166,7 +191,7 @@
                                 });
 
                                 $('.test-center-datatable').DataTable().ajax
-                            .reload(); // Reload data table
+                                    .reload(); // Reload data table
                             },
                             error: function(xhr, status, error) {
                                 Swal.fire({
@@ -243,9 +268,9 @@
                 // Enforce the character limit
                 if (charCount > maxLength) {
                     $(this).val($(this).val().substring(0,
-                    maxLength)); // Truncate the text if over 350 characters
+                        maxLength)); // Truncate the text if over 350 characters
                     $('#charCount').text(maxLength + '/' +
-                    maxLength); // Show max count if limit is exceeded
+                        maxLength); // Show max count if limit is exceeded
                 }
             });
 
@@ -301,6 +326,100 @@
                 });
             });
             // ======end of deleting test center========
+
+
+            // ========view consultancies=============
+            $(document).on('click', '.view-dashboard', function() {
+                const testCenterId = $(this).data('id');
+                const modal = $('#consultanciesModal');
+                const consultanciesList = $('#consultanciesList');
+
+                // Clear previous content
+                consultanciesList.html('<p>Loading...</p>');
+
+                // Fetch consultancies via AJAX
+                $.ajax({
+                    url: "{{ route('test_center.consultancies') }}",
+                    method: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        test_center_id: testCenterId
+                    },
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            let content = '';
+
+                            response.consultancies.forEach(consultancy => {
+                                // Add consultancy name
+                                content +=
+                                    `<h5 class=" fw-bold bg-success p-2 text-white rounded-2">${consultancy.user.name}</h5>`;
+
+                                // Check if there are students
+                                if (consultancy.students.length > 0) {
+                                    // Initialize counters for active and inactive students
+                                    let activeCount = 0;
+                                    let inactiveCount = 0;
+
+                                    // Start the table
+                                    content +=
+                                        '<table class="table table-bordered"><thead><tr><th>Student Name</th><th>Phone</th><th>Email</th><th>Nationality</th><th>Status</th></tr></thead><tbody>';
+
+                                    consultancy.students.forEach(student => {
+                                        content += `
+                                <tr>
+                                    <td>${student.name}</td>
+                                    <td>${student.phone}</td>
+                                    <td>${student.email}</td>
+                                    <td>${student.nationality}</td>
+                                    <td>
+                                        <span class="badge ${student.status ? 'bg-success' : 'bg-warning'}">
+                                            ${student.status ? 'Active' : 'Pending'}
+                                        </span>
+                                    </td>
+                                </tr>
+                            `;
+
+                                        // Increment active or inactive count based on student status
+                                        if (student.status) {
+                                            activeCount++;
+                                        } else {
+                                            inactiveCount++;
+                                        }
+                                    });
+
+                                    // Close the table
+                                    content += '</tbody></table>';
+
+                                    // Add total active and inactive counts
+                                    content += `
+                            <p><strong>Total Active Students:</strong> ${activeCount}</p>
+                            <p><strong>Total Pending Students:</strong> ${inactiveCount}</p>
+                        `;
+                                } else {
+                                    // If no students found, show a message
+                                    content +=
+                                        `<p>No students found for this consultancy.</p>`;
+                                }
+                            });
+
+                            // Insert the content into the modal body
+                            $('#consultanciesList').html(content);
+                        } else {
+                            $('#consultanciesList').html('<p>No consultancies found.</p>');
+                        }
+                    },
+                    error: function() {
+                        consultanciesList.html('<p>An error occurred while fetching data.</p>');
+                    }
+                });
+
+                // Show the modal
+                modal.modal('show');
+            });
+
+
+            // =====end of viewing consultancies=========
+
         });
     </script>
 @endpush

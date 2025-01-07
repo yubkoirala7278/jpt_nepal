@@ -4,18 +4,16 @@ namespace App\Http\Controllers\Admin;
 
 use App\Exports\StudentsExport;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ReceiptRequest;
 use App\Http\Requests\StudentRequest;
 use App\Mail\StudentCreatedMail;
 use App\Models\AdmitCard;
 use App\Models\Consultancy;
 use App\Models\ExamDate;
+use App\Models\Nationality;
 use App\Models\Students;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
@@ -25,7 +23,7 @@ class StudentController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('check.student.access')->only(['edit', 'update', 'create', 'store','show']);
+        $this->middleware('check.student.access')->only(['edit', 'update', 'create', 'store', 'show']);
     }
     /**
      * Display a listing of the resource.
@@ -47,10 +45,11 @@ class StudentController extends Controller
     public function create()
     {
         try {
+            $nationalities = Nationality::orderBy('name', 'asc')->get();
             $examDates = ExamDate::where('exam_date', '>', now()->addDays(10))
                 ->latest()
                 ->get();
-            return view('admin.students.create', compact('examDates'));
+            return view('admin.students.create', compact('examDates','nationalities'));
         } catch (\Throwable $th) {
             return back()->with('error', $th->getMessage());
         }
@@ -102,7 +101,9 @@ class StudentController extends Controller
                 'receipt_image' => $receiptPath,
                 'user_id' => Auth::user()->id,
                 'exam_date_id' => $request['exam_date'],
-                'amount' => $request['amount']
+                'amount' => $request['amount'] ?? null,
+                'gender'=>$request['gender'],
+                'nationality'=>$request['nationality']
             ]);
             // send email to applicant
             $examStartTime = \Carbon\Carbon::parse($student->exam_date->exam_start_time)->format('h:i A');
@@ -117,6 +118,7 @@ class StudentController extends Controller
                 'exam_duration' => "$examStartTime to $examEndTime",
                 'consultancy_name' => $student->user->name,
                 'consultancy_address' => $student->user->consultancy->address,
+                'consultancy_phone_number' => $student->user->consultancy->phone,
                 'registration_number' => $student->slug
             ];
             Mail::to($request['email'])->send(new StudentCreatedMail($data));
@@ -160,7 +162,8 @@ class StudentController extends Controller
             $examDates = ExamDate::where('exam_date', '>', now()->addDays(10))
                 ->latest()
                 ->get();
-            return view('admin.students.edit', compact('student', 'examDates'));
+                $nationalities = Nationality::orderBy('name', 'asc')->get();
+            return view('admin.students.edit', compact('student', 'examDates','nationalities'));
         } catch (\Throwable $th) {
             return back()->with('erorr', $th->getMessage());
         }
@@ -172,6 +175,43 @@ class StudentController extends Controller
     public function update(StudentRequest $request, Students $student)
     {
         try {
+            // Handle file upload for the receipt image
+            if ($request->hasFile('receipt_image')) {
+                // Delete the old receipt image if it exists
+                $sameReceiptCount = Students::where('receipt_image', $student->receipt_image)->count();
+
+                if ($sameReceiptCount == 1 && $student->receipt_image && Storage::exists(str_replace('Storage/', 'public/', $student->receipt_image))) {
+                    Storage::delete(str_replace('Storage/', 'public/', $student->receipt_image));
+                }
+
+                $receiptPath = $request->file('receipt_image')->storeAs(
+                    'public/receipt_image',
+                    uniqid() . '.' . $request->file('receipt_image')->getClientOriginalExtension()
+                );
+                // Replace 'public/' with 'Storage/' to store the desired path in the database
+                $receiptPath = str_replace('public/', 'Storage/', $receiptPath);
+            } else {
+                // Keep the old receipt image if no new one is uploaded
+                $receiptPath = $student->receipt_image;
+            }
+
+            // Handle citizenship 
+            if ($request->hasFile('citizenship')) {
+                // Delete the old citizenship image if it exists
+                if ($student->citizenship && Storage::exists(str_replace('Storage/', 'public/', $student->citizenship))) {
+                    Storage::delete(str_replace('Storage/', 'public/', $student->citizenship));
+                }
+
+                $citizenshipPath = $request->file('citizenship')->storeAs(
+                    'public/citizenship',
+                    uniqid() . '.' . $request->file('citizenship')->getClientOriginalExtension()
+                );
+                // Replace 'public/' with 'Storage/' to store the desired path in the database
+                $citizenshipPath = str_replace('public/', 'Storage/', $citizenshipPath);
+            } else {
+                // Keep the old citizenship image if no new one is uploaded
+                $citizenshipPath = $student->citizenship;
+            }
             // Handle file upload for the profile
             if ($request->hasFile('profile')) {
                 // Delete the old profile image if it exists
@@ -190,36 +230,21 @@ class StudentController extends Controller
                 $profilePath = $student->profile;
             }
 
-            // Handle file upload for the receipt image
-            if ($request->hasFile('receipt_image')) {
-                // Delete the old receipt image if it exists
-                if ($student->receipt_image && Storage::exists(str_replace('Storage/', 'public/', $student->receipt_image))) {
-                    Storage::delete(str_replace('Storage/', 'public/', $student->receipt_image));
-                }
-
-                $receiptPath = $request->file('receipt_image')->storeAs(
-                    'public/receipt_image',
-                    uniqid() . '.' . $request->file('receipt_image')->getClientOriginalExtension()
-                );
-                // Replace 'public/' with 'Storage/' to store the desired path in the database
-                $receiptPath = str_replace('public/', 'Storage/', $receiptPath);
-            } else {
-                // Keep the old receipt image if no new one is uploaded
-                $receiptPath = $student->receipt_image;
-            }
-
             // Update the student record
             $student->update([
                 'name' => $request['name'],
                 'address' => $request['address'],
                 'profile' => $profilePath,
+                'citizenship' => $citizenshipPath,
                 'phone' => $request['phone'],
                 'dob' => $request['dob'],
                 'email' => $request['email'],
                 'is_appeared_previously' => $request['is_appeared_previously'] ? true : false,
                 'receipt_image' => $receiptPath,
                 'exam_date_id' => $request['exam_date'],
-                'amount' => $request['amount']
+                'amount' => $request['amount'],
+                'nationality'=>$request['nationality'],
+                'gender'=>$request['gender']
             ]);
             // sending updated mail to applicant
             $examStartTime = \Carbon\Carbon::parse($student->exam_date->exam_start_time)->format('h:i A');
@@ -234,6 +259,7 @@ class StudentController extends Controller
                 'exam_duration' => "$examStartTime to $examEndTime",
                 'consultancy_name' => $student->user->name,
                 'consultancy_address' => $student->user->consultancy->address,
+                'consultancy_phone_number' => $student->user->consultancy->phone,
                 'registration_number' => $student->slug
             ];
             Mail::to($request['email'])->send(new StudentCreatedMail($data));
@@ -250,7 +276,6 @@ class StudentController extends Controller
      */
     public function destroy($slug)
     {
-
         try {
             $student = Students::with('admit_cards')->where('slug', $slug)->first();
             if ($student->status) {
@@ -260,6 +285,13 @@ class StudentController extends Controller
             if ($student->receipt_image) {
                 $relativeReceiptPath = str_replace('Storage/', 'public/', $student->receipt_image);
             }
+            // Delete the receipt if it exists
+            if ($student->receipt_image && Storage::exists($relativeReceiptPath)) {
+                $sameReceiptCount = Students::where('receipt_image', $student->receipt_image)->count();
+                if ($sameReceiptCount == 1) {
+                    Storage::delete($relativeReceiptPath);
+                }
+            }
             $relativeProfilePath = str_replace('Storage/', 'public/', $student->profile);
             // delete admit card if present
             if ($student->admit_cards) {
@@ -268,11 +300,7 @@ class StudentController extends Controller
                     Storage::delete($relativeAdmitCardPath);
                 }
             }
-            // Delete the receipt if it exists
-            if ($student->receipt_image && Storage::exists($relativeReceiptPath)) {
-                $sameReceiptCount = Students::where('receipt_image', $student->receipt_image)->count();
-                Storage::delete($relativeReceiptPath);
-            }
+
             // Delete the profile if it exists
             if ($student->profile && Storage::exists($relativeProfilePath)) {
                 Storage::delete($relativeProfilePath);
@@ -481,6 +509,9 @@ class StudentController extends Controller
                         ? '<span class="badge text-bg-success">Approved</span>'
                         : '<span class="badge text-bg-danger">Pending</span>';
                 })
+                ->editColumn('amount', function ($row) {
+                    return $row->amount ?? '<span class="badge text-bg-warning text-white">Due</span>';
+                })
                 ->editColumn('exam_duration', function ($row) {
                     return $row->exam_date
                         ? $row->exam_date->exam_start_time->format('h:i A') . ' - ' . $row->exam_date->exam_end_time->format('h:i A')
@@ -491,7 +522,7 @@ class StudentController extends Controller
                         ? '<a href="' . asset($row->admit_cards->admit_card) . '" download class="btn btn-success btn-sm"><i class="fa-solid fa-download"></i> Download</a>'
                         : '<a href="javascript:void(0);" class="btn btn-secondary btn-sm"><i class="fa-solid fa-hourglass-half"></i> Pending</a>';
                 })
-                ->rawColumns(['receipt', 'action', 'status', 'admit_card'])
+                ->rawColumns(['receipt', 'action', 'status', 'admit_card', 'amount'])
                 ->make(true);
         }
     }
@@ -604,7 +635,7 @@ class StudentController extends Controller
     {
         try {
             $students = Students::where('user_id', Auth::id())
-                ->whereNull('receipt_image')
+                ->whereNull('amount')
                 ->latest()
                 ->get();
             return view('admin.students.upload-receipt', compact('students'));
@@ -629,6 +660,7 @@ class StudentController extends Controller
         // Validate the students input (ensuring each ID exists in the database)
         $request->validate([
             'receipt_image' => 'required|max:2048',
+            'amount' => 'required|numeric',
             'students' => 'required|array|min:1', // Ensure at least one student remains after removal
             'students.*' => 'exists:students,id'  // Validate each student ID exists in the students table
         ]);
@@ -646,10 +678,12 @@ class StudentController extends Controller
             $receiptPath = str_replace('public/', 'Storage/', $receiptPath);
         }
 
-        // Update the receipt image for selected students
         $students = $request->input('students', []);
+        $student_count = count($students);
+        $each_student_receipt_amount = $request['amount'] / $student_count;
 
         try {
+            // $receipt_amount=$request['amount']/;
             // Update each student's receipt image
             foreach ($students as $studentId) {
                 $studentInfo = Students::findOrFail($studentId); // Find the student or fail
@@ -657,6 +691,7 @@ class StudentController extends Controller
                 // Update the student record with the receipt image path
                 $studentInfo->update([
                     'receipt_image' => $receiptPath,
+                    'amount' => $each_student_receipt_amount
                 ]);
             }
             return redirect()->route('student.index')->with('success', 'Receipt has been uploaded for the selected applicants!');
@@ -664,4 +699,7 @@ class StudentController extends Controller
             return back()->with('error', $th->getMessage());
         }
     }
+
+
+    
 }
