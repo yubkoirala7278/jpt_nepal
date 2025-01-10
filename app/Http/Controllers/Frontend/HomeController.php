@@ -7,7 +7,6 @@ use App\Models\ExamDate;
 use App\Models\Notice;
 use App\Models\TestCenter;
 use App\Models\Testimonial;
-use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 

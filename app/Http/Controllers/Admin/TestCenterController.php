@@ -2,21 +2,18 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Events\TestCenterCreatedEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TestCenterRequest;
 use App\Mail\TestCenterCreatedMail;
 use App\Mail\TestCenterDisabledMail;
 use App\Mail\TestCenterEnabledMail;
 use App\Models\Consultancy;
-use App\Models\Students;
 use App\Models\TestCenter;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
 class TestCenterController extends Controller
@@ -126,6 +123,8 @@ class TestCenterController extends Controller
                 'user_id' => $user->id,
                 'phone' => $request['phone'],
                 'address' => $request['address'],
+                'venue_code'=>$request['venue_code'],
+                'test_venue'=>$request['test_venue']
             ]);
             // send mail when created test center
             $data = [
@@ -183,6 +182,8 @@ class TestCenterController extends Controller
             $testCenter->update([
                 'phone' => $request->phone,
                 'address' => $request->address,
+                'venue_code'=>$request->venue_code,
+                'test_venue'=>$request->test_venue
             ]);
 
             return redirect()->route('test_center.index')->with('success', 'Test Center updated successfully!');

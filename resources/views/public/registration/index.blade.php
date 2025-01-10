@@ -45,6 +45,26 @@
                     <span class="text-danger error-text exam_date-error"></span>
                 </div>
 
+                <div class="mb-3">
+                    <label class="form-label">Examinee Category</label>
+                    <select class="form-select" name="examinee_category" id="examinee_category">
+                        <option selected disabled>Select Examinee Category</option>
+                        <option value="Student" {{ old('examinee_category') == 'Student' ? 'selected' : '' }}>Student</option>
+                        <option value="General" {{ old('examinee_category') == 'General' ? 'selected' : '' }}>General</option>
+                    </select>
+                    <span class="text-danger error-text examinee_category-error"></span>
+                </div>
+        
+                <div class="mb-3">
+                    <label class="form-label">Exam Category</label>
+                    <select class="form-select" name="exam_category" id="exam_category">
+                        <option selected disabled>Select Exam Category</option>
+                        <option value="Regular period" {{ old('exam_category') == 'Regular period' ? 'selected' : '' }}>Regular period</option>
+                        <option value="Any time" {{ old('exam_category') == 'Any time' ? 'selected' : '' }}>Any time</option>
+                    </select>
+                    <span class="text-danger error-text exam_category-error"></span>
+                </div>
+
                 <!-- Test Center -->
                 <div class="mb-3">
                     <label for="test_center" class="form-label">Available Test Center</label>
@@ -167,17 +187,22 @@
                 </div>
 
                 <!-- Account Details Section -->
-                <div id="account_section" class="mb-3 p-4 rounded shadow-sm" style="display: none; background: #f8f9fa;">
-                    <div class="text-center">
-                        <img src="{{asset('frontend/img/qr.png')}}" alt="Account QR" loading="lazy" class="img-fluid mb-3 rounded" style="max-width: 200px;">
+                <div id="account_section"  class="mb-3 p-4 rounded shadow-sm" style="display: none; background: #f8f9fa;">
+
+                    <!-- Bank Information Section -->
+                    <div class="text-center mb-4">
+                        <p class="fw-bold mb-1" style="font-size: 1.5rem; color: #343a40;">Bank Name: <span class="text-primary">Nic Asia</span></p>
+                        <p class="text-primary fs-4 mb-2">Account Name: <span class="fw-bold">Japanese Proficiency Test</span></p>
+                        <p class="fw-bold mb-1" style="font-size: 1.5rem; color: #343a40;">Account Number: <span class="text-success">0987654321</span></p>
+                        <p class="text-secondary fs-5">Branch: <span class="fw-bold text-dark">Putalisadak</span></p>
                     </div>
+                
+                    <!-- QR Code Section -->
                     <div class="text-center">
-                        <p class="fw-bold mb-1" style="font-size: 1.2rem;">Account Number:</p>
-                        <p class="text-primary fs-5">9876543217728</p>
-                        <p class="fw-bold mb-1" style="font-size: 1.2rem;">Account Name:</p>
-                        <p class="text-secondary fs-5">Japanese Proficiency Test</p>
+                        <img src="{{ asset('frontend/img/qr.png') }}" alt="Account QR" loading="lazy" class="img-fluid mb-3 rounded" style="max-width: 200px;">
                     </div>
                 </div>
+                
                 
 
                 <!-- Receipt Section -->
@@ -268,6 +293,8 @@
                         <li><strong>Email Address:</strong> ${response.data.email}</li>
                         <li><strong>Amount:</strong> ${response.data.amount}</li>
                         <li><strong>Exam Date:</strong> ${response.data.exam_date}</li>
+                         <li><strong>Exam Category:</strong> ${response.data.exam_category}</li>
+                           <li><strong>Examinee Category:</strong> ${response.data.examinee_category}</li>
                          <li><strong>Nationality:</strong> ${response.data.nationality}</li>
                          <li><strong>Gender:</strong> ${response.data.gender}</li>
                         <li><strong>Test Center:</strong> ${response.data.test_center}</li>

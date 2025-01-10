@@ -41,7 +41,9 @@ class RegistrationRequest extends FormRequest
             'citizenship' => 'required|mimes:webp,jpeg,png,jpg,svg,pdf|max:2048',
             'test_center' => 'required',
             'gender' => 'required',
-            'nationality' => 'required'
+            'nationality' => 'required',
+            'examinee_category'=>'required',
+            'exam_category'=>'required'
         ];
 
         return $rules;

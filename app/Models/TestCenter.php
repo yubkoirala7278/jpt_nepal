@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 class TestCenter extends Model
 {
     use HasFactory;
-    protected $fillable = ['user_id', 'slug', 'phone', 'address','status','disabled_reason'];
+    protected $fillable = ['user_id', 'slug', 'phone', 'address','status','disabled_reason','test_venue','venue_code'];
     // Automatically boot the model
     protected static function boot()
     {
@@ -42,5 +42,10 @@ class TestCenter extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function consultancies()
+    {
+        return $this->hasMany(Consultancy::class, 'test_center_id', 'user_id');
     }
 }

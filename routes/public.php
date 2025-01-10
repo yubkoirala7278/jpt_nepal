@@ -18,7 +18,7 @@ Route::get('/',[HomeController::class,'index'])->name('home');
 Route::get('/blog',[BlogController::class,'index'])->name('blog');
 Route::get('/blog-detail/{slug}',[BlogController::class,'blogDetails'])->name('blog-detail');
 Route::get('/admit-card',[AdmitCardController::class,'index'])->name('admit-card');
-Route::post('/my-admit-card',[AdmitCardController::class,'getAdmitCard'])->name('my-admit-card');
+Route::get('/my-admit-card',[AdmitCardController::class,'getAdmitCard'])->name('my-admit-card');
 Route::get('/applicant-result',[AdmitCardController::class,'getApplicantResult'])->name('applicant-result');
 Route::post('/my-result',[AdmitCardController::class,'getResult'])->name('my-result');
 Route::get('/about',[AboutController::class,'index'])->name('about');
@@ -36,3 +36,4 @@ Route::post('/registration',[RegistrationController::class,'store'])->name('publ
 Route::get('/agent-registration',[AgentController::class,'index'])->name('agent.register');
 Route::post('/agent-registration',[AgentController::class,'store'])->name('agent.store');
 Route::get('/test-levels',[TestLevelController::class,'index'])->name('test-levels');
+Route::get('/admit-card/{dob}/{registration_number}', [AdmitCardController::class, 'showAdmitCard'])->name('admit-card.show');

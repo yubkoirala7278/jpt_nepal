@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Admin;
 use App\Exports\StudentsExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StudentRequest;
+use App\Imports\ExamCodeImport;
 use App\Mail\StudentCreatedMail;
 use App\Models\AdmitCard;
 use App\Models\Consultancy;
 use App\Models\ExamDate;
 use App\Models\Nationality;
 use App\Models\Students;
+use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -31,10 +33,11 @@ class StudentController extends Controller
     public function index(Request $request)
     {
         $examDates = ExamDate::orderBy('exam_date', 'asc')->get();
+        $testCenterManagers = User::role('test_center_manager')->get();
         if ($request->ajax()) {
             return $this->getPendingOrApprovedStudents($request, null);
         }
-        return view('admin.students.index', compact('examDates'));
+        return view('admin.students.index', compact('examDates', 'testCenterManagers'));
     }
 
 
@@ -49,7 +52,7 @@ class StudentController extends Controller
             $examDates = ExamDate::where('exam_date', '>', now()->addDays(10))
                 ->latest()
                 ->get();
-            return view('admin.students.create', compact('examDates','nationalities'));
+            return view('admin.students.create', compact('examDates', 'nationalities'));
         } catch (\Throwable $th) {
             return back()->with('error', $th->getMessage());
         }
@@ -89,6 +92,7 @@ class StudentController extends Controller
                 // Replace 'public/' with 'Storage/' to store the desired path in the database
                 $citizenshipPath = str_replace('public/', 'Storage/', $citizenshipPath);
             }
+            $test_center = Auth::user()->consultancy->test_center->test_center;
             $student = Students::create([
                 'name' => $request['name'],
                 'address' => $request['address'],
@@ -102,8 +106,12 @@ class StudentController extends Controller
                 'user_id' => Auth::user()->id,
                 'exam_date_id' => $request['exam_date'],
                 'amount' => $request['amount'] ?? null,
-                'gender'=>$request['gender'],
-                'nationality'=>$request['nationality']
+                'gender' => $request['gender'],
+                'nationality' => $request['nationality'],
+                'venue_code' => $test_center->venue_code,
+                'test_venue' => $test_center->test_venue,
+                'exam_category' => $request['exam_category'],
+                'examinee_category' => $request['examinee_category']
             ]);
             // send email to applicant
             $examStartTime = \Carbon\Carbon::parse($student->exam_date->exam_start_time)->format('h:i A');
@@ -119,7 +127,9 @@ class StudentController extends Controller
                 'consultancy_name' => $student->user->name,
                 'consultancy_address' => $student->user->consultancy->address,
                 'consultancy_phone_number' => $student->user->consultancy->phone,
-                'registration_number' => $student->slug
+                'registration_number' => $student->slug,
+                'venue_code' => $test_center->venue_code,
+                'test_venue' => $test_center->test_venue,
             ];
             Mail::to($request['email'])->send(new StudentCreatedMail($data));
             return redirect()->route('student.index')->with('success', "Applicant added successfully!");
@@ -162,8 +172,8 @@ class StudentController extends Controller
             $examDates = ExamDate::where('exam_date', '>', now()->addDays(10))
                 ->latest()
                 ->get();
-                $nationalities = Nationality::orderBy('name', 'asc')->get();
-            return view('admin.students.edit', compact('student', 'examDates','nationalities'));
+            $nationalities = Nationality::orderBy('name', 'asc')->get();
+            return view('admin.students.edit', compact('student', 'examDates', 'nationalities'));
         } catch (\Throwable $th) {
             return back()->with('erorr', $th->getMessage());
         }
@@ -243,24 +253,28 @@ class StudentController extends Controller
                 'receipt_image' => $receiptPath,
                 'exam_date_id' => $request['exam_date'],
                 'amount' => $request['amount'],
-                'nationality'=>$request['nationality'],
-                'gender'=>$request['gender']
+                'nationality' => $request['nationality'],
+                'gender' => $request['gender'],
+                'examinee_category' => $request['examinee_category'],
+                'exam_category' => $request['exam_category']
             ]);
             // sending updated mail to applicant
             $examStartTime = \Carbon\Carbon::parse($student->exam_date->exam_start_time)->format('h:i A');
             $examEndTime = \Carbon\Carbon::parse($student->exam_date->exam_end_time)->format('h:i A');
             $data = [
                 'name' => $request['name'],
-                'address' => $request['address'],
+                'address' =>  $request['address'],
                 'phone' => $request['phone'],
                 'dob' => $request['dob'],
                 'email' => $request['email'],
                 'exam_date' => \Carbon\Carbon::parse($student->exam_date->exam_date)->format('F j, Y'), // Formats as "Month Day, Year"
                 'exam_duration' => "$examStartTime to $examEndTime",
                 'consultancy_name' => $student->user->name,
-                'consultancy_address' => $student->user->consultancy->address,
-                'consultancy_phone_number' => $student->user->consultancy->phone,
-                'registration_number' => $student->slug
+                'consultancy_address' => $student->user->consultancy->address ?? $student->user->test_center->address,
+                'consultancy_phone_number' => $student->user->consultancy->phone ?? $student->user->test_center->phone,
+                'registration_number' => $student->slug,
+                'test_venue' => $student->test_venue,
+                'venue_code' => $student->venue_code
             ];
             Mail::to($request['email'])->send(new StudentCreatedMail($data));
 
@@ -389,10 +403,11 @@ class StudentController extends Controller
     public function getPendingStudents(Request $request)
     {
         $examDates = ExamDate::latest()->get();
+        $testCenterManagers = User::role('test_center_manager')->get();
         if ($request->ajax()) {
             return $this->getPendingOrApprovedStudents($request, false);
         }
-        return view('admin.students.pending', compact('examDates'));
+        return view('admin.students.pending', compact('examDates','testCenterManagers'));
     }
 
     /**
@@ -401,10 +416,11 @@ class StudentController extends Controller
     public function getApprovedStudents(Request $request)
     {
         $examDates = ExamDate::latest()->get();
+        $testCenterManagers = User::role('test_center_manager')->get();
         if ($request->ajax()) {
             return $this->getPendingOrApprovedStudents($request, true);
         }
-        return view('admin.students.approved', compact('examDates'));
+        return view('admin.students.approved', compact('examDates','testCenterManagers'));
     }
 
     /**
@@ -492,15 +508,27 @@ class StudentController extends Controller
                             <i class="fa-solid fa-pencil"></i>
                         </a>';
                     }
-
-
-                    // Show the upload admit card button only for admin and if status is false
-                    if (auth()->user()->hasRole('admin') && $row->status) {
+                    // Button to change status (for test_center_manager if amount is paid and receipt exists)
+                    if (auth()->user()->hasRole('test_center_manager') && $row->amount && $row->receipt_image) {
+                        $statusText = $row->status ? 'Pending' : 'Approved';
+                        $statusColor = $row->status ? 'warning' : 'success';
                         $buttons .= '
-                        <button type="button" class="btn btn-success btn-sm text-white upload-admit-card-btn" title="Upload Admit Card" 
-                                data-slug="' . $row->slug . '"><i class="fa-solid fa-upload"></i>
+                        <button type="button" class="btn btn-' . $statusColor . ' btn-sm text-white change-status-btn" 
+                                data-slug="' . $row->slug . '" 
+                                data-status="' . $row->status . '" 
+                                title="Change Status">
+                            <i class="fa-solid fa-toggle-' . ($row->status ? 'off' : 'on') . '"></i>
                         </button>';
                     }
+
+
+                    // // Show the upload admit card button only for admin and if status is false
+                    // if (auth()->user()->hasRole('admin') && $row->status) {
+                    //     $buttons .= '
+                    //     <button type="button" class="btn btn-success btn-sm text-white upload-admit-card-btn" title="Upload Admit Card" 
+                    //             data-slug="' . $row->slug . '"><i class="fa-solid fa-upload"></i>
+                    //     </button>';
+                    // }
 
                     return $buttons;
                 })
@@ -518,9 +546,25 @@ class StudentController extends Controller
                         : 'N/A';
                 })
                 ->editColumn('admit_card', function ($row) {
-                    return $row->admit_cards
-                        ? '<a href="' . asset($row->admit_cards->admit_card) . '" download class="btn btn-success btn-sm"><i class="fa-solid fa-download"></i> Download</a>'
-                        : '<a href="javascript:void(0);" class="btn btn-secondary btn-sm"><i class="fa-solid fa-hourglass-half"></i> Pending</a>';
+                    if (!$row->status) {
+                        return '<span class="badge text-bg-danger text-white">Pending</span>';
+                    }
+
+                    if ($row->status && !$row->exam_number) {
+                        return '<span class="badge text-bg-warning text-white">Admit Card Under Process</span>';
+                    }
+
+                    if ($row->status && $row->exam_number) {
+                        return '
+                            <button 
+                                type="button" 
+                                class="btn btn-success btn-sm text-white" 
+                                id="download-button-' . $row->id . '"
+                                onclick="downloadAdmitCard(\'' . $row->dob . '\', \'' . $row->slug . '\', ' . $row->id . ')">
+                                <i class="fa-solid fa-download"></i> Download
+                            </button>
+                        ';
+                    }
                 })
                 ->rawColumns(['receipt', 'action', 'status', 'admit_card', 'amount'])
                 ->make(true);
@@ -535,45 +579,50 @@ class StudentController extends Controller
     {
         try {
             // Validate the request
-            $request->validate([
-                'export' => 'required|in:excel,csv,pdf', // Ensure valid export types
-                'date' => 'required|exists:exam_dates,id', // Ensure the date exists
-                'status' => 'required'
-            ], [
-                'export.required' => 'Please select an export option.',
-                'export.in' => 'Invalid export type selected.',
-                'date.required' => 'Exam date is required.',
-                'date.exists' => 'Invalid exam date selected.',
+            $validator = \Validator::make($request->all(), [
+                'export' => 'required|in:excel,csv,pdf',
+                'date' => 'required|exists:exam_dates,id',
+                'status' => 'required',
+                'test_center' => 'required',
             ]);
+
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 422);
+            }
 
             // Handle the export based on the selected type
             if ($request->export === 'excel') {
-                return $this->exportApplicantsToExcel($request->date, $request->status);
+                return $this->exportApplicantsToExcel($request->date, $request->status, $request->test_center);
             } elseif ($request->export === 'csv') {
-                return $this->exportApplicantsToCSV($request->date, $request->status);
+                return $this->exportApplicantsToCSV($request->date, $request->status, $request->test_center);
             } elseif ($request->export === 'pdf') {
-                return $this->exportApplicantsToPDF($request->date, $request->status);
+                return $this->exportApplicantsToPDF($request->date, $request->status, $request->test_center);
             }
 
-            return back()->with('error', 'Invalid export option.');
+            return response()->json(['success' => false, 'message' => 'Invalid export option.'], 400);
         } catch (\Throwable $th) {
-            return back()->with('error', $th->getMessage());
+            return response()->json(['success' => false, 'message' => $th->getMessage()], 500);
         }
     }
+
 
     /**
      * Export applicants to Excel
      */
-    public function exportApplicantsToExcel($exam_date_id, $status)
+    public function exportApplicantsToExcel($exam_date_id, $status, $testCenterId)
     {
         try {
+            $userIdsArray = Consultancy::where('test_center_id', $testCenterId)->pluck('user_id')->toArray();
+            $userIdsArray[] = $testCenterId;
             // Fetch students filtered by the selected exam date
             $students = Students::with('exam_date')
                 ->where('exam_date_id', $exam_date_id)
+                ->whereIn('user_id', $userIdsArray)
                 ->when($status == 0 || $status == 1, function ($query) use ($status) {
                     $query->where('status', $status);
                 })
                 ->get();
+
 
             // Export the students to Excel using Laravel Excel
             return Excel::download(new StudentsExport($students), 'applicants.xlsx');
@@ -586,12 +635,15 @@ class StudentController extends Controller
     /**
      * Export applicants to csv
      */
-    public function exportApplicantsToCSV($exam_date_id, $status)
+    public function exportApplicantsToCSV($exam_date_id, $status, $testCenterId)
     {
         try {
+            $userIdsArray = Consultancy::where('test_center_id', $testCenterId)->pluck('user_id')->toArray();
+            $userIdsArray[] = $testCenterId;
             // Fetch students filtered by the selected exam date
             $students = Students::with('exam_date')
                 ->where('exam_date_id', $exam_date_id)
+                ->whereIn('user_id', $userIdsArray)
                 ->when($status == 0 || $status == 1, function ($query) use ($status) {
                     $query->where('status', $status);
                 })
@@ -607,12 +659,15 @@ class StudentController extends Controller
     /**
      * Export applicants to pdf
      */
-    public function exportApplicantsToPDF($exam_date_id, $status)
+    public function exportApplicantsToPDF($exam_date_id, $status, $testCenterId)
     {
         try {
+            $userIdsArray = Consultancy::where('test_center_id', $testCenterId)->pluck('user_id')->toArray();
+            $userIdsArray[] = $testCenterId;
             // Fetch students filtered by the selected exam date
-            $students = Students::with('exam_date', 'user')
+            $students = Students::with('exam_date')
                 ->where('exam_date_id', $exam_date_id)
+                ->whereIn('user_id', $userIdsArray)
                 ->when($status == 0 || $status == 1, function ($query) use ($status) {
                     $query->where('status', $status);
                 })
@@ -701,5 +756,40 @@ class StudentController extends Controller
     }
 
 
-    
+    // import exam code
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,csv',
+        ]);
+
+        try {
+            Excel::import(new ExamCodeImport, $request->file('file'));
+            return back()->with('success', 'Exam Code imported successfully!');
+        } catch (\Illuminate\Database\QueryException $e) {
+            // Handling duplicate entry error from the database (unique constraint violation)
+            if ($e->getCode() == '23000') {
+                return back()->with('error', 'Something went wrong.Please try again!');
+            }
+            // General error message for other database exceptions
+            return back()->with('error', 'An error occurred while importing the exam codes. Please try again later.');
+        } catch (\Exception $e) {
+            // Catch custom exceptions like non-existing student_id
+            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $th) {
+            // Catch all other exceptions
+            return back()->with('error', 'An unexpected error occurred: ' . $th->getMessage());
+        }
+    }
+
+    // =====change status of student=======
+    public function changeStatus(Request $request)
+    {
+        $student = Students::where('slug', $request->slug)->firstOrFail();
+        $student->update([
+            'status' => $request->status == 'true' ? true : false
+        ]);
+
+        return response()->json(['success' => true, 'message' => 'Status updated successfully.']);
+    }
 }

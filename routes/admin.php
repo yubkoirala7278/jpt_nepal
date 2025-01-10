@@ -32,6 +32,7 @@ Route::middleware(['auth', 'check.consultancy.test_center'])->group(function () 
         Route::get('/transaction', [TransactionController::class, 'index'])->name('transaction');
         Route::post('/applicants/export', [StudentController::class, 'exportApplicants'])->name('applicants.export');
         Route::post('/applicant-result/import', [ResultController::class, 'import'])->name('results.import');
+        Route::post('/applicant-exam-code/import', [StudentController::class, 'import'])->name('exam-code.import');
         Route::resource('blog', BlogController::class);
         Route::resource('header', HeaderController::class);
         Route::get('/contact', [ContactController::class, 'index'])->name('admin.contact');
@@ -66,3 +67,9 @@ Route::middleware(['auth', 'check.consultancy.test_center'])->group(function () 
         Route::post('/upload-receipt', [StudentController::class, 'storeReceiptInfo'])->name('store.receipt');
     });
 });
+
+
+Route::get('/chart', [HomeController::class, 'showApplicantCountPerMonthChart'])->name('chart.show');
+// Route::get('/chart/test-centers', [HomeController::class, 'showApplicantAddedPerTestCenter'])->name('chart.testCenters');
+
+Route::post('/change-student-status', [StudentController::class, 'changeStatus'])->name('student.changeStatus');

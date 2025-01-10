@@ -61,26 +61,22 @@
     <table>
         <thead>
             <tr>
-                <th>S.N:</th>
-                <th>Name</th>
-                <th>Reg No.</th>
-                <th>Phone</th>
                 <th>Email</th>
-                <th>Exam Date</th>
-                <th>Status</th>
+                <th>Full Name</th>
+                <th>Gender</th>
+                <th>Nationality</th>
+                <th>Birthdate</th>
             </tr>
         </thead>
         <tbody>
             @if (count($students) > 0)
                 @foreach ($students as $key => $student)
                     <tr>
-                        <td>{{ $key + 1 }}</td>
-                        <td>{{ $student->name }}</td>
-                        <td>{{ $student->slug }}</td>
-                        <td>{{ $student->phone }}</td>
                         <td>{{ $student->email }}</td>
-                        <td>{{ $student->exam_date->exam_date }}</td>
-                        <td>{{ $student->status?'Approved':'Pending' }}</td>
+                        <td>{{ $student->name }}</td>
+                        <td>{{ $student->gender }}</td>
+                        <td>{{ $student->nationality }}</td>
+                        <td>{{ $student->dob }}</td>
                     </tr>
                 @endforeach
             @endif

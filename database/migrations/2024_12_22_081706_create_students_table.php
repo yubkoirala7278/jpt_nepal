@@ -33,6 +33,11 @@ return new class extends Migration
             $table->boolean('is_viewed_by_admin')->default(false);
             $table->enum('gender', ['male', 'female', 'other']);
             $table->string('nationality');
+            $table->string('exam_number')->nullable();
+            $table->string('examinee_category');
+            $table->string('exam_category');
+            $table->string('test_venue');
+            $table->string('venue_code');
             $table->timestamps();
         });
     }

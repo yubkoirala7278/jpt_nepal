@@ -65,63 +65,62 @@
             </form>
         </div>
     </div>
-    </div>
     {{-- export result --}}
     <div class="modal fade" id="exportResults" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="exportResultsLabel" aria-hidden="true">
         <div class="modal-dialog">
             <form action="{{ route('admin.applicant-result-export') }}" method="POST">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exportResultsLabel">Export Result</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    @csrf
-                    <div class="mb-3">
-                        <label class="form-label">Select Exam Date</label>
-                        <select class="form-select" name="date" required>
-                            <option selected disabled>Select Date</option>
-                            @if (count($examDates) > 0)
-                                @foreach ($examDates as $examDate)
-                                    <option value="{{ $examDate->id }}">{{ $examDate->exam_date }}</option>
-                                @endforeach
-                            @endif
-                        </select>
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exportResultsLabel">Export Result</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
+                    <div class="modal-body">
+                        @csrf
+                        <div class="mb-3">
+                            <label class="form-label">Select Exam Date</label>
+                            <select class="form-select" name="date" required>
+                                <option selected disabled>Select Date</option>
+                                @if (count($examDates) > 0)
+                                    @foreach ($examDates as $examDate)
+                                        <option value="{{ $examDate->id }}">{{ $examDate->exam_date }}</option>
+                                    @endforeach
+                                @endif
+                            </select>
+                        </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Result</label>
-                        <div class="d-flex align-items-center" style="column-gap: 20px">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="result" value="pass"
-                                    id="pass" checked>
-                                <label class="form-check-label" for="pass">
-                                    Pass
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="result" value="fail"
-                                    id="fail">
-                                <label class="form-check-label" for="fail">
-                                    Fail
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="result" value="both"
-                                    id="both">
-                                <label class="form-check-label" for="both">
-                                    Both
-                                </label>
+                        <div class="mb-3">
+                            <label class="form-label">Result</label>
+                            <div class="d-flex align-items-center" style="column-gap: 20px">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="result" value="pass"
+                                        id="pass" checked>
+                                    <label class="form-check-label" for="pass">
+                                        Pass
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="result" value="fail"
+                                        id="fail">
+                                    <label class="form-check-label" for="fail">
+                                        Fail
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="result" value="both"
+                                        id="both">
+                                    <label class="form-check-label" for="both">
+                                        Both
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success">Export</button>
+                    </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-success">Export</button>
-                </div>
-            </div>
             </form>
         </div>
     </div>

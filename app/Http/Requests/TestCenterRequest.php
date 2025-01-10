@@ -35,6 +35,8 @@ class TestCenterRequest extends FormRequest
                 'regex:/^\+?[0-9\s\-\(\)]+$/',
             ],
             'address' => 'required|max:255',
+            'test_venue'=>'required|max:255',
+            'venue_code'=>'required|max:255'
         ];
 
         // Password is required only for store, optional for update

@@ -16,6 +16,8 @@
                     <th>Email</th>
                     <th>Created At</th>
                     <th>Status</th>
+                    <th>Test Venue</th>
+                    <th>Venue Code</th>
                     <th>Action</th>
                     {{-- <th>Dashboard</th> --}}
                 </tr>
@@ -132,6 +134,14 @@
                         {
                             data: 'status',
                             name: 'status'
+                        },
+                        {
+                            data: 'test_venue',
+                            name: 'test_venue'
+                        },
+                        {
+                            data: 'venue_code',
+                            name: 'venue_code'
                         },
                         {
                             data: 'action',

@@ -24,12 +24,12 @@
                     <th>Phone Number</th>
                     <th>DOB</th>
                     <th>Email</th>
-                    <th>Receipt</th>
-                    <th>Amount</th>
-                    <th>Status</th>
                     <th>Exam Date</th>
                     <th>Exam Duration</th>
                     <th>Registration No.</th>
+                    <th>Receipt</th>
+                    <th>Amount</th>
+                    <th>Status</th>
                     <th>Admit Card</th>
                     <th>Action</th>
                 </tr>
@@ -71,7 +71,7 @@
     <div class="modal fade" id="exportApplicants" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="exportApplicantsLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <form action="{{ route('applicants.export') }}" method="POST">
+            <form id="exportApplicantsForm" action="{{ route('applicants.export') }}" method="POST">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="exportApplicantsLabel">Export Applicants</h1>
@@ -80,6 +80,7 @@
                     <div class="modal-body">
 
                         @csrf
+                        <div id="form-errors" class="alert alert-danger d-none"></div>
                         <div class="mb-3">
                             <label class="form-label">Select Exam Date</label>
                             <select class="form-select" name="date" required>
@@ -90,6 +91,19 @@
                                     @endforeach
                                 @endif
                             </select>
+                            <span class="text-danger" id="date-error"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Select Test Center</label>
+                            <select class="form-select" name="test_center" required>
+                                <option selected disabled>Select Test Center</option>
+                                @if (count($testCenterManagers) > 0)
+                                    @foreach ($testCenterManagers as $testCenterManager)
+                                        <option value="{{ $testCenterManager->id }}">{{ $testCenterManager->name }}</option>
+                                    @endforeach
+                                @endif
+                            </select>
+                            <span class="text-danger" id="test_center-error"></span>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Export File To</label>
@@ -121,6 +135,7 @@
                         <div class="mb-3">
                             <label class="form-label">Status</label>
                             <div class="d-flex align-items-center" style="column-gap: 20px">
+                               
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="status" value="0"
                                         id="pending" checked>
@@ -128,6 +143,7 @@
                                         Pending
                                     </label>
                                 </div>
+                               
                             </div>
                         </div>
                     </div>
@@ -188,6 +204,20 @@
                         name: 'email'
                     },
                     {
+                        data: 'exam_date.exam_date',
+                        name: 'exam_date.exam_date'
+                    },
+                    {
+                        data: 'exam_duration',
+                        name: 'exam_duration',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'slug',
+                        name: 'slug'
+                    },
+                    {
                         data: 'receipt',
                         name: 'receipt',
                         orderable: false,
@@ -201,20 +231,6 @@
                         data: 'status',
                         name: 'status',
                         searchable: false
-                    },
-                    {
-                        data: 'exam_date.exam_date',
-                        name: 'exam_date.exam_date'
-                    },
-                    {
-                        data: 'exam_duration',
-                        name: 'exam_duration',
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        data: 'slug',
-                        name: 'slug'
                     },
                     {
                         data: 'admit_card',
@@ -337,6 +353,183 @@
                 });
             });
 
+            // ==========change status of student==========
+            $(document).on('click', '.change-status-btn', function() {
+                let studentSlug = $(this).data('slug');
+                let currentStatus = $(this).data('status');
+                let newStatus = currentStatus ? 'Pending' : 'Approved';
+                let alertText = currentStatus ?
+                    "Are you sure you want to mark this student as Pending?" :
+                    "Are you sure you want to mark this student as Approved?";
+
+                Swal.fire({
+                    title: "Change Student Status",
+                    text: alertText,
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Yes, Change it!",
+                    cancelButtonText: "No, Cancel"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '/admin/change-student-status', // Adjust this route to your backend
+                            method: 'POST',
+                            data: {
+                                slug: studentSlug,
+                                status: !currentStatus, // Toggle the status
+                                _token: $('meta[name="csrf-token"]').attr(
+                                    'content') // Include CSRF token
+                            },
+                            success: function(response) {
+                                Swal.fire(
+                                    "Status Changed!",
+                                    "The student's status has been updated to " +
+                                    newStatus + ".",
+                                    "success"
+                                );
+                                // Reload the data table to reflect the updated status
+                                $('#studentsTable').DataTable().ajax.reload();
+                            },
+                            error: function() {
+                                Swal.fire(
+                                    "Error!",
+                                    "There was an error updating the student's status. Please try again.",
+                                    "error"
+                                );
+                            }
+                        });
+                    }
+                });
+            });
+
         });
     </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('#exportApplicants form');
+        const exportButton = form.querySelector('button[type="submit"]');
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            const url = form.action;
+
+            // Disable the Export button and change its text to "Exporting..."
+            exportButton.disabled = true;
+            const originalButtonText = exportButton.innerHTML;
+            exportButton.innerHTML = 'Exporting...';
+
+            // Clear previous errors
+            document.querySelectorAll('.text-danger').forEach(el => el.innerText = '');
+            const formErrors = document.getElementById('form-errors');
+            if (formErrors) {
+                formErrors.classList.add('d-none');
+                formErrors.innerHTML = '';
+            }
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                            .getAttribute('content')
+                    }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 422) { // Validation error
+                        const errors = await response.json();
+                        if (errors.errors) {
+                            // Display validation errors below respective fields
+                            Object.keys(errors.errors).forEach(key => {
+                                const input = form.querySelector(`[name="${key}"]`);
+                                if (input) {
+                                    // Remove existing invalid-feedback if any
+                                    let errorElement = input.parentNode.querySelector(
+                                        '.invalid-feedback');
+                                    if (!errorElement) {
+                                        errorElement = document.createElement('div');
+                                        errorElement.classList.add('invalid-feedback');
+                                        input.parentNode.appendChild(errorElement);
+                                    }
+                                    errorElement.innerText = errors.errors[key][0];
+                                    input.classList.add('is-invalid');
+                                }
+                            });
+
+                            // Optionally, show a general error message
+                            if (formErrors) {
+                                formErrors.classList.remove('d-none');
+                                formErrors.innerHTML = 'Please fix the errors and try again.';
+                            }
+                        }
+                    } else {
+                        // Handle other types of errors (e.g., server errors)
+                        const errorData = await response.json();
+                        Swal.fire(
+                            "Error!",
+                            errorData.message ||
+                            "There was an error processing your request. Please try again.",
+                            "error"
+                        );
+                    }
+                } else {
+                    // Assuming the response is a file download
+                    const contentDisposition = response.headers.get('content-disposition');
+                    let filename = 'applicants_exported';
+                    if (contentDisposition && contentDisposition.indexOf('filename=') !== -1) {
+                        const filenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
+                        if (filenameMatch.length > 1) filename = filenameMatch[1];
+                    } else {
+                        // Fallback filename based on export type
+                        const exportType = formData.get('export') || 'file';
+                        filename = `applicants.${exportType}`;
+                    }
+
+                    const blob = await response.blob();
+                    const downloadUrl = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = downloadUrl;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+
+                    // Optionally, show a success message
+                    Swal.fire(
+                        "Success!",
+                        "Applicants have been exported successfully.",
+                        "success"
+                    );
+
+                    // Close the modal
+                    const modalElement = document.getElementById('exportApplicants');
+                    const modal = bootstrap.Modal.getInstance(modalElement);
+                    if (modal) {
+                        modal.hide();
+                    }
+
+                    // Optionally, reset the form
+                    form.reset();
+                }
+            } catch (error) {
+                console.error('An error occurred:', error);
+                Swal.fire(
+                    "Error!",
+                    "There was an unexpected error. Please try again.",
+                    "error"
+                );
+            } finally {
+                // Re-enable the Export button and reset its text
+                exportButton.disabled = false;
+                exportButton.innerHTML = originalButtonText;
+            }
+        });
+    });
+</script>
 @endpush

@@ -39,6 +39,21 @@
     <h2 class="mb-3">Upload Receipt</h2>
     <form action="{{route('store.receipt')}}" method="POST" enctype="multipart/form-data">
         @csrf
+         {{-- account details --}}
+         <div id="account_section"  class="mb-3 p-4 rounded shadow-sm" style=" background: #f8f9fa;">
+            <!-- Bank Information Section -->
+            <div class="text-center mb-4">
+                <p class="fw-bold mb-1" style="font-size: 1.5rem; color: #343a40;">Bank Name: <span class="text-primary">Nic Asia</span></p>
+                <p class="text-primary fs-4 mb-2">Account Name: <span class="fw-bold">Japanese Proficiency Test</span></p>
+                <p class="fw-bold mb-1" style="font-size: 1.5rem; color: #343a40;">Account Number: <span class="text-success">0987654321</span></p>
+                <p class="text-secondary fs-5">Branch: <span class="fw-bold text-dark">Putalisadak</span></p>
+            </div>
+        
+            <!-- QR Code Section -->
+            <div class="text-center">
+                <img src="{{ asset('frontend/img/qr.png') }}" alt="Account QR" loading="lazy" class="img-fluid mb-3 rounded" style="max-width: 200px;">
+            </div>
+        </div>
         <div class="mb-3">
             <label for="receipt_image" class="form-label">Upload Receipt</label>
             <input type="file" class="form-control" id="receipt_image" name="receipt_image"

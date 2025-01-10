@@ -9,10 +9,24 @@
         @csrf
         @method('PUT')
         <div class="mb-3">
-            <label for="name" class="form-label">Name</label>
+            <label for="name" class="form-label">Test Center Name</label>
             <input type="text" class="form-control" id="name" name="name" placeholder="Test Center Name" value="{{old('name',$testCenter->user->name)}}">
             @if ($errors->has('name'))
                 <span class="text-danger">{{ $errors->first('name') }}</span>
+            @endif
+        </div>
+        <div class="mb-3">
+            <label for="test_venue" class="form-label">Test Venue</label>
+            <input type="text" class="form-control" id="test_venue" name="test_venue" placeholder="Enter Test Venue" value="{{old('test_venue',$testCenter->test_venue)}}">
+            @if ($errors->has('test_venue'))
+                <span class="text-danger">{{ $errors->first('test_venue') }}</span>
+            @endif
+        </div>
+        <div class="mb-3">
+            <label for="venue_code" class="form-label">Venue Code</label>
+            <input type="text" class="form-control" id="venue_code" name="venue_code" placeholder="Enter Venue Code" value="{{old('venue_code',$testCenter->venue_code )}}">
+            @if ($errors->has('venue_code'))
+                <span class="text-danger">{{ $errors->first('venue_code') }}</span>
             @endif
         </div>
         <div class="mb-3">

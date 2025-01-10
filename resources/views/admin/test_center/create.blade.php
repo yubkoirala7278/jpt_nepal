@@ -12,6 +12,20 @@
             @endif
         </div>
         <div class="mb-3">
+            <label for="test_venue" class="form-label">Test Venue</label>
+            <input type="text" class="form-control" id="test_venue" name="test_venue" placeholder="Enter Test Venue" value="{{old('test_venue')}}">
+            @if ($errors->has('test_venue'))
+                <span class="text-danger">{{ $errors->first('test_venue') }}</span>
+            @endif
+        </div>
+        <div class="mb-3">
+            <label for="venue_code" class="form-label">Venue Code</label>
+            <input type="text" class="form-control" id="venue_code" name="venue_code" placeholder="Enter Venue Code" value="{{old('venue_code')}}">
+            @if ($errors->has('venue_code'))
+                <span class="text-danger">{{ $errors->first('venue_code') }}</span>
+            @endif
+        </div>
+        <div class="mb-3">
             <label for="phone" class="form-label">Phone</label>
             <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter Phone Number" value="{{old('phone')}}" >
             @if ($errors->has('phone'))

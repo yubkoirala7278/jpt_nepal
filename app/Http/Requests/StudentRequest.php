@@ -36,14 +36,16 @@ class StudentRequest extends FormRequest
             'is_appeared_previously' => 'nullable',
             'exam_date' => 'required',
             'gender'=>'required',
-            'nationality'=>'required'
+            'nationality'=>'required',
+            'examinee_category'=>'required',
+            'exam_category'=>'required'
         ];
 
         // profile is required only for store, optional for update
         if ($this->isMethod('post')) { // Store method
             $rules['profile'] = 'required|image|mimes:webp,jpeg,png,jpg,gif,svg|max:2048';
             // Add custom dimension validation
-            $rules['profile'] .= '|dimensions:width=120,height=160'; // 3cm x 4cm (approximately 120x160px)
+            $rules['profile'] .= '|dimensions:width=120,height=160'; 
         } elseif ($this->isMethod('put') || $this->isMethod('patch')) { // Update method
             $rules['profile'] = 'nullable|image|mimes:webp,jpeg,png,jpg,gif,svg|max:2048';
             // Add custom dimension validation
@@ -66,7 +68,15 @@ class StudentRequest extends FormRequest
             $rules['amount'] =  'nullable|numeric|required_with:receipt_image';
             $rules['receipt_image'] = 'nullable|image|mimes:webp,jpeg,png,jpg,gif,svg|max:2048';
         }
+        
 
         return $rules;
+    }
+
+    public function messages()
+    {
+        return [
+            'profile.dimensions' => 'The profile image must have dimensions of 120px by 160px (3cm x 4cm).',
+        ];
     }
 }

@@ -21,13 +21,11 @@ class StudentsExport implements FromCollection, WithHeadings
     {
         return $this->applicants->map(function ($student) {
             return [
-                $student->id,
-                $student->slug,
-                $student->name,
-                $student->dob,
                 $student->email,
-                $student->exam_date->exam_date,
-                 $student->status == 1 ? 'Approved' : 'Pending'
+                $student->name,
+                $student->gender,
+                $student->nationality,
+                $student->dob
             ];
         });
     }
@@ -38,15 +36,11 @@ class StudentsExport implements FromCollection, WithHeadings
     public function headings(): array
     {
         return [
-            'applicant_id',
-            'registration_number',
-            'applicant_name',
-            'applicant_dob',
-            'applicant_email',
-            'applicant_exam_date',
-            'applicant_status',
-            'applicant_marks',
-            'applicant_result',
+            'Email',
+            'Full Name',
+            'Gender',
+            'Nationality',
+            'Birthdate'
         ];
     }
 }

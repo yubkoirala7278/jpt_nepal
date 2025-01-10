@@ -64,85 +64,85 @@
 @push('script')
     <script>
         $(document).ready(function() {
-            $('#admitCardForm').on('submit', function(e) {
-                e.preventDefault(); // Prevent the form from submitting the traditional way
+        $('#admitCardForm').on('submit', function(e) {
+            e.preventDefault(); // Prevent the form from submitting the traditional way
 
-                // Disable the button
-                $('#downloadBtn').prop('disabled', true).text('Downloading...');
+            // Disable the button
+            $('#downloadBtn').prop('disabled', true).text('Downloading...');
 
-                // Clear previous error messages
-                $('#dobError').text('');
-                $('#registrationError').text('');
+            // Clear previous error messages
+            $('#dobError').text('');
+            $('#registrationError').text('');
 
-                // Get form data
-                var formData = {
-                    dob: $('#dob').val(),
-                    registration_number: $('#registration_number').val(),
-                    _token: $('input[name="_token"]').val() // CSRF token
-                };
+            // Get form data
+            var formData = {
+                dob: $('#dob').val(),
+                registration_number: $('#registration_number').val(),
+                _token: $('input[name="_token"]').val() // CSRF token
+            };
 
-                // Send the AJAX request
-                $.ajax({
-                    url: "{{ route('my-admit-card') }}",
-                    method: "POST",
-                    data: formData,
-                    success: function(response) {
-                        if (response.downloadUrl) {
-                            // Trigger the download using the URL returned from the server
-                            var a = document.createElement('a');
-                            a.href = response.downloadUrl;
-                            a.download = ''; // You can set a filename here, if necessary
-                            document.body.appendChild(a);
-                            a.click();
-                            document.body.removeChild(a);
+            // Send the AJAX request
+            $.ajax({
+                url: "{{ route('my-admit-card') }}",
+                method: "POST",
+                data: formData,
+                success: function(response) {
+                    if (response.downloadUrl) {
+                        // Trigger the download using the URL returned from the server
+                        var a = document.createElement('a');
+                        a.href = response.downloadUrl;
+                        a.download = ''; // You can set a filename here, if necessary
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
 
-                            // Show success message
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Success!',
-                                text: 'Your admit card is being downloaded.',
-                                showConfirmButton: false,
-                                timer: 1500
-                            });
-                        }
-                        // Re-enable the button and update the text to 'Download'
-                        $('#downloadBtn').prop('disabled', false).text('Download');
-                    },
-                    error: function(xhr) {
-                        // Handle validation or server-side errors
-                        var errors = xhr.responseJSON.errors;
-
-                        if (errors) {
-                            if (errors.dob) {
-                                $('#dobError').text(errors.dob[0]);
-                            }
-                            if (errors.registration_number) {
-                                $('#registrationError').text(errors.registration_number[0]);
-                            }
-                        }
-
-                        // If the error is "Admit card not found", display a custom message
-                        if (xhr.responseJSON.error === 'Admit card not found.') {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error!',
-                                text: 'Admit card not found. Please check the registration number or DOB and try again.',
-                            });
-                        } else {
-                            // Handle any other error (e.g., file not found)
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error!',
-                                text: xhr.responseJSON.error ||
-                                    'An error occurred. Please try again.',
-                            });
-                        }
-
-                        // Re-enable the button and update the text to 'Download'
-                        $('#downloadBtn').prop('disabled', false).text('Download');
+                        // Show success message
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: 'Your admit card is being downloaded.',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
                     }
-                });
+                    // Re-enable the button and update the text to 'Download'
+                    $('#downloadBtn').prop('disabled', false).text('Download');
+                },
+                error: function(xhr) {
+                    // Handle validation or server-side errors
+                    var errors = xhr.responseJSON.errors;
+
+                    if (errors) {
+                        if (errors.dob) {
+                            $('#dobError').text(errors.dob[0]);
+                        }
+                        if (errors.registration_number) {
+                            $('#registrationError').text(errors.registration_number[0]);
+                        }
+                    }
+
+                    // If the error is "Admit card not found", display a custom message
+                    if (xhr.responseJSON.error === 'Admit card not found.') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'Admit card not found. Please check the registration number or DOB and try again.',
+                        });
+                    } else {
+                        // Handle any other error (e.g., file not found)
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: xhr.responseJSON.error ||
+                                'An error occurred. Please try again.',
+                        });
+                    }
+
+                    // Re-enable the button and update the text to 'Download'
+                    $('#downloadBtn').prop('disabled', false).text('Download');
+                }
             });
         });
+    });
     </script>
 @endpush

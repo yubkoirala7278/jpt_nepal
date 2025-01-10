@@ -83,6 +83,32 @@
                 <span class="text-danger">{{ $errors->first('gender') }}</span>
             @endif
         </div>
+
+        <div class="mb-3">
+            <label class="form-label">Examinee Category</label>
+            <select class="form-select" name="examinee_category">
+                <option disabled {{ old('examinee_category', $student->examinee_category) ? '' : 'selected' }}>Select Examinee Category</option>
+                <option value="Student" {{ old('examinee_category', $student->examinee_category) == 'Student' ? 'selected' : '' }}>Student</option>
+                <option value="General" {{ old('examinee_category', $student->examinee_category) == 'General' ? 'selected' : '' }}>General</option>
+            </select>
+            @if ($errors->has('examinee_category'))
+                <span class="text-danger">{{ $errors->first('examinee_category') }}</span>
+            @endif
+        </div>
+        
+
+        <div class="mb-3">
+            <label class="form-label">Exam Category</label>
+            <select class="form-select" name="exam_category">
+                <option disabled {{ old('exam_category', $student->exam_category) ? '' : 'selected' }}>Select Exam Category</option>
+                <option value="Regular period" {{ old('exam_category', $student->exam_category) == 'Regular period' ? 'selected' : '' }}>Regular period</option>
+                <option value="Any time" {{ old('exam_category', $student->exam_category) == 'Any time' ? 'selected' : '' }}>Any time</option>
+            </select>
+            @if ($errors->has('exam_category'))
+                <span class="text-danger">{{ $errors->first('exam_category') }}</span>
+            @endif
+        </div>
+        
         
         <div class="mb-3">
             <label for="address" class="form-label">Address</label>
@@ -129,7 +155,7 @@
             @endif
         </div>
 
-        <!-- Payment Option -->
+        {{-- <!-- Payment Option -->
         <div class="mb-3">
             <label class="form-label">Payment Option</label>
             <div class="d-flex align-items-center" style="column-gap: 20px">
@@ -142,7 +168,7 @@
                     <label for="pay_later">Pay Later</label>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <!-- Receipt Section -->
         <div id="receipt_section" class="mb-3" style="display: none;">

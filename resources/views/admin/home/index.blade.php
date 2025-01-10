@@ -241,13 +241,28 @@
                 </div>
 
                 {{-- line chart to display applicant added per month --}}
-                <div class="col-8 mt-4">
-                    <div id="students-line-chart"></div>
+                <div class="col-12 mt-4">
+                    <div class="d-flex justify-content-end">
+                        <select class="form-select w-auto" id="yearSelect">
+                            @php
+                                $currentYear = now()->year;
+                                $startYear = $currentYear - 10;
+                                $endYear = $currentYear + 10;
+                            @endphp
+
+                            @for ($year = $startYear; $year <= $endYear; $year++)
+                                <option value="{{ $year }}" @if ($year == $currentYear) selected @endif>
+                                    {{ $year }}</option>
+                            @endfor
+                        </select>
+
+                    </div>
+                    <div id="chart1"></div>
                 </div>
                 {{-- pie chart to display pending and approved applicants --}}
-                <div class="col-4 mt-4">
+                {{-- <div class="col-4 mt-4">
                     <div id="test-centers-pie-chart"></div>
-                </div>
+                </div> --}}
 
                 <!-- Recent Applicants Table -->
                 <div class="col-12 text-start mt-4">
@@ -269,8 +284,10 @@
                                         <tr>
                                             <td>{{ $student->name }}</td>
                                             <td>{{ $student->user->name }}</td>
-                                            <td>{{ $student->user->consultancy->test_center->name??$student->user->name }}</td>
-                                            <td>{{ $student->exam_date ? \Carbon\Carbon::parse($student->exam_date->exam_date)->format('M d, Y') : 'N/A' }}</td>
+                                            <td>{{ $student->user->consultancy->test_center->name ?? $student->user->name }}
+                                            </td>
+                                            <td>{{ $student->exam_date ? \Carbon\Carbon::parse($student->exam_date->exam_date)->format('M d, Y') : 'N/A' }}
+                                            </td>
                                             <td>
                                                 <a href="{{ route('student.show', $student->slug) }}"
                                                     class="btn btn-success btn-sm">View</a>
@@ -379,13 +396,13 @@
 
 
                 {{-- line chart to display applicant added per month --}}
-                <div class="col-8 mt-4">
-                    <div id="students-line-chart"></div>
+                <div class="col-12 mt-4">
+                    <div id="chart1"></div>
                 </div>
                 {{-- pie chart to display pending and approved applicants --}}
-                <div class="col-4 mt-4">
+                {{-- <div class="col-4 mt-4">
                     <div id="test-centers-pie-chart"></div>
-                </div>
+                </div> --}}
 
                 <div class="col-12 text-start">
                     <div class=" my-5">
@@ -410,11 +427,12 @@
                                                 @if (count($students) > 0)
                                                     @foreach ($students as $student)
                                                         <tr>
-                                                            <td>{{$student->name}}</td>
-                                                            <td>{{$student->user->name}}</td>
-                                                            <td>{{ $student->exam_date ? \Carbon\Carbon::parse($student->exam_date->exam_date)->format('M d, Y') : 'N/A' }}</td>
+                                                            <td>{{ $student->name }}</td>
+                                                            <td>{{ $student->user->name }}</td>
+                                                            <td>{{ $student->exam_date ? \Carbon\Carbon::parse($student->exam_date->exam_date)->format('M d, Y') : 'N/A' }}
+                                                            </td>
                                                             <td>
-                                                                <a href="{{route('student.show',$student->slug)}}"
+                                                                <a href="{{ route('student.show', $student->slug) }}"
                                                                     class="btn btn-sm btn-outline-success">View</a>
                                                             </td>
                                                         </tr>
@@ -461,7 +479,7 @@
                                             </tbody>
                                         </table>
                                         <div class="d-flex justify-content-center">
-                                        {{ $notices->onEachSide(2)->links('pagination::simple-bootstrap-5') }}
+                                            {{ $notices->onEachSide(2)->links('pagination::simple-bootstrap-5') }}
                                         </div>
                                     </div>
                                 </div>
@@ -500,7 +518,7 @@
                                         <div class="d-flex justify-content-center">
                                             {{ $upcomingTests->onEachSide(2)->links('pagination::simple-bootstrap-5') }}
                                         </div>
-                                      
+
                                     </div>
                                 </div>
                             </div>
@@ -565,7 +583,7 @@
                 </div>
                 {{-- line chart to display applicant added per month --}}
                 <div class="col-12 mt-4">
-                    <div id="students-line-chart"></div>
+                    <div id="chart1"></div>
                 </div>
                 {{-- pie chart to display pending and approved applicants --}}
                 {{-- <div class="col-5 mt-4">
@@ -750,92 +768,146 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             // ===========line chart to display applicant added per month============
-            var options1 = {
-                chart: {
-                    type: 'line',
-                    height: 350,
-                    toolbar: {
-                        show: false // Hides export/download options
-                    },
-                    zoom: {
-                        enabled: false // Disables zooming
-                    }
-                },
-                series: [{
-                    name: 'Applicants Added',
-                    data: [45, 50, 55, 60, 70, 80, 85, 90, 100, 110, 120, 130] // Example data
-                }],
-                xaxis: {
-                    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov',
-                        'Dec'
-                    ], // Months
-                    title: {
-                        text: 'Month',
-                        style: {
-                            fontSize: '14px',
-                            fontWeight: 'bold'
-                        }
-                    }
-                },
-                yaxis: {
-                    title: {
-                        text: 'Applicant Count',
-                        style: {
-                            fontSize: '14px',
-                            fontWeight: 'bold'
-                        }
-                    }
-                },
-                colors: ['#4CAF50'], // Line color (green in this case)
-                stroke: {
-                    curve: 'smooth', // Smooth curve for the line
-                    width: 5
-                },
-                markers: {
-                    size: 5,
-                    colors: ['#4CAF50'], // Marker color
-                    strokeWidth: 2,
-                    hover: {
-                        size: 7
-                    }
-                },
-                grid: {
-                    borderColor: '#e7e7e7'
-                },
-                tooltip: {
-                    theme: 'dark'
-                },
-                title: {
-                    text: 'Applicant Added Per Month',
-                    align: 'center',
-                    style: {
-                        fontSize: '16px',
-                        fontWeight: 'bold'
-                    }
-                }
-            };
+            // Function to fetch chart data based on the selected year
+            function fetchChartData(year) {
 
-            var chart1 = new ApexCharts(document.querySelector("#students-line-chart"), options1);
-            chart1.render();
+                $.ajax({
+                    url: "{{ route('chart.show') }}", // Correct route
+                    method: 'GET',
+                    data: {
+                        year: year
+                    },
+                    success: function(response) {
+                        // Update the chart with the new data
+                        updateChart(response.months, response.counts);
+                    },
+                    error: function(error) {
+                        console.error("Error fetching data:", error);
+                    }
+                });
+            }
+            // Function to update the chart with new data
+            function updateChart(months, counts) {
+                var options1 = {
+                    chart: {
+                        type: 'line',
+                        height: 350,
+                        animations: {
+                            enabled: false // Disable animations
+                        },
+                        toolbar: {
+                            show: false
+                        },
+                        zoom: {
+                            enabled: false
+                        }
+                    },
+                    series: [{
+                        name: 'Applicants Added',
+                        data: counts // Use the updated count data
+                    }],
+                    xaxis: {
+                        categories: months, // Use the updated months data
+                        title: {
+                            text: 'Month',
+                            style: {
+                                fontSize: '14px',
+                                fontWeight: 'bold'
+                            }
+                        }
+                    },
+                    yaxis: {
+                        title: {
+                            text: 'Applicant Count',
+                            style: {
+                                fontSize: '14px',
+                                fontWeight: 'bold'
+                            }
+                        }
+                    },
+                    colors: ['#4CAF50'], // Line color (green in this case)
+                    stroke: {
+                        curve: 'smooth', // Smooth curve for the line
+                        width: 5
+                    },
+                    markers: {
+                        size: 5,
+                        colors: ['#4CAF50'], // Marker color
+                        strokeWidth: 2,
+                        hover: {
+                            size: 7
+                        }
+                    },
+                    grid: {
+                        borderColor: '#e7e7e7'
+                    },
+                    tooltip: {
+                        theme: 'dark'
+                    },
+                    title: {
+                        text: 'Applicant Added Per Month',
+                        align: 'center',
+                        style: {
+                            fontSize: '16px',
+                            fontWeight: 'bold'
+                        }
+                    }
+                };
+
+                // Initialize or update the chart
+                var chart1 = new ApexCharts(document.querySelector("#chart1"), options1);
+                chart1.render();
+            }
+            // Set initial year as the current year
+            var currentYear = new Date().getFullYear();
+            fetchChartData(currentYear);
+
+            // Update chart when the year is changed
+            $('#yearSelect').on('change', function() {
+                var selectedYear = $(this).val();
+                fetchChartData(selectedYear); // Fetch data for selected year
+            });
             // ============end of line chart to display applicant added per month============
 
             // ===========pie chart to display total applicants of related test centers==========
-            var testCenterNames = ['Center A', 'Center B', 'Center C', 'Center D']; // Example test center names
-            var applicantCounts = [120, 90, 150, 80]; // Example applicant counts for each center
 
+            // ============end of pie chart to display total applicants of related test centers==========
+        });
+    </script>
+    {{-- <script>
+        // Fetch data for the pie chart
+        function loadPieChart() {
+            $.ajax({
+                url: "{{ route('chart.testCenters') }}", // Adjust this route name to match your setup
+                method: 'GET',
+                success: function(response) {
+                    console.log(response); // Debugging
+
+                    // Pass data to the chart
+                    renderPieChart(response.testCenterNames, response.studentsCounts, response.percentages,
+                        response.totalStudentCount);
+                },
+                error: function(error) {
+                    console.error("Error fetching pie chart data:", error);
+                }
+            });
+        }
+
+        // Render the pie chart
+        function renderPieChart(testCenterNames, studentsCounts, percentages, totalStudentCount) {
             var options2 = {
                 chart: {
                     type: 'pie',
                     height: 350,
                 },
-                series: applicantCounts, // Dynamic applicant data
+                series: studentsCounts, // Dynamic consultancy data (number of students)
                 labels: testCenterNames, // Dynamic test center names
                 colors: ['#FF5733', '#33FF57', '#337BFF', '#FFC300'], // Custom colors for each center
                 legend: {
                     position: 'bottom',
                 },
                 title: {
-                    text: 'Applicants',
+                    text: 'Applicants per Test Center (Total: ' + totalStudentCount + ')',
                     align: 'center',
                     style: {
                         fontSize: '16px',
@@ -843,13 +915,24 @@
                     }
                 },
                 tooltip: {
-                    theme: 'dark'
+                    theme: 'dark',
+                    y: {
+                        formatter: function(val, opts) {
+                            var index = opts.seriesIndex;
+                            var percentage = percentages[index];
+                            return  " Total students= " + val ;
+                        }
+                    }
                 }
             };
 
             var chart2 = new ApexCharts(document.querySelector("#test-centers-pie-chart"), options2);
             chart2.render();
-            // ============end of pie chart to display total applicants of related test centers==========
+        }
+
+        // Load the pie chart on page load
+        $(document).ready(function() {
+            loadPieChart();
         });
-    </script>
+    </script> --}}
 @endpush

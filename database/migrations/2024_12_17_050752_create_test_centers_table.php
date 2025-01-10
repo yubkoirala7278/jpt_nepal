@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('address');
             $table->enum('status', ['active', 'disabled'])->default('active');
             $table->text('disabled_reason')->nullable();
+            $table->string('test_venue');
+            $table->string('venue_code');
             $table->timestamps();
         });
     }

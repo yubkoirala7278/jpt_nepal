@@ -80,6 +80,30 @@
             @endif
         </div>
 
+        <div class="mb-3">
+            <label class="form-label">Examinee Category</label>
+            <select class="form-select" name="examinee_category">
+                <option selected disabled>Select Examinee Category</option>
+                <option value="Student" {{ old('examinee_category') == 'Student' ? 'selected' : '' }}>Student</option>
+                <option value="General" {{ old('examinee_category') == 'General' ? 'selected' : '' }}>General</option>
+            </select>
+            @if ($errors->has('examinee_category'))
+                <span class="text-danger">{{ $errors->first('examinee_category') }}</span>
+            @endif
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Exam Category</label>
+            <select class="form-select" name="exam_category">
+                <option selected disabled>Select Exam Category</option>
+                <option value="Regular period" {{ old('exam_category') == 'Regular period' ? 'selected' : '' }}>Regular period</option>
+                <option value="Any time" {{ old('exam_category') == 'Any time' ? 'selected' : '' }}>Any time</option>
+            </select>
+            @if ($errors->has('exam_category'))
+                <span class="text-danger">{{ $errors->first('exam_category') }}</span>
+            @endif
+        </div>
+
 
         <div class="mb-3">
             <label for="address" class="form-label">Address</label>
@@ -141,6 +165,22 @@
                 </div>
             </div>
         </div>
+        {{-- account details --}}
+        <div id="account_section"  class="mb-3 p-4 rounded shadow-sm" style="display: none; background: #f8f9fa;">
+
+            <!-- Bank Information Section -->
+            <div class="text-center mb-4">
+                <p class="fw-bold mb-1" style="font-size: 1.5rem; color: #343a40;">Bank Name: <span class="text-primary">Nic Asia</span></p>
+                <p class="text-primary fs-4 mb-2">Account Name: <span class="fw-bold">Japanese Proficiency Test</span></p>
+                <p class="fw-bold mb-1" style="font-size: 1.5rem; color: #343a40;">Account Number: <span class="text-success">0987654321</span></p>
+                <p class="text-secondary fs-5">Branch: <span class="fw-bold text-dark">Putalisadak</span></p>
+            </div>
+        
+            <!-- QR Code Section -->
+            <div class="text-center">
+                <img src="{{ asset('frontend/img/qr.png') }}" alt="Account QR" loading="lazy" class="img-fluid mb-3 rounded" style="max-width: 200px;">
+            </div>
+        </div>
 
         <!-- Receipt Section -->
         <div id="receipt_section" class="mb-3" style="display: none;">
@@ -184,15 +224,18 @@
     <script>
         function updateVisibility() {
             const receiptSection = document.getElementById('receipt_section');
+            const accountSection = document.getElementById('account_section');
             const amountSection = document.getElementById('amount_section');
             const selectedOption = document.querySelector('input[name="payment_option"]:checked').value;
 
             if (selectedOption === 'pay_now') {
                 receiptSection.style.display = 'block';
+                accountSection.style.display = 'block';
                 amountSection.style.display = 'block';
             } else {
                 // Hide sections
                 receiptSection.style.display = 'none';
+                accountSection.style.display = 'none';
                 amountSection.style.display = 'none';
 
                 // Reset values

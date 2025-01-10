@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Consultancy;
 use App\Models\Students;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,29 +14,63 @@ class AdmitCardController extends Controller
     public function index(Request $request)
     {
         try {
-            if (Auth::user()->hasRole('admin')) {
-                $students = Students::has('admit_cards')->with('admit_cards','exam_date')->latest()->get();
-            } else if (Auth::user()->hasRole('consultancy_manager')) {
-                $students = Students::with('admit_cards','exam_date') 
-                ->where('user_id', Auth::user()->id) 
-                ->has('admit_cards')
-                ->get();
-            } else {
-                return; // If the user does not have a valid role, return nothing
-            }
-
             if ($request->ajax()) {
+                $query = Students::with('user.consultancy', 'user.test_center', 'exam_date', 'admit_cards')
+                ->whereNotNull('exam_number') 
+                ->latest();
+
+                if (Auth::user()->hasRole('consultancy_manager')) {
+                    $query->where('user_id', Auth::user()->id);
+                } else if (Auth::user()->hasRole('test_center_manager')) {
+                    $consultanciesUserIds = Consultancy::where('test_center_id', Auth::user()->id)
+                        ->pluck('user_id')
+                        ->toArray();
+                    // Append the authenticated user's ID to the array
+                    $consultanciesUserIds[] = Auth::user()->id;
+                    $query->whereIn('user_id', $consultanciesUserIds);
+                }
+
+                // Fetch students
+                $students = $query->get();
+
+                // Loop through the students and check if consultancy address is null
+                $students->map(function ($student) {
+                    // Check if consultancy address is null and use test center address as fallback
+                    $student->consultancy_address = $student->user->consultancy && $student->user->consultancy->address
+                        ? $student->user->consultancy->address
+                        : $student->user->test_center->address;
+                    return $student;
+                });
+
                 return DataTables::of($students)
                     ->addIndexColumn()
-                    ->addColumn('admit_card', function ($student) {
-                        // Add download button for the admit card
-                        return '<a href="' . asset($student->admit_cards->admit_card) . '" class="btn btn-success btn-sm" download><i class="fa-solid fa-download me-1"></i>Download</a>';
+                    ->editColumn('exam_duration', function ($row) {
+                        return $row->exam_date
+                            ? $row->exam_date->exam_start_time->format('h:i A') . ' - ' . $row->exam_date->exam_end_time->format('h:i A')
+                            : 'N/A';
                     })
-                    ->addColumn('exam_date', function ($examDate) {
-                        // Add download button for the admit card
-                        return $examDate->exam_date->exam_date;
+                    ->editColumn('admit_card', function ($row) {
+                        if (!$row->status) {
+                            return '<span class="badge text-bg-danger text-white">Pending</span>';
+                        }
+
+                        if ($row->status && !$row->exam_number) {
+                            return '<span class="badge text-bg-warning text-white">Admit Card Under Process</span>';
+                        }
+
+                        if ($row->status && $row->exam_number) {
+                            return '
+                            <button 
+                                type="button" 
+                                class="btn btn-success btn-sm text-white" 
+                                id="download-button-' . $row->id . '"
+                                onclick="downloadAdmitCard(\'' . $row->dob . '\', \'' . $row->slug . '\', ' . $row->id . ')">
+                                <i class="fa-solid fa-download"></i> Download
+                            </button>
+                        ';
+                        }
                     })
-                    ->rawColumns(['admit_card'])
+                    ->rawColumns(['status', 'admit_card'])
                     ->make(true);
             }
             return view('admin.admit_card.index');

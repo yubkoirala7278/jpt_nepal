@@ -8,6 +8,7 @@ use App\Mail\StudentCreatedMail;
 use App\Models\ExamDate;
 use App\Models\Nationality;
 use App\Models\Students;
+use App\Models\TestCenter;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -52,7 +53,9 @@ class RegistrationController extends Controller
                         'email',
                         'is_appeared_previously',
                         'gender',
-                        'nationality'
+                        'nationality',
+                        'examinee_category',
+                        'exam_category'
                     ]),
                     [
                         'exam_date' => $examDate ? $examDate->exam_date : null,
@@ -69,6 +72,7 @@ class RegistrationController extends Controller
     public function store(RegistrationRequest $request)
     {
         try {
+            $testCenter=TestCenter::where('user_id',$request->test_center)->first();
             $profilePath = $request->hasFile('profile')
                 ? $request->file('profile')->storeAs('public/profile', uniqid() . '.' . $request->file('profile')->getClientOriginalExtension())
                 : null;
@@ -95,7 +99,11 @@ class RegistrationController extends Controller
                 'exam_date_id' => $request->exam_date,
                 'amount' => $request->amount??null,
                 'gender'=>$request->gender,
-                'nationality'=>$request->nationality
+                'nationality'=>$request->nationality,
+                'exam_category'=>$request->exam_category,
+                'examinee_category'=>$request->examinee_category,
+                'test_venue'=>$testCenter->test_venue,
+                'venue_code'=>$testCenter->venue_code
             ]);
 
             $examStartTime = \Carbon\Carbon::parse($student->exam_date->exam_start_time)->format('h:i A');
@@ -112,6 +120,8 @@ class RegistrationController extends Controller
                 'consultancy_address' => $student->user->test_center->address,
                 'consultancy_phone_number' => $student->user->test_center->phone,
                 'registration_number' => $student->slug,
+                'test_venue'=>$testCenter->test_venue,
+                'venue_code'=>$testCenter->venue_code
             ];
             Mail::to($student->email)->send(new StudentCreatedMail($data));
 
