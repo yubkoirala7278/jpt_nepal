@@ -39,32 +39,6 @@
 @endsection
 
 @section('modal')
-    {{-- import results --}}
-    <div class="modal fade" id="importResults" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="importResultsLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <form action="{{ route('results.import') }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="importResultsLabel">Import Results</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <!-- File Upload -->
-                        <div class="mb-3">
-                            <label for="file" class="form-label">Upload Excel File</label>
-                            <input type="file" class="form-control" name="file" id="file" accept=".xlsx"
-                                required>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Import</button>
-                    </div>
-            </form>
-        </div>
-    </div>
     {{-- export result --}}
     <div class="modal fade" id="exportResults" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="exportResultsLabel" aria-hidden="true">
@@ -121,6 +95,32 @@
                         <button type="submit" class="btn btn-success">Export</button>
                     </div>
                 </div>
+            </form>
+        </div>
+    </div>
+    {{-- import results --}}
+    <div class="modal fade" id="importResults" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="importResultsLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form action="{{ route('results.import') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="importResultsLabel">Import Results</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- File Upload -->
+                        <div class="mb-3">
+                            <label for="file" class="form-label">Upload Excel File</label>
+                            <input type="file" class="form-control" name="file" id="file" accept=".xlsx,.csv"
+                                required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Import</button>
+                    </div>
             </form>
         </div>
     </div>

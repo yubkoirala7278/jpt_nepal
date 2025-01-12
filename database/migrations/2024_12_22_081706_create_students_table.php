@@ -38,6 +38,8 @@ return new class extends Migration
             $table->string('exam_category');
             $table->string('test_venue');
             $table->string('venue_code');
+            $table->string('venue_name');
+            $table->string('venue_address');
             $table->timestamps();
         });
     }

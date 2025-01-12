@@ -25,9 +25,9 @@ class ResultImport implements ToModel, WithHeadingRow
                 throw new \Exception("Invalid marks value for email " . $row['email'] . ". Marks must be a number >= 0.");
             }
 
-            // Validate 'results': Must be either 'pass' or 'fail'
-            if (!in_array(strtolower($row['results']), ['pass', 'fail'])) {
-                throw new \Exception("Invalid results value for email " . $row['email'] . ". Results must be 'pass' or 'fail'.");
+            // Validate 'result': Must be either 'pass' or 'fail'
+            if (!in_array(strtolower($row['result']), ['pass', 'fail'])) {
+                throw new \Exception("Invalid result value for email " . $row['email'] . ". Result must be 'pass' or 'fail'.");
             }
 
             // Find the student based on email and conditions
@@ -51,7 +51,7 @@ class ResultImport implements ToModel, WithHeadingRow
             // Create the result entry
             $result = new Result([
                 'student_id' => $student->id,
-                'result' => strtolower($row['results']), // Save as lowercase (standard format)
+                'result' => strtolower($row['result']), // Save as lowercase (standard format)
                 'marks' => $row['marks'],
             ]);
 

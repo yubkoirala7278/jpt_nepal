@@ -16,12 +16,15 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('slug')->unique();
-            $table->string('phone');
-            $table->string('address');
-            $table->enum('status', ['active', 'disabled'])->default('active');
-            $table->text('disabled_reason')->nullable();
+            $table->string('venue_address');
             $table->string('test_venue');
             $table->string('venue_code');
+            $table->string('venue_name');
+            $table->string('phone');
+            $table->string('contact_person');
+            $table->string('mobile_no');
+            $table->enum('status', ['active', 'disabled'])->default('active');
+            $table->text('disabled_reason')->nullable();
             $table->timestamps();
         });
     }

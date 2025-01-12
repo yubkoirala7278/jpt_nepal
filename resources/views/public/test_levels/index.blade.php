@@ -10,8 +10,7 @@
                     <div class="carousel-caption d-flex flex-column h-100 align-items-start justify-content-center ">
                         <h1 class="display-5 fw-bold" data-aos="fade-right" data-aos-duration="1500">Test Levels</h1>
                         <p class="fs-4 text-start text-white " style="max-width: 600px;" data-aos="fade-left"
-                            data-aos-duration="1500"> Lorem ipsum dolor sit amet
-                            consectetur adipisicing elit.</p>
+                            data-aos-duration="1500">The Japanese Proficiency Test measures language skills at various levels.</p>
                     </div>
                 </div>
             </div>
@@ -20,48 +19,32 @@
 
 
     <section class="container">
-        <div class="section-title mb-4">
+        <div class="section-title">
             <span><i class="fa-solid fa-angles-right"></i> Test Levels</span>
             <h2>Test Levels</h2>
         </div>
-        <div class="">
-            <table class="table table-primary">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Test Date</th>
-                        <th scope="col">Test Location</th>
-                        <th scope="col">Test Levels</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="table-active">
-                        <th scope="row">1</th>
-                        <td>Dec 29, 2024</td>
-                        <td>Kathmandu, Nepal</td>
-                        <td>N1</td>
-                    </tr>
-                    <tr class="table-active">
-                        <th scope="row">2</th>
-                        <td>Dec 29, 2024</td>
-                        <td>Kathmandu, Nepal</td>
-                        <td>N2</td>
-                    </tr>
-                    <tr class="table-active">
-                        <th scope="row">3</th>
-                        <td>Dec 29, 2024</td>
-                        <td>Kathmandu, Nepal</td>
-                        <td>N5</td>
-                    </tr>
-                    <tr class="table-active">
-                        <th scope="row">4</th>
-                        <td>Jan 29, 2025</td>
-                        <td>Kathmandu, Nepal</td>
-                        <td>N4</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <strong>Beginner Level (N5):</strong> Gain foundational skills in reading and writing basic Japanese characters (Hiragana, Katakana, and Kanji). Learn simple phrases for everyday conversations.
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Elementary Level (N4):</strong> Build upon your knowledge of basic grammar and vocabulary. Understand and use expressions in more diverse contexts, such as travel and shopping.
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Intermediate Level (N3):</strong> Develop the ability to comprehend moderately complex texts and conversations. Engage in discussions on common topics like culture and daily activities.
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Advanced Level (N2):</strong> Demonstrate fluency in professional settings. Understand and interpret complex writings and discussions related to news, work, or education.
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Proficient Level (N1):</strong> Achieve mastery of the Japanese language. Exhibit excellent comprehension of nuanced topics and participate in high-level professional and academic discourse.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        
 
         {{-- <div class="main-pagination mt-5" data-aos="flip-right" data-aos-duration="1500">
             <ul class="d-flex flex-wrap gap-3 justify-content-center ">

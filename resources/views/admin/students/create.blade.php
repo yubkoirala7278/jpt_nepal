@@ -107,7 +107,7 @@
 
         <div class="mb-3">
             <label for="address" class="form-label">Address</label>
-            <input type="text" class="form-control" id="address" name="address" placeholder="Enter Applicant Address"
+            <input type="text" class="form-control" id="address" name="address" placeholder="Enter Student Address"
                 value="{{ old('address') }}">
             @if ($errors->has('address'))
                 <span class="text-danger">{{ $errors->first('address') }}</span>
@@ -135,7 +135,7 @@
         </div>
 
         <div class="mb-3">
-            <label for="profile" class="form-label">Upload Applicant Profile</label>
+            <label for="profile" class="form-label">Upload Applicant Photo</label>
             <input type="file" class="form-control" id="profile" name="profile"
                 accept="image/jpeg, image/png, image/jpg,image/gif,image/webp,image/svg" />
             @if ($errors->has('profile'))
@@ -166,21 +166,24 @@
             </div>
         </div>
         {{-- account details --}}
+        @if($account)
         <div id="account_section"  class="mb-3 p-4 rounded shadow-sm" style="display: none; background: #f8f9fa;">
 
             <!-- Bank Information Section -->
             <div class="text-center mb-4">
-                <p class="fw-bold mb-1" style="font-size: 1.5rem; color: #343a40;">Bank Name: <span class="text-primary">Nic Asia</span></p>
-                <p class="text-primary fs-4 mb-2">Account Name: <span class="fw-bold">Japanese Proficiency Test</span></p>
-                <p class="fw-bold mb-1" style="font-size: 1.5rem; color: #343a40;">Account Number: <span class="text-success">0987654321</span></p>
-                <p class="text-secondary fs-5">Branch: <span class="fw-bold text-dark">Putalisadak</span></p>
+                <p class="fw-bold mb-1" style="font-size: 1.5rem; color: #343a40;">Bank Name: <span class="text-primary">{{$account->bank_name}}</span></p>
+                <p class="text-primary fs-4 mb-2">Account Name: <span class="fw-bold">{{$account->account_name}}</span></p>
+                <p class="fw-bold mb-1" style="font-size: 1.5rem; color: #343a40;">Account Number: <span class="text-success">{{$account->account_number}}</span></p>
+                <p class="text-secondary fs-5">Branch: <span class="fw-bold text-dark">{{$account->branch_name}}</span></p>
             </div>
         
             <!-- QR Code Section -->
             <div class="text-center">
-                <img src="{{ asset('frontend/img/qr.png') }}" alt="Account QR" loading="lazy" class="img-fluid mb-3 rounded" style="max-width: 200px;">
+                <img src="{{ asset($account->qr_code) }}" alt="Account QR" loading="lazy" class="img-fluid mb-3 rounded" style="max-width: 200px;">
             </div>
         </div>
+        @endif
+      
 
         <!-- Receipt Section -->
         <div id="receipt_section" class="mb-3" style="display: none;">

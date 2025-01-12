@@ -11,15 +11,16 @@
                 <tr>
                     <th>S.N</th>
                     <th>Name</th>
-                    <th>Phone No.</th>
                     <th>Address</th>
-                    <th>Email</th>
-                    <th>Created At</th>
-                    <th>Status</th>
-                    <th>Test Venue</th>
+                    <th>City</th>
                     <th>Venue Code</th>
+                    <th>Venue Name</th>
+                    <th>Phone Number</th>
+                    <th>Email Address</th>
+                    <th>Contact Person</th>
+                    <th>Mobile Number</th>
+                    <th>Status</th>
                     <th>Action</th>
-                    {{-- <th>Dashboard</th> --}}
                 </tr>
             </thead>
             <tbody style="vertical-align: middle"></tbody>
@@ -95,7 +96,8 @@
                             d.search = $('input[type="search"]').val(); // Pass search query
                         }
                     },
-                    columns: [{
+                    columns: [
+                        {
                             data: 'DT_RowIndex',
                             name: 'DT_RowIndex',
                             orderable: false,
@@ -108,14 +110,32 @@
                             searchable: true
                         },
                         {
-                            data: 'phone',
-                            name: 'phone',
+                            data: 'venue_address',
+                            name: 'venue_address',
                             orderable: true,
                             searchable: true
                         },
                         {
-                            data: 'address',
-                            name: 'address',
+                            data: 'test_venue',
+                            name: 'test_venue',
+                            orderable: true,
+                            searchable: true
+                        },
+                        {
+                            data: 'venue_code',
+                            name: 'venue_code',
+                            orderable: true,
+                            searchable: true
+                        },
+                        {
+                            data: 'venue_name',
+                            name: 'venue_name',
+                            orderable: true,
+                            searchable: true
+                        },
+                        {
+                            data: 'phone',
+                            name: 'phone',
                             orderable: true,
                             searchable: true
                         },
@@ -126,22 +146,20 @@
                             searchable: true
                         },
                         {
-                            data: 'created_at',
-                            name: 'created_at',
+                            data: 'contact_person',
+                            name: 'contact_person',
+                            orderable: true,
+                            searchable: true
+                        },
+                        {
+                            data: 'mobile_no',
+                            name: 'mobile_no',
                             orderable: true,
                             searchable: true
                         },
                         {
                             data: 'status',
                             name: 'status'
-                        },
-                        {
-                            data: 'test_venue',
-                            name: 'test_venue'
-                        },
-                        {
-                            data: 'venue_code',
-                            name: 'venue_code'
                         },
                         {
                             data: 'action',

@@ -38,19 +38,19 @@
     <div class="">
         <p class="fw-bold fs-5 m-0">第393回 JPT 日本語能力試験 受験票 / 393rd test JPT Examination Voucher 試験当日、この受験票を必ず持って来てください。
             Please be sure to bring this examination voucher with you on the day of the examination.</p>
-        
+
     </div>
 
     <table>
         <tr>
             <th class="centered background">試験日 Date of the exam</th>
-            <td class="centered">2024 December 28</td>
+            <td class="centered">{{ $data['examDate'] }}</td>
             <td rowspan="2" class="centered background">Test Venue</td>
-            <td rowspan="2" class="centered">8:00 - 9:00</td>
+            <td rowspan="2" class="centered">{{ $data['testVenue'] }}</td>
         </tr>
         <tr>
             <th class="centered background">受付時間 Reception hours</th>
-            <td class="centered">8:00 - 9:00</td>
+            <td class="centered">{{ $data['receptionHours'] }}</td>
         </tr>
         <tr>
             <td colspan="4" class="centered background">受験者情報 (Examinee Information)</td>
@@ -71,24 +71,22 @@
 
                                     <div class="d-flex justify-content-around gap-0"
                                         style="border: 3px solid rgb(245, 37, 141);">
-                                        <div class="text-center"
-                                            style="width: 30px;border: 1px solid rgb(245, 37, 141);">
-                                            0
-                                        </div>
-                                        <div class="text-center"
-                                            style="width: 30px;border: 1px solid rgb(245, 37, 141);">
-                                            1
-                                        </div>
-                                        <div class="text-center"
-                                            style="width: 30px;border: 1px solid rgb(245, 37, 141);">
-                                            2
-                                        </div>
+                                        @php
+                                            $venueCodeDigits = str_split($data['venueCode']);
+                                        @endphp
+
+                                        @foreach ($venueCodeDigits as $digit)
+                                            <div class="text-center"
+                                                style="width: 30px; border: 1px solid rgb(245, 37, 141);">
+                                                {{ $digit }}
+                                            </div>
+                                        @endforeach
                                     </div>
                                 </div>
                             </div>
 
                             <div class="vc">
-                                <p class="text-center m-0" style="font-size: 10px;">Venue Code</p>
+                                <p class="text-center m-0" style="font-size: 10px;">Examinee's number</p>
                                 <div class="box" style="border: 1px solid rgb(245, 37, 141);">
                                     <div class="text-center mt-2" style="font-size: 14px;">
                                         <p class="fw-semibold">受験番号</p>
@@ -96,26 +94,16 @@
 
                                     <div class="d-flex justify-content-around gap-0"
                                         style="border: 3px solid rgb(245, 37, 141);">
-                                        <div class="text-center"
-                                            style="width: 30px;border: 1px solid rgb(245, 37, 141);">
-                                            0
-                                        </div>
-                                        <div class="text-center"
-                                            style="width: 30px;border: 1px solid rgb(245, 37, 141);">
-                                            1
-                                        </div>
-                                        <div class="text-center"
-                                            style="width: 30px;border: 1px solid rgb(245, 37, 141);">
-                                            2
-                                        </div>
-                                        <div class="text-center"
-                                            style="width: 30px;border: 1px solid rgb(245, 37, 141);">
-                                            3
-                                        </div>
-                                        <div class="text-center"
-                                            style="width: 30px;border: 1px solid rgb(245, 37, 141);">
-                                            4
-                                        </div>
+                                        @php
+                                            $examineeNumber = str_split($data['examineeNumber']);
+                                        @endphp
+
+                                        @foreach ($examineeNumber as $digit)
+                                            <div class="text-center"
+                                                style="width: 30px; border: 1px solid rgb(245, 37, 141);">
+                                                {{ $digit }}
+                                            </div>
+                                        @endforeach
                                     </div>
 
                                 </div>
@@ -149,46 +137,22 @@
 
                                     <div class="d-flex justify-content-around gap-0"
                                         style="border: 3px solid rgb(245, 37, 141);">
-                                        <div class="text-center"
-                                            style="width: 30px;border: 1px solid rgb(245, 37, 141);">
-                                            2
-                                        </div>
-                                        <div class="text-center"
-                                            style="width: 30px;border: 1px solid rgb(245, 37, 141);">
-                                            0
-                                        </div>
-                                        <div class="text-center"
-                                            style="width: 30px;border: 1px solid rgb(245, 37, 141);">
-                                            2
-                                        </div>
-                                        <div class="text-center"
-                                            style="width: 30px;border: 1px solid rgb(245, 37, 141);">
-                                            4
-                                        </div>
-                                        <div class="text-center"
-                                            style="width: 30px;border: 1px solid rgb(245, 37, 141);">
-                                            1
-                                        </div>
-                                        <div class="text-center"
-                                            style="width: 30px;border: 1px solid rgb(245, 37, 141);">
-                                            0
-                                        </div>
-                                        <div class="text-center"
-                                            style="width: 30px;border: 1px solid rgb(245, 37, 141);">
-                                            1
-                                        </div>
-                                        <div class="text-center"
-                                            style="width: 30px;border: 1px solid rgb(245, 37, 141);">
-                                            5
-                                        </div>
+                                        @php
+                                            $dobDigits = str_split(str_replace('-', '', $data['dob']));
+                                        @endphp
+
+                                        @foreach ($dobDigits as $digit)
+                                            <div class="text-center"
+                                                style="width: 30px; border: 1px solid rgb(245, 37, 141);">
+                                                {{ $digit }}
+                                            </div>
+                                        @endforeach
                                     </div>
-
                                 </div>
-
                             </div>
 
                             <div class="vc">
-                                <p class="text-center m-0" style="font-size: 10px;">Gander</p>
+                                <p class="text-center m-0" style="font-size: 10px;">Gender</p>
                                 <div class="box" style="border: 1px solid rgb(245, 37, 141); width: 120px;">
                                     <div class="d-flex justify-content-around" style="font-size: 14px;">
                                         <p class="fw-semibold">性</p>
@@ -200,14 +164,14 @@
                                         <div class="d-flex justify-content-around align-items-evenly">
                                             <p class="fw-semibold m-0">男</p>
                                             <div class="rounded-pill mt-1"
-                                                style="border: 1px solid rgb(245, 37, 141);height: 20px; width: 10px;">
+                                                style="border: {{ $data['gender'] === 'male' ? '7px solid rgb(245, 37, 141)' : '1px solid rgb(245, 37, 141)' }}; height: 20px; width: 10px;">
                                             </div>
                                         </div>
 
                                         <div class="d-flex justify-content-around align-items-evenly">
                                             <p class="fw-semibold my-2">女</p>
                                             <div class="rounded-pill mt-2"
-                                                style="border: 1px solid rgb(245, 37, 141);height: 20px; width: 10px;">
+                                                style="border: {{ $data['gender'] === 'female' ? '7px solid rgb(245, 37, 141)' : '1px solid rgb(245, 37, 141)' }}; height: 20px; width: 10px;">
                                             </div>
                                         </div>
                                     </div>
@@ -215,7 +179,7 @@
                             </div>
 
                             <div class="vc">
-                                <p class="text-center m-0" style="font-size: 10px;">Venue Code</p>
+                                <p class="text-center m-0" style="font-size: 10px;">Examinee category</p>
                                 <div class="box" style="border: 1px solid rgb(245, 37, 141); width: 120px;">
                                     <div class="d-flex justify-content-center" style="font-size: 14px;">
                                         <p class="fw-semibold">受験区分</p>
@@ -226,7 +190,7 @@
                                             <p class="fw-semibold m-0">学</p>
                                             <p class="fw-semibold m-0">生</p>
                                             <div class="rounded-pill mt-1"
-                                                style="border: 1px solid rgb(245, 37, 141);height: 20px; width: 10px;">
+                                                style="border: {{ $data['examineeCategory'] === 'Student' ? '7px solid rgb(245, 37, 141)' : '1px solid rgb(245, 37, 141)' }}; height: 20px; width: 10px;">
                                             </div>
                                         </div>
 
@@ -234,7 +198,7 @@
                                             <p class="fw-semibold my-2">一</p>
                                             <p class="fw-semibold my-2">般</p>
                                             <div class="rounded-pill mt-2"
-                                                style="border: 5px solid black;height: 20px; width: 10px;">
+                                                style="border: {{ $data['examineeCategory'] === 'General' ? '7px solid rgb(245, 37, 141)' : '1px solid rgb(245, 37, 141)' }}; height: 20px; width: 10px;">
                                             </div>
                                         </div>
                                     </div>
@@ -242,7 +206,7 @@
                             </div>
 
                             <div class="vc">
-                                <p class="text-center m-0" style="font-size: 10px;">Venue Code</p>
+                                <p class="text-center m-0" style="font-size: 10px;">Exam category</p>
                                 <div class="box" style="border: 1px solid rgb(245, 37, 141); width: 120px;">
                                     <div class="d-flex justify-content-center" style="font-size: 14px;">
                                         <p class="fw-semibold">試験区分</p>
@@ -253,7 +217,7 @@
                                             <p class="fw-semibold m-0">定</p>
                                             <p class="fw-semibold m-0">期</p>
                                             <div class="rounded-pill mt-1"
-                                                style="border: 1px solid rgb(245, 37, 141);height: 20px; width: 10px;">
+                                                style="border: {{ $data['examCategory'] === 'Regular period' ? '7px solid rgb(245, 37, 141)' : '1px solid rgb(245, 37, 141)' }};height: 20px; width: 10px;">
                                             </div>
                                         </div>
 
@@ -261,7 +225,7 @@
                                             <p class="fw-semibold my-2">随</p>
                                             <p class="fw-semibold my-2">時</p>
                                             <div class="rounded-pill mt-2"
-                                                style="border: 5px solid black;height: 20px; width: 10px;">
+                                                style="border: {{ $data['examCategory'] === 'Any time' ? '7px solid rgb(245, 37, 141)' : '1px solid rgb(245, 37, 141)' }};height: 20px; width: 10px;">
                                             </div>
                                         </div>
                                     </div>
@@ -276,13 +240,13 @@
                                 <p class="my-2">前</p>
                             </div>
                             <div class="name" style="border: 3px solid rgb(245, 37, 141);">
-                                <h2 class="text-center py-2">MANISHA GAIRE</h2>
+                                <h2 class="text-center py-2">{{$data['applicantName']}}</h2>
                             </div>
                         </div>
 
                     </div>
 
-                    <img src="{{asset('admit_card/testimonial-1.jpg')}}" class="h-100" alt="">
+                    <img src="{{ asset($data['imagePath']) }}" class="h-100" alt="Profile Image">
 
                 </div>
             </td>
@@ -290,10 +254,10 @@
 
         <tr>
             <td colspan="4">
-                    成績証明書には登録された情報がそのまま表示されます。登録情報の修正や写真の変更は、試験会場で当日受け付けます。
-                    Score certificate will show the registered information as it appears here. Corrections to registered
-                    information
-                    and changes to photographs will be accepted at the examination site on the day of the examination.
+                成績証明書には登録された情報がそのまま表示されます。登録情報の修正や写真の変更は、試験会場で当日受け付けます。
+                Score certificate will show the registered information as it appears here. Corrections to registered
+                information
+                and changes to photographs will be accepted at the examination site on the day of the examination.
             </td>
         </tr>
 
@@ -311,21 +275,21 @@
         <tr>
             <td class="centered" colspan="1">会場名 (Name of venue)</td>
             <td class="centered" colspan="2">
-                Rammani Multiple Campus
+                {{$data['venue_name']}}
             </td>
             <td colspan="2" rowspan="3"></td>
         </tr>
         <tr>
             <td class="centered" colspan="1">住所 (Address)</td>
             <td class="centered" colspan="2">
-                Kathmandu, Nepal
+                {{$data['venue_address']}}
             </td>
         </tr>
 
         <tr>
             <td class="centered" colspan="1">交通 (Venue Directions)</td>
             <td class="centered" colspan="2">
-                
+
             </td>
         </tr>
     </table>
@@ -372,7 +336,7 @@
     <table class="mt-2">
         <tr>
             <td colspan="2" class="centered">
-                <img src="{{asset('admit_card/image.png')}}" style="max-width: 320px;" alt="">
+                <img src="{{ asset('admit_card/image.png') }}" style="max-width: 320px;" alt="">
             </td>
             <td colspan="2">
                 <p class="m-0">Please contact for more details :</p>
@@ -394,14 +358,13 @@
     <!-- Bootstrap Script CDN -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
-        </script>
+    </script>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
 
 
     <script type="text/javascript">
-
-        $("#btnprint").on("click", function () {
+        $("#btnprint").on("click", function() {
             window.print();
         });
     </script>

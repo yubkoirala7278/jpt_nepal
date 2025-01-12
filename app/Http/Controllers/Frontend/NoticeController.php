@@ -10,7 +10,8 @@ class NoticeController extends Controller
 {
     public function index(){
         try{
-            return view('public.notice.index');
+            $notices=Notice::latest()->paginate(10);
+            return view('public.notice.index',compact('notices'));
         }catch(\Throwable $th){
             return back()->with('error',$th->getMessage());
         }
@@ -19,10 +20,11 @@ class NoticeController extends Controller
     public function getNoticeDetail($slug){
         try{
             $notice=Notice::where('slug',$slug)->first();
+            $latestNotices = Notice::latest()->take(3)->get();
             if(!$notice){
                 return back()->with('error','Notice not found!');
             }
-            return view('public.notice.notice_detail',compact('notice'));
+            return view('public.notice.notice_detail',compact('notice','latestNotices'));
         }catch(\Throwable $th){
             return back()->with('error',$th->getMessage());
         }

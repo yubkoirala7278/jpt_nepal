@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegistrationRequest;
 use App\Mail\StudentCreatedMail;
+use App\Models\Account;
 use App\Models\ExamDate;
 use App\Models\Nationality;
 use App\Models\Students;
@@ -29,7 +30,8 @@ class RegistrationController extends Controller
                 ->orderBy('name', 'asc')
                 ->get();
                 $nationalities = Nationality::orderBy('name', 'asc')->get();
-            return view('public.registration.index', compact('examDates', 'testCenters','nationalities'));
+                $account=Account::latest()->first();
+            return view('public.registration.index', compact('examDates', 'testCenters','nationalities','account'));
         } catch (\Throwable $th) {
             return back()->with('error', $th->getMessage());
         }
@@ -103,7 +105,9 @@ class RegistrationController extends Controller
                 'exam_category'=>$request->exam_category,
                 'examinee_category'=>$request->examinee_category,
                 'test_venue'=>$testCenter->test_venue,
-                'venue_code'=>$testCenter->venue_code
+                'venue_code'=>$testCenter->venue_code,
+                'venue_name'=>$testCenter->venue_name,
+                'venue_address'=>$testCenter->venue_address,
             ]);
 
             $examStartTime = \Carbon\Carbon::parse($student->exam_date->exam_start_time)->format('h:i A');
@@ -121,7 +125,9 @@ class RegistrationController extends Controller
                 'consultancy_phone_number' => $student->user->test_center->phone,
                 'registration_number' => $student->slug,
                 'test_venue'=>$testCenter->test_venue,
-                'venue_code'=>$testCenter->venue_code
+                'venue_code'=>$testCenter->venue_code,
+                'venue_name'=>$testCenter->venue_name,
+                'venue_address'=>$testCenter->venue_address,
             ];
             Mail::to($student->email)->send(new StudentCreatedMail($data));
 

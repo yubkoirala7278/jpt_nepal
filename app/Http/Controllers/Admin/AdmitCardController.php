@@ -38,7 +38,7 @@ class AdmitCardController extends Controller
                     // Check if consultancy address is null and use test center address as fallback
                     $student->consultancy_address = $student->user->consultancy && $student->user->consultancy->address
                         ? $student->user->consultancy->address
-                        : $student->user->test_center->address;
+                        : $student->user->test_center->venue_address;
                     return $student;
                 });
 

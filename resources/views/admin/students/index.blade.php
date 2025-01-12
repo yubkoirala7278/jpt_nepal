@@ -79,7 +79,7 @@
         </div>
     </div>
     {{-- export applicants --}}
-    <div class="modal fade" id="exportApplicants" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    <div class="modal fade modal-lg" id="exportApplicants" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="exportApplicantsLabel" aria-hidden="true">
         <div class="modal-dialog">
             <form id="exportApplicantsForm" action="{{ route('applicants.export') }}" method="POST">
@@ -169,6 +169,33 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Export Reason</label>
+                            <div class="d-flex align-items-center" style="column-gap: 20px">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="export_reason" value="exam_code"
+                                        id="exam_code" checked>
+                                    <label class="form-check-label" for="exam_code">
+                                       Insert Examinee Number
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="export_reason" value="result"
+                                        id="result">
+                                    <label class="form-check-label" for="result">
+                                       Insert Result
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="export_reason" value="monitor"
+                                        id="monitor">
+                                    <label class="form-check-label" for="monitor">
+                                        Just to Monitor
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -193,9 +220,9 @@
                     <div class="modal-body">
                         <!-- File Upload -->
                         <div class="mb-3">
-                            <label for="file" class="form-label">Upload Excel File</label>
+                            <label for="file" class="form-label">Upload Excel/CSV File</label>
                             <input type="file" class="form-control" name="file" id="file"
-                                accept=".xlsx, .csv" required>
+                                accept=".xlsx,.csv" required>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -476,8 +503,6 @@
                     }
                 });
             });
-
-
         });
     </script>
 

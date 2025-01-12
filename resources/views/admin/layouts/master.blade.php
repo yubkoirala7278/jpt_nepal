@@ -150,13 +150,12 @@
                 <li class="nav-item dropdown pe-3">
                     <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#"
                         data-bs-toggle="dropdown">
-                        <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
+                        <i class="fa-solid fa-user-tie bg-success p-2 rounded-circle text-white"></i>
                         <span class="d-none d-md-block dropdown-toggle ps-2">{{ Auth::user()->name }}</span>
                     </a><!-- End Profile Iamge Icon -->
 
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                         <li class="dropdown-header">
-                            <h6>{{ Auth::user()->name }}</h6>
                             @if (Auth::user()->getRoleNames()->first() == 'admin')
                                 <h6>Admin</h6>
                             @elseif(Auth::user()->getRoleNames()->first() == 'consultancy_manager')
@@ -169,43 +168,48 @@
                             <hr class="dropdown-divider">
                         </li>
 
-                        <li>
+                        {{-- <li>
                             <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
                                 <i class="bi bi-person"></i>
                                 <span>My Profile</span>
                             </a>
-                        </li>
-                        <li>
+                        </li> --}}
+                        {{-- <li>
                             <hr class="dropdown-divider">
-                        </li>
+                        </li> --}}
 
-                        <li>
+                        {{-- <li>
                             <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
                                 <i class="bi bi-gear"></i>
                                 <span>Account Settings</span>
                             </a>
-                        </li>
-                        <li>
+                        </li> --}}
+                        {{-- <li>
                             <hr class="dropdown-divider">
-                        </li>
+                        </li> --}}
 
-                        <li>
+                        {{-- <li>
                             <a class="dropdown-item d-flex align-items-center" href="pages-faq.html">
                                 <i class="bi bi-question-circle"></i>
                                 <span>Need Help?</span>
                             </a>
-                        </li>
-                        <li>
+                        </li> --}}
+                        {{-- <li>
                             <hr class="dropdown-divider">
-                        </li>
+                        </li> --}}
 
                         <li>
-                            <a class="dropdown-item d-flex align-items-center" href="#">
+                            <a class="dropdown-item d-flex align-items-center" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                 <i class="bi bi-box-arrow-right"></i>
                                 <span>Sign Out</span>
                             </a>
                         </li>
-
+                        
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
+                        
+                        
                     </ul><!-- End Profile Dropdown Items -->
                 </li>
 
@@ -324,15 +328,15 @@
                         @endif
                     </ul>
                 </li><!-- End Icons Nav -->
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="{{ route('admin.admit-card') }}">
+                        <i class="fa-solid fa-ticket"></i>
+                        <span>Admit Card</span>
+                    </a>
+                </li><!-- End Profile Page Nav -->
 
                 @if (Auth::user()->hasRole('consultancy_manager') || Auth::user()->hasRole('admin'))
-                    <li class="nav-item">
-                        <a class="nav-link collapsed" href="{{ route('admin.admit-card') }}">
-                            <i class="fa-solid fa-ticket"></i>
-                            <span>Admit Card</span>
-                        </a>
-                    </li><!-- End Profile Page Nav -->
-
+                   
                     <li class="nav-item">
                         <a class="nav-link collapsed" href="{{ route('admin.applicant-result') }}">
                             <i class="fa-solid fa-graduation-cap"></i>
@@ -346,6 +350,12 @@
                         <a class="nav-link collapsed" href="{{ route('transaction') }}">
                             <i class="fa-solid fa-sack-dollar"></i>
                             <span>Transaction</span>
+                        </a>
+                    </li><!-- End Profile Page Nav -->
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="{{ route('account.index') }}">
+                            <i class="fa-solid fa-building-columns"></i>
+                            <span>Accounts</span>
                         </a>
                     </li><!-- End Profile Page Nav -->
                     <li class="nav-item">
@@ -378,50 +388,7 @@
                 </li><!-- End Icons Nav -->
 
 
-                {{-- <li class="nav-item">
-                    <a class="nav-link collapsed" data-bs-target="#icons-nav-fifth" data-bs-toggle="collapse"
-                        href="#">
-                        <i class="fa-solid fa-file"></i><span>Static Pages</span><i
-                            class="fas fa-chevron-down ms-auto"></i>
-                    </a>
-                    <ul id="icons-nav-fifth" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                        <li>
-                            <a href="#">
-                                <i class="fas fa-circle"></i><span>Header</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                <i class="fas fa-circle"></i><span>Footer</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                <i class="fas fa-circle"></i><span>Home Page</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                <i class="fas fa-circle"></i><span>Contact Page</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                <i class="fas fa-circle"></i><span>F.A.Q</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                <i class="fas fa-circle"></i><span>Privacy & Policy</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                <i class="fas fa-circle"></i><span>Help Desk</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li><!-- End Icons Nav --> --}}
+              
 
 
                 @if (Auth::user()->hasRole('admin'))
@@ -439,6 +406,36 @@
                             <span>Blogs</span>
                         </a>
                     </li><!-- End Profile Page Nav -->
+
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" data-bs-target="#icons-nav-fifth" data-bs-toggle="collapse"
+                            href="#">
+                            <i class="fa-solid fa-file"></i><span>Static Pages</span><i
+                                class="fas fa-chevron-down ms-auto"></i>
+                        </a>
+                        <ul id="icons-nav-fifth" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                            <li>
+                                <a href="{{route('header.index')}}">
+                                    <i class="fas fa-circle"></i><span>Header</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{route('about.index')}}">
+                                    <i class="fas fa-circle"></i><span>About</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{route('faq.index')}}">
+                                    <i class="fas fa-circle"></i><span>Faq's</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{route('footer.index')}}">
+                                    <i class="fas fa-circle"></i><span>Footer</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li><!-- End Icons Nav -->
                 @endif
             @endif
 

@@ -138,7 +138,7 @@
         </div>
 
         <div class="mb-3">
-            <label for="profile" class="form-label">Upload Applicant Profile</label>
+            <label for="profile" class="form-label">Upload Applicant Photo</label>
             <input type="file" class="form-control" id="profile" name="profile"
                 accept="image/jpeg, image/png, image/jpg,image/gif,image/webp,image/svg" />
             @if ($errors->has('profile'))
@@ -171,7 +171,7 @@
         </div> --}}
 
         <!-- Receipt Section -->
-        <div id="receipt_section" class="mb-3" style="display: none;">
+        {{-- <div id="receipt_section" class="mb-3" style="display: none;">
             <label for="receipt_image" class="form-label">Upload Receipt</label>
             <input type="file" class="form-control" id="receipt_image" name="receipt_image"
                 accept="image/jpeg, image/png, image/jpg, image/gif, image/webp, image/svg" />
@@ -188,7 +188,7 @@
             @if ($errors->has('amount'))
                 <span class="text-danger">{{ $errors->first('amount') }}</span>
             @endif
-        </div>
+        </div> --}}
 
         <div class="mb-3">
             <div class="form-check">

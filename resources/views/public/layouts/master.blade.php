@@ -31,13 +31,13 @@
                 <div class="d-flex justify-content-center justify-content-sm-between">
                     <div class="d-flex gap-4 align-items-center justify-content-center">
                         <div class="phone">
-                            <span><i class="fa-solid fa-phone"></i> +977 9876543210</span>
+                            <span><i class="fa-solid fa-phone"></i> {{$footerContent ->phone??'xxxxxxxx'}}</span>
                         </div>
                         <div class="email">
-                            <span><i class="fa-regular fa-envelope"></i> info@example.com</span>
+                            <span><i class="fa-regular fa-envelope"></i> {{$footerContent ->email??'xxxxxxxx'}}</span>
                         </div>
                         <div class="location d-none d-sm-block">
-                            <span><i class="fa-solid fa-location-dot"></i> Kathmandu, Nepal</span>
+                            <span><i class="fa-solid fa-location-dot"></i> {{$footerContent ->location??'xxxxxxxx'}}</span>
                         </div>
                     </div>
                     <div class="d-flex d-none d-md-block">
@@ -102,7 +102,7 @@
                                         <a class="nav-link" href="event.html">Event</a>
                                     </li> -->
                                     <li class="nav-item">
-                                        <a class="nav-link" href="">FAQ's</a>
+                                        <a class="nav-link" href="{{route('faq')}}">FAQ's</a>
                                     </li>
 
                                     <li class="nav-item">
@@ -138,30 +138,53 @@
             <div class="row gy-4">
                 <div class="col-lg-3 col-md-6">
                     <img src="{{ asset('frontend/img/logo.jpg') }}" style="max-height: 200px;" alt="">
-                    <p class="text-justify mt-4 text-white"> Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        Fugiat nobis
-                        tenetur libero, placeat
-                        dolores animi suscipit incidunt iure vero sunt sint.</p>
+                    <p class="text-justify mt-4 text-white">{{$footerContent->description??"xxxxx"}}</p>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <h2 class="fs-5 text-white">Get in Touch</h2>
                     <p class="my-2 text-white">
                         <i class="fa-solid fa-location-dot me-2"></i>
-                        Kathmandu, Nepal
+                       {{$footerContent->location??"xxxxxxxxx"}}
                     </p>
                     <p class="my-2 text-white">
                         <i class="fa-solid fa-phone me-2"></i>
-                        +977 9087654321
+                        {{$footerContent->phone??'xxxxxxxxxx'}}
                     </p>
                     <p class="my-2 text-white">
                         <i class="fa-regular fa-envelope me-2"></i>
-                        info@example.com
+                        {{$footerContent->email??'xxxxxxxxxx'}}
                     </p>
 
-                    <div class="social-media mt-4">
-                        <div class="">
-                            <h2 class="fs-5 ">Follow Us:</h2>
-                        </div>
+                  
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h2 class="fs-5">Useful Links</h2>
+                    <p class="my-2"><a class="footer-link text-white text-decoration-none"
+                            href="{{ route('about') }}">
+                            <i class="fa-solid fa-angle-right me-2"></i>
+                            About JPT</a></p>
+                    {{-- <p class="my-2"><a class="footer-link text-white text-decoration-none" href="">
+                            <i class="fa-solid fa-angle-right me-2"></i>
+                            Practice Materials</a></p>
+                    <p class="my-2"><a class="footer-link text-white text-decoration-none" href="">
+                            <i class="fa-solid fa-angle-right me-2"></i>
+                            Resources</a></p> --}}
+                    <p class="my-2"><a class="footer-link text-white text-decoration-none"
+                            href="{{ route('blog') }}">
+                            <i class="fa-solid fa-angle-right me-2"></i>
+                            Blog</a></p>
+                            <p class="my-2"><a class="footer-link text-white text-decoration-none"
+                                href="{{ route('notice') }}">
+                                <i class="fa-solid fa-angle-right me-2"></i>
+                                Notice</a></p>
+                    {{-- <p class="my-2"><a class="footer-link text-white text-decoration-none" href="">
+                            <i class="fa-solid fa-angle-right me-2"></i>
+                            Terms & Conditions</a></p> --}}
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="social-media">
+                        <h2 class="fs-5 ">Follow Us:</h2>
                         <div class="d-flex gap-3 mt-3">
                             <a href="">
                                 <i class="fa-brands fa-facebook-f"></i>
@@ -175,45 +198,12 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6">
-                    <h2 class="fs-5">Useful Links</h2>
-                    <p class="my-2"><a class="footer-link text-white text-decoration-none"
-                            href="{{ route('about') }}">
-                            <i class="fa-solid fa-angle-right me-2"></i>
-                            About JPT</a></p>
-                    <p class="my-2"><a class="footer-link text-white text-decoration-none" href="">
-                            <i class="fa-solid fa-angle-right me-2"></i>
-                            Practice Materials</a></p>
-                    <p class="my-2"><a class="footer-link text-white text-decoration-none" href="">
-                            <i class="fa-solid fa-angle-right me-2"></i>
-                            Resources</a></p>
-                    <p class="my-2"><a class="footer-link text-white text-decoration-none"
-                            href="{{ route('blog') }}">
-                            <i class="fa-solid fa-angle-right me-2"></i>
-                            Blog</a></p>
-                    <p class="my-2"><a class="footer-link text-white text-decoration-none" href="">
-                            <i class="fa-solid fa-angle-right me-2"></i>
-                            Terms & Conditions</a></p>
-                </div>
-
-                <div class="col-lg-3 col-md-6">
-                    <h2 class="fs-5">Newsletter</h2>
-                    <p class="my-2 text-white">Lorem ipsum dolor sit amet consectetur.</p>
-                    <div class="newslatter row g-0">
-                        <div class="col-8">
-                            <input class="border-0 h-100 w-100" type="text">
-                        </div>
-                        <div class="col-4">
-                            <button class="btn btn-warning rounded-0 w-100">Sign Up</button>
-                        </div>
-                    </div>
-                </div>
 
 
             </div>
             <hr>
             <div class="copyright text-center">
-                <p class="m-0 text-white">© 2024 something Ltd. All Right Reserved.</p>
+                <p class="m-0 text-white">© 2024 JPT Nepal. All Right Reserved.</p>
             </div>
         </div>
     </footer>

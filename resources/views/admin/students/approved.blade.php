@@ -67,7 +67,7 @@
     </div>
 
     {{-- export applicants --}}
-    <div class="modal fade" id="exportApplicants" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    <div class="modal fade modal-lg" id="exportApplicants" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="exportApplicantsLabel" aria-hidden="true">
         <div class="modal-dialog">
             <form id="exportApplicantsForm" action="{{ route('applicants.export') }}" method="POST">
@@ -143,6 +143,32 @@
                                     </label>
                                 </div>
 
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Export Reason</label>
+                            <div class="d-flex align-items-center" style="column-gap: 20px">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="export_reason" value="exam_code"
+                                        id="exam_code" checked>
+                                    <label class="form-check-label" for="exam_code">
+                                       Insert Examinee Number
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="export_reason" value="result"
+                                        id="result">
+                                    <label class="form-check-label" for="result">
+                                       Insert Result
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="export_reason" value="monitor"
+                                        id="monitor">
+                                    <label class="form-check-label" for="monitor">
+                                        Just to Monitor
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -408,50 +434,39 @@
 
 
 
-    <script>
-        function downloadAdmitCard(dob, slug, rowId) {
-            // Select the button
-            const button = document.getElementById(`download-button-${rowId}`);
+<script>
+    function downloadAdmitCard(dob, registration_number, student_id) {
+        // Disable the download button and change its text
+        var downloadButton = $('#download-button-' + student_id);
+        downloadButton.prop('disabled', true);
+        downloadButton.html('Downloading...');
 
-            // Disable the button and update text
-            button.disabled = true;
-            button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Downloading';
-
-            // Send an AJAX request
-            fetch('/my-admit-card', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: JSON.stringify({
-                        dob: dob,
-                        registration_number: slug
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.downloadUrl) {
-                        // Trigger the file download
-                        const link = document.createElement('a');
-                        link.href = data.downloadUrl;
-                        link.download = 'AdmitCard.pdf';
-                        link.click();
-                    } else {
-                        alert('Error: Unable to download the admit card.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Download failed:', error);
-                    alert('An error occurred while processing the download.');
-                })
-                .finally(() => {
-                    // Re-enable the button and restore text
-                    button.disabled = false;
-                    button.innerHTML = '<i class="fa-solid fa-download"></i> Download';
-                });
-        }
-    </script>
+        $.ajax({
+            url: '/get-admit-card', // This is your AJAX route
+            type: 'GET',
+            data: {
+                dob: dob,
+                registration_number: registration_number,
+            },
+            success: function(response) {
+                if (response.error) {
+                    alert(response.error);
+                } else {
+                    // Open the admit card in a new tab
+                    window.open('/admit-card/' + dob + '/' + registration_number, '_blank');
+                }
+            },
+            error: function(xhr) {
+                alert('Something went wrong!');
+            },
+            complete: function() {
+                // Re-enable the button and reset the text
+                downloadButton.prop('disabled', false);
+                downloadButton.html('<i class="fa-solid fa-download"></i> Download');
+            }
+        });
+    }
+</script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

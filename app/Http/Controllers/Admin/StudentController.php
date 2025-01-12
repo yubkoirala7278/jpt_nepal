@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StudentRequest;
 use App\Imports\ExamCodeImport;
 use App\Mail\StudentCreatedMail;
+use App\Models\Account;
 use App\Models\AdmitCard;
 use App\Models\Consultancy;
 use App\Models\ExamDate;
@@ -52,7 +53,8 @@ class StudentController extends Controller
             $examDates = ExamDate::where('exam_date', '>', now()->addDays(10))
                 ->latest()
                 ->get();
-            return view('admin.students.create', compact('examDates', 'nationalities'));
+                $account=Account::latest()->first();
+            return view('admin.students.create', compact('examDates', 'nationalities','account'));
         } catch (\Throwable $th) {
             return back()->with('error', $th->getMessage());
         }
@@ -110,6 +112,8 @@ class StudentController extends Controller
                 'nationality' => $request['nationality'],
                 'venue_code' => $test_center->venue_code,
                 'test_venue' => $test_center->test_venue,
+                'venue_name'=>$test_center->venue_name,
+                'venue_address'=>$test_center->venue_address,
                 'exam_category' => $request['exam_category'],
                 'examinee_category' => $request['examinee_category']
             ]);
@@ -129,6 +133,8 @@ class StudentController extends Controller
                 'consultancy_phone_number' => $student->user->consultancy->phone,
                 'registration_number' => $student->slug,
                 'venue_code' => $test_center->venue_code,
+                'venue_name'=>$test_center->venue_name,
+                'venue_address'=>$test_center->venue_address,
                 'test_venue' => $test_center->test_venue,
             ];
             Mail::to($request['email'])->send(new StudentCreatedMail($data));
@@ -456,7 +462,7 @@ class StudentController extends Controller
                 // Check if consultancy address is null and use test center address as fallback
                 $student->consultancy_address = $student->user->consultancy && $student->user->consultancy->address
                     ? $student->user->consultancy->address
-                    : $student->user->test_center->address;
+                    : $student->user->test_center->venue_address;
                 return $student;
             });
 
@@ -509,7 +515,7 @@ class StudentController extends Controller
                         </a>';
                     }
                     // Button to change status (for test_center_manager if amount is paid and receipt exists)
-                    if (auth()->user()->hasRole('test_center_manager') && $row->amount && $row->receipt_image) {
+                    if (auth()->user()->hasRole('test_center_manager') && $row->amount && $row->receipt_image && !$row->exam_number) {
                         $statusText = $row->status ? 'Pending' : 'Approved';
                         $statusColor = $row->status ? 'warning' : 'success';
                         $buttons .= '
@@ -592,9 +598,9 @@ class StudentController extends Controller
 
             // Handle the export based on the selected type
             if ($request->export === 'excel') {
-                return $this->exportApplicantsToExcel($request->date, $request->status, $request->test_center);
+                return $this->exportApplicantsToExcel($request->date, $request->status, $request->test_center,$request['export_reason']);
             } elseif ($request->export === 'csv') {
-                return $this->exportApplicantsToCSV($request->date, $request->status, $request->test_center);
+                return $this->exportApplicantsToCSV($request->date, $request->status, $request->test_center,$request['export_reason']);
             } elseif ($request->export === 'pdf') {
                 return $this->exportApplicantsToPDF($request->date, $request->status, $request->test_center);
             }
@@ -609,7 +615,7 @@ class StudentController extends Controller
     /**
      * Export applicants to Excel
      */
-    public function exportApplicantsToExcel($exam_date_id, $status, $testCenterId)
+    public function exportApplicantsToExcel($exam_date_id, $status, $testCenterId,$export_reason)
     {
         try {
             $userIdsArray = Consultancy::where('test_center_id', $testCenterId)->pluck('user_id')->toArray();
@@ -625,7 +631,7 @@ class StudentController extends Controller
 
 
             // Export the students to Excel using Laravel Excel
-            return Excel::download(new StudentsExport($students), 'applicants.xlsx');
+            return Excel::download(new StudentsExport($students,$export_reason), 'applicants.xlsx');
         } catch (\Throwable $th) {
             // Return error message
             return back()->with('error', $th->getMessage());
@@ -635,7 +641,7 @@ class StudentController extends Controller
     /**
      * Export applicants to csv
      */
-    public function exportApplicantsToCSV($exam_date_id, $status, $testCenterId)
+    public function exportApplicantsToCSV($exam_date_id, $status, $testCenterId,$export_reason)
     {
         try {
             $userIdsArray = Consultancy::where('test_center_id', $testCenterId)->pluck('user_id')->toArray();
@@ -650,7 +656,7 @@ class StudentController extends Controller
                 ->get();
 
             // Trigger the CSV export and download the file
-            return Excel::download(new StudentsExport($students), 'applicants.csv');
+            return Excel::download(new StudentsExport($students,$export_reason), 'applicants.csv');
         } catch (\Throwable $th) {
             return back()->with('error', $th->getMessage());
         }
@@ -693,7 +699,8 @@ class StudentController extends Controller
                 ->whereNull('amount')
                 ->latest()
                 ->get();
-            return view('admin.students.upload-receipt', compact('students'));
+                $account=Account::latest()->first();
+            return view('admin.students.upload-receipt', compact('students','account'));
         } catch (\Throwable $th) {
             return back()->with('error', $th->getMessage());
         }
@@ -759,9 +766,10 @@ class StudentController extends Controller
     // import exam code
     public function import(Request $request)
     {
-        $request->validate([
-            'file' => 'required|mimes:xlsx,csv',
-        ]);
+        // $request->validate([
+        //     'file' => 'required|mimes:xlsx,csv,application/csv,application/vnd.ms-excel',
+        // ]);
+        
 
         try {
             Excel::import(new ExamCodeImport, $request->file('file'));

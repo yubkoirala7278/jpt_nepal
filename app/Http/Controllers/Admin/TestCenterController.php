@@ -121,10 +121,13 @@ class TestCenterController extends Controller
             // Create the test center record
             TestCenter::create([
                 'user_id' => $user->id,
-                'phone' => $request['phone'],
-                'address' => $request['address'],
+                'venue_address'=>$request['venue_address'],
+                'test_venue'=>$request['test_venue'],
                 'venue_code'=>$request['venue_code'],
-                'test_venue'=>$request['test_venue']
+                'venue_name'=>$request['venue_name'],
+                'phone'=>$request['phone'],
+                'contact_person'=>$request['contact_person'],
+                'mobile_no'=>$request['mobile_no'],
             ]);
             // send mail when created test center
             $data = [
@@ -183,7 +186,9 @@ class TestCenterController extends Controller
                 'phone' => $request->phone,
                 'address' => $request->address,
                 'venue_code'=>$request->venue_code,
-                'test_venue'=>$request->test_venue
+                'test_venue'=>$request->test_venue,
+                'venue_address'=>$request->venue_address,
+                'venue_name'=>$request->venue_name
             ]);
 
             return redirect()->route('test_center.index')->with('success', 'Test Center updated successfully!');

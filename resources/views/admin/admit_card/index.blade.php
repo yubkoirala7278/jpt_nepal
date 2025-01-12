@@ -135,48 +135,37 @@
 
         });
     </script>
-    <script>
-        function downloadAdmitCard(dob, slug, rowId) {
-            // Select the button
-            const button = document.getElementById(`download-button-${rowId}`);
+     <script>
+        function downloadAdmitCard(dob, registration_number, student_id) {
+            // Disable the download button and change its text
+            var downloadButton = $('#download-button-' + student_id);
+            downloadButton.prop('disabled', true);
+            downloadButton.html('Downloading...');
 
-            // Disable the button and update text
-            button.disabled = true;
-            button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Downloading';
-
-            // Send an AJAX request
-            fetch('/my-admit-card', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: JSON.stringify({
-                        dob: dob,
-                        registration_number: slug
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.downloadUrl) {
-                        // Trigger the file download
-                        const link = document.createElement('a');
-                        link.href = data.downloadUrl;
-                        link.download = 'AdmitCard.pdf';
-                        link.click();
+            $.ajax({
+                url: '/get-admit-card', // This is your AJAX route
+                type: 'GET',
+                data: {
+                    dob: dob,
+                    registration_number: registration_number,
+                },
+                success: function(response) {
+                    if (response.error) {
+                        alert(response.error);
                     } else {
-                        alert('Error: Unable to download the admit card.');
+                        // Open the admit card in a new tab
+                        window.open('/admit-card/' + dob + '/' + registration_number, '_blank');
                     }
-                })
-                .catch(error => {
-                    console.error('Download failed:', error);
-                    alert('An error occurred while processing the download.');
-                })
-                .finally(() => {
-                    // Re-enable the button and restore text
-                    button.disabled = false;
-                    button.innerHTML = '<i class="fa-solid fa-download"></i> Download';
-                });
+                },
+                error: function(xhr) {
+                    alert('Something went wrong!');
+                },
+                complete: function() {
+                    // Re-enable the button and reset the text
+                    downloadButton.prop('disabled', false);
+                    downloadButton.html('<i class="fa-solid fa-download"></i> Download');
+                }
+            });
         }
     </script>
 @endpush

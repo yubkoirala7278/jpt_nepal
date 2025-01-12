@@ -23,20 +23,23 @@ class TestCenterRequest extends FormRequest
     {
         $rules = [
             'name' => 'required|max:255',
+            'venue_address'=>'required|max:255',
+            'test_venue'=>'required|max:255',
+            'venue_code'=>'required|max:255',
+            'venue_name'=>'required|max:255',
+            'phone' => [
+                'required',
+                'max:255',
+                'regex:/^\+?[0-9\s\-\(\)]+$/',
+            ],
             'email' => [
                 'required',
                 'email',
                 'max:255',
                 'unique:users,email' . ($this->isMethod('post') ? '' : ',' . optional($this->test_center->user)->id),
             ],
-            'phone' => [
-                'required',
-                'max:255',
-                'regex:/^\+?[0-9\s\-\(\)]+$/',
-            ],
-            'address' => 'required|max:255',
-            'test_venue'=>'required|max:255',
-            'venue_code'=>'required|max:255'
+            'contact_person'=>'required|max:255',
+            'mobile_no'=>'required|max:255',
         ];
 
         // Password is required only for store, optional for update

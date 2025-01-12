@@ -81,24 +81,23 @@
                     aria-label="Slide 3"></button>
             </div>
             <div class="carousel-inner slider-body">
-                <div class="carousel-item active">
-                    <img src="{{ asset('frontend/img/slider/japan-2.jpg') }}" class="slide-image d-block w-100"
-                        alt="Carousel Image" loading="lazy">
-                    <div class="carousel-caption d-flex flex-column h-100 align-items-start justify-content-center ">
-                        <h1 class="display-5 fw-bold " data-aos="fade-left" data-aos-duration="2000">Introduction to JPT
-                        </h1>
-                        <p class="fs-4 text-start text-white " style="max-width: 600px;" data-aos="fade-right"
-                            data-aos-duration="2000">The JPT evaluates proficiency across multiple levels, from beginners to experts.</p>
-                    </div>
-                </div>
-                <div class="carousel-item">
-                    <img src="{{ asset('frontend/img/slider/japan-1.jpg') }}" class="slide-image d-block w-100"
-                        alt="Carousel Image" loading="lazy">
-                    <div class="carousel-caption d-flex flex-column h-100 align-items-start justify-content-center ">
-                        <h1 class="display-5 fw-bold">Test Structure Overview</h1>
-                        <p class="fs-4 text-start text-white " style="max-width: 600px;">JPT has five levels with sections on vocabulary, grammar, and listening.</p>
-                    </div>
-                </div>
+                @if (count($headers) > 0)
+                    @foreach ($headers as $key => $header)
+                        <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
+                            <img src="{{ asset($header->image) }}" class="slide-image d-block w-100" alt="Carousel Image"
+                                loading="lazy">
+                            <div class="carousel-caption d-flex flex-column h-100 align-items-start justify-content-center">
+                                <h1 class="display-5 fw-bold" data-aos="fade-left" data-aos-duration="2000">
+                                    {{ $header->title }}
+                                </h1>
+                                <p class="fs-4 text-start text-white" style="max-width: 600px;" data-aos="fade-right"
+                                    data-aos-duration="2000">
+                                    {{ $header->description }}
+                                </p>
+                            </div>
+                        </div>
+                    @endforeach
+                @endif
             </div>
             <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions"
                 data-bs-slide="prev">
@@ -120,90 +119,52 @@
 
     </section>
 
-
-    <section class="my-news-slider mt-0">
-        <div class="row align-items-center">
-            <!-- <div class="col-md-2 news-bar-slider-name">
-                                                            <p class="fw-bold m-1 text-center">News Sidebar</p>
-                                                        </div> -->
-            <div class="col-md-12">
-                <div id="top-bar-slider">
-                    <div class="top-blog-slider">
-                        <div>
-                            <a class="link fs-5" href="">News One Lorem, ipsum dolor.</a>
-                        </div>
-                        <div>
-                            <a class="link fs-5" href="">News Two Lorem, ipsum dolor.</a>
-                        </div>
-                        <div>
-                            <a class="link fs-5" href="">News Three Lorem, ipsum dolor.</a>
-                        </div>
-                        <div>
-                            <a class="link fs-5" href="">News Four Lorem, ipsum dolor.</a>
-                        </div>
-                        <div>
-                            <a class="link fs-5" href="">News Five Lorem, ipsum dolor.</a>
+    @if (count($blogs) > 0)
+        <section class="my-news-slider mt-0">
+            <div class="row align-items-center">
+                <div class="col-md-12">
+                    <div id="top-bar-slider">
+                        <div class="top-blog-slider">
+                            @foreach ($blogs as $blog)
+                                <div>
+                                    <a class="link fs-5"
+                                        href="{{ route('blog-detail', $blog->slug) }}">{{ $blog->title }}</a>
+                                </div>
+                            @endforeach
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    @endif
 
-
-
-
-    <section class="container">
-        <div class="row gy-4">
-            <div class="col-md-6 order-md-0 order-1" data-aos="fade-right" data-aos-duration="1500">
-                <div class="d-flex flex-column justify-content-center h-100">
-                    <div class="section-title">
-                        <span><i class="fa-solid fa-angles-right"></i> Know About Our Courses</span>
-                        <h2>About Japan</h2>
+    @if (count($abouts) > 0)
+        <section class="container">
+            <div class="row gy-4">
+                @foreach ($abouts as $index => $about)
+                    <div class="col-md-6 {{ $index == 0 ? 'order-md-0 order-1' : 'order-md-1 order-0' }}"
+                        data-aos="fade-{{ $index == 0 ? 'right' : 'left' }}" data-aos-duration="1500">
+                        <div class="d-flex flex-column justify-content-center h-100">
+                            <div class="section-title">
+                                <span><i class="fa-solid fa-angles-right"></i> {{ $about->sub_title }}</span>
+                                <h2>{{ $about->title }}</h2>
+                            </div>
+                            <p>{{ $about->description }}</p>
+                            <div class="">
+                                <a href="{{ route('about') }}" class="btn btn-outline-primary">Learn More</a>
+                            </div>
+                        </div>
                     </div>
-                    <p> Japan is a country rich in history and culture. From its ancient temples to modern technology, it offers a unique blend of tradition and innovation. The language, customs, and values are integral to understanding the Japanese way of life.</p>
-                    <p>
-                        Japan's culture has influenced the world in various ways, from its art and cuisine to its technological advancements. The country is known for its polite society, respect for nature, and strong sense of community and work ethic.</p>
-                    <div class="">
-                        <a href="{{ route('about') }}" class="btn btn-outline-primary">Learn More</a>
+
+                    <div class="col-md-6 {{ $index == 0 ? 'order-md-1 order-0' : 'order-md-0 order-1' }}"
+                        data-aos="fade-{{ $index == 0 ? 'left' : 'right' }}" data-aos-duration="1500">
+                        <img class="w-100 image-fluid rounded" src="{{ asset($about->image) }}" alt="{{ $about->title }}"
+                            loading="lazy">
                     </div>
-                </div>
+                @endforeach
             </div>
-            
-
-            <div class="col-md-6 order-md-1 order-0" data-aos="fade-left" data-aos-duration="1500">
-                <img class="w-100 image-fluid rounded" src="{{ asset('frontend/img/about/about-1.png') }}" alt="About Japan"
-                    loading="lazy">
-            </div>
-        </div>
-    </section>
-
-
-    <section class="container">
-        <div class="row gy-4">
-            <div class="col-md-6" data-aos="fade-right" data-aos-duration="1500">
-                <img class="w-100 image-fluid rounded" src="{{ asset('frontend/img/about/about-2.jpg') }}"
-                    alt="About Image" loading="lazy">
-            </div>
-
-            <div class="col-md-6" data-aos="fade-left" data-aos-duration="1500">
-                <div class="d-flex flex-column justify-content-center h-100">
-                    <div class="section-title">
-                        <span><i class="fa-solid fa-angles-right"></i> Know About Our Courses</span>
-                        <h2>About Japan</h2>
-                    </div>
-                    <p> Japan is an island nation in East Asia, known for its rich history, beautiful landscapes, and cutting-edge technology. The country offers a unique combination of traditional customs and modern innovations. From ancient temples to bustling cities, Japan has something for everyone.</p>
-                    <p>
-                        The culture of Japan emphasizes respect for nature, tradition, and community. It is a society that values hard work, politeness, and the beauty of simplicity. Japanese cuisine, arts, and innovations have influenced the world in many profound ways.</p>
-                    <div class="">
-                        <a href="{{ route('about') }}" class="btn btn-outline-primary">Learn More</a>
-                    </div>
-                </div>
-            </div>
-            
-
-        </div>
-    </section>
+        </section>
+    @endif
 
 
     <section class="container">
@@ -222,7 +183,8 @@
                             <option selected disabled>Select location</option>
                             @if (count($testCentreAddress) > 0)
                                 @foreach ($testCentreAddress as $testCentre)
-                                    <option value="{{ $testCentre->address }}">{{ $testCentre->address }}</option>
+                                    <option value="{{ $testCentre->venue_address }}">{{ $testCentre->venue_address }}
+                                    </option>
                                 @endforeach
                             @endif
                         </select>
@@ -316,39 +278,39 @@
             </div>
         </div>
     </section>
-    @if(count($testimonials)>0)
-    <section class="container" data-aos="fade-right" data-aos-duration="1500">
-        <div class="section-title mb-5">
-            <span><i class="fa-solid fa-angles-right"></i> Clint Opinion</span>
-            <h2>Testominal</h2>
-        </div>
-        <div id="testominal">
+    @if (count($testimonials) > 0)
+        <section class="container" data-aos="fade-right" data-aos-duration="1500">
+            <div class="section-title mb-5">
+                <span><i class="fa-solid fa-angles-right"></i> Clint Opinion</span>
+                <h2>Testominal</h2>
+            </div>
+            <div id="testominal">
 
 
-            <div class="testominal-slider">
-                @foreach ($testimonials as $testimonial)
-                <div class="col-md-4">
-                    <div class="card testominal-item" style="width: 95%">
-                        <div class="card-body">
-                            <h5 class="card-title text-center fw-bold">{{$testimonial->name}}</h5>
-                            <p class="card-text text-center fst-italic">"{{$testimonial->description}}"
-                            </p>
-                            <div class="hr"></div>
-                            <p class="text-center fst-italic mt-2 mb-0"> <small>Good Experience</small> </p>
-                            <div class="rating">
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
+                <div class="testominal-slider">
+                    @foreach ($testimonials as $testimonial)
+                        <div class="col-md-4">
+                            <div class="card testominal-item" style="width: 95%">
+                                <div class="card-body">
+                                    <h5 class="card-title text-center fw-bold">{{ $testimonial->name }}</h5>
+                                    <p class="card-text text-center fst-italic">"{{ $testimonial->description }}"
+                                    </p>
+                                    <div class="hr"></div>
+                                    <p class="text-center fst-italic mt-2 mb-0"> <small>Good Experience</small> </p>
+                                    <div class="rating">
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    @endforeach
                 </div>
-                @endforeach
             </div>
-        </div>
-    </section>
+        </section>
     @endif
 
 @endsection
@@ -406,9 +368,9 @@
                         } else {
                             $('#searchData').html(
                                 '<p class="text-danger">Please select the location first.</p>'
-                                );
+                            );
                             $('#searchData')
-                        .show(); // Show the search data section even if no data is found
+                                .show(); // Show the search data section even if no data is found
                         }
                     },
                     error: function() {
@@ -419,9 +381,9 @@
                         // Display error message and show the search data section
                         $('#searchData').html(
                             '<p class="text-danger">An error occurred, please try again later.</p>'
-                            );
+                        );
                         $('#searchData')
-                    .show(); // Show the search data section when there's an error
+                            .show(); // Show the search data section when there's an error
                     }
                 });
             });

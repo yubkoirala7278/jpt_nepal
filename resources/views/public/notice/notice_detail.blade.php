@@ -9,8 +9,7 @@
                 <img src="{{asset('frontend/img/slider/japan-2.jpg')}}" class="slide-image d-block w-100" alt="Japan Image" loading="lazy">
                 <div class="carousel-caption d-flex flex-column h-100 align-items-start justify-content-center ">
                     <h1 class="display-5 fw-bold" data-aos="fade-right" data-aos-duration="1500">News & Notice</h1>
-                    <p class="fs-4 text-start text-white " style="max-width: 600px;" data-aos="fade-left" data-aos-duration="1500"> Lorem ipsum dolor sit amet
-                        consectetur adipisicing elit.</p>
+                    <p class="fs-4 text-start text-white " style="max-width: 600px;" data-aos="fade-left" data-aos-duration="1500">Stay updated with news and notices on Japanese proficiency tests.</p>
                 </div>
             </div>
         </div>
@@ -40,54 +39,25 @@
         <div class="col-xl-4" data-aos="fade-left" data-aos-duration="1500">
             <div class="recent-news">
                 <h2 class="border-bottom border-3 border-warning " >Recent News & Notice</h2>
-
-                <div class="card mb-3 mt-3" style="max-width: 540px;">
-                    <div class="row g-0">
-                        <div class="col-sm-3">
-                            <img src="{{asset('frontend/img/about/about-2.jpg')}}" class="img-fluid rounded-start w-100 h-100" alt="About Image" loading="lazy">
-                        </div>
-                        <div class="col-sm-9">
-                            <div class="card-body">
-                                <a href="blog-detail.html">
-                                    <h5 class="card-title">Lorem ipsum dolor sit amet consectetur.</h5>
-                                    <small class="card-text">December, 6, 2023</small>
-                                </a>
+                @if(count($latestNotices)>0)
+                    @foreach ($latestNotices as $latestNotice)
+                    <div class="card mb-3 mt-3" style="max-width: 540px;">
+                        <div class="row g-0">
+                            <div class="col-sm-3">
+                                <img src="{{asset($latestNotice->image)}}" class="img-fluid rounded-start w-100 h-100" alt="About Image" loading="lazy">
+                            </div>
+                            <div class="col-sm-9">
+                                <div class="card-body">
+                                    <a href="{{route('notice.detail',$latestNotice->slug)}}">
+                                        <h5 class="card-title">{{$latestNotice->title}}</h5>
+                                        <small class="card-text">{{ $latestNotice->created_at->format('F j, Y') }}</small>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="card mb-3 mt-3" style="max-width: 540px;">
-                    <div class="row g-0">
-                        <div class="col-sm-3">
-                            <img src="{{asset('frontend/img/about/about-1.png')}}" class="img-fluid rounded-start w-100 h-100" alt="About Image" loading="lazy">
-                        </div>
-                        <div class="col-sm-9">
-                            <div class="card-body">
-                                <a href="blog-detail.html">
-                                    <h5 class="card-title">Lorem ipsum dolor sit amet consectetur.</h5>
-                                    <small class="card-text">December, 6, 2023</small>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card mb-3 mt-3" style="max-width: 540px;">
-                    <div class="row g-0">
-                        <div class="col-sm-3">
-                            <img src="{{asset('frontend/img/about/about-2.jpg')}}" class="img-fluid rounded-start w-100 h-100" alt="About Image" loading="lazy">
-                        </div>
-                        <div class="col-sm-9">
-                            <div class="card-body">
-                                <a href="blog-detail.html">
-                                    <h5 class="card-title">Lorem ipsum dolor sit amet consectetur.</h5>
-                                    <small class="card-text">December, 6, 2023</small>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    @endforeach
+                @endif
 
             </div>
         </div>

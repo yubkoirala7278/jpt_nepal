@@ -98,8 +98,10 @@
                 <p><strong>Date of Birth:</strong> {{ $studentData['dob'] }}</p>
                 <p><strong>Address:</strong> {{ $studentData['address'] }}</p>
                 <p><strong>Registration Number:</strong> {{ $studentData['registration_number'] }}</p>
+                <p><strong>Venue Name:</strong> {{ $studentData['venue_name'] }}</p>
                 <p><strong>Test Venue:</strong> {{ $studentData['test_venue'] }}</p>
                 <p><strong>Venue Code:</strong> {{ $studentData['venue_code'] }}</p>
+                <p><strong>Venue Address:</strong> {{ $studentData['venue_address'] }}</p>
                 @if (Auth::user() && Auth::user()->hasRole('consultancy_manager'))
                     <p><strong>Consultancy Name:</strong> {{ $studentData['consultancy_name'] }}</p>
                     <p><strong>Consultancy Address:</strong> {{ $studentData['consultancy_address'] }}</p>

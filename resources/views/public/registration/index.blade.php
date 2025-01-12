@@ -4,7 +4,6 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     {{-- sweet alert 2 --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
 @endsection
 @section('content')
     <section class="secondary-banner mt-0">
@@ -17,8 +16,8 @@
                         <h1 class="display-5 fw-bold" data-aos="fade-right" data-aos-duration="1500">Student Registration
                         </h1>
                         <p class="fs-4 text-start text-white " style="max-width: 600px;" data-aos="fade-left"
-                            data-aos-duration="1500"> Lorem ipsum dolor sit amet
-                            consectetur adipisicing elit.</p>
+                            data-aos-duration="1500">Register for the Japanese proficiency test and begin your certification
+                            journey.</p>
                     </div>
                 </div>
             </div>
@@ -49,18 +48,22 @@
                     <label class="form-label">Examinee Category</label>
                     <select class="form-select" name="examinee_category" id="examinee_category">
                         <option selected disabled>Select Examinee Category</option>
-                        <option value="Student" {{ old('examinee_category') == 'Student' ? 'selected' : '' }}>Student</option>
-                        <option value="General" {{ old('examinee_category') == 'General' ? 'selected' : '' }}>General</option>
+                        <option value="Student" {{ old('examinee_category') == 'Student' ? 'selected' : '' }}>Student
+                        </option>
+                        <option value="General" {{ old('examinee_category') == 'General' ? 'selected' : '' }}>General
+                        </option>
                     </select>
                     <span class="text-danger error-text examinee_category-error"></span>
                 </div>
-        
+
                 <div class="mb-3">
                     <label class="form-label">Exam Category</label>
                     <select class="form-select" name="exam_category" id="exam_category">
                         <option selected disabled>Select Exam Category</option>
-                        <option value="Regular period" {{ old('exam_category') == 'Regular period' ? 'selected' : '' }}>Regular period</option>
-                        <option value="Any time" {{ old('exam_category') == 'Any time' ? 'selected' : '' }}>Any time</option>
+                        <option value="Regular period" {{ old('exam_category') == 'Regular period' ? 'selected' : '' }}>
+                            Regular period</option>
+                        <option value="Any time" {{ old('exam_category') == 'Any time' ? 'selected' : '' }}>Any time
+                        </option>
                     </select>
                     <span class="text-danger error-text exam_category-error"></span>
                 </div>
@@ -133,8 +136,8 @@
                 <!-- Address -->
                 <div class="mb-3">
                     <label for="address" class="form-label">Address</label>
-                    <input type="text" class="form-control" id="address" name="address" placeholder="Enter Address"
-                        value="{{ old('address') }}">
+                    <input type="text" class="form-control" id="address" name="address"
+                        placeholder="Enter Address" value="{{ old('address') }}">
                     <span class="text-danger error-text address-error"></span>
                 </div>
 
@@ -157,7 +160,7 @@
                 </div>
                 <!-- Applicant Profile -->
                 <div class="mb-3">
-                    <label for="profile" class="form-label">Student PP Size Photo</label>
+                    <label for="profile" class="form-label">Student PP Size Photo of 120px by 160px (3cm x 4cm)</label>
                     <input type="file" class="form-control" id="profile" name="profile" accept="image/*">
                     <span class="text-danger error-text profile-error"></span>
                 </div>
@@ -186,24 +189,30 @@
                     </div>
                 </div>
 
-                <!-- Account Details Section -->
-                <div id="account_section"  class="mb-3 p-4 rounded shadow-sm" style="display: none; background: #f8f9fa;">
+                @if ($account)
+                    <!-- Account Details Section -->
+                    <div id="account_section" class="mb-3 p-4 rounded shadow-sm"
+                        style="display: none; background: #f8f9fa;">
 
-                    <!-- Bank Information Section -->
-                    <div class="text-center mb-4">
-                        <p class="fw-bold mb-1" style="font-size: 1.5rem; color: #343a40;">Bank Name: <span class="text-primary">Nic Asia</span></p>
-                        <p class="text-primary fs-4 mb-2">Account Name: <span class="fw-bold">Japanese Proficiency Test</span></p>
-                        <p class="fw-bold mb-1" style="font-size: 1.5rem; color: #343a40;">Account Number: <span class="text-success">0987654321</span></p>
-                        <p class="text-secondary fs-5">Branch: <span class="fw-bold text-dark">Putalisadak</span></p>
+                        <!-- Bank Information Section -->
+                        <div class="text-center mb-4">
+                            <p class="fw-bold mb-1" style="font-size: 1.5rem; color: #343a40;">Bank Name: <span
+                                    class="text-primary">{{$account->bank_name}}</span></p>
+                            <p class="text-primary fs-4 mb-2">Account Name: <span class="fw-bold">{{$account->account_name}}</span></p>
+                            <p class="fw-bold mb-1" style="font-size: 1.5rem; color: #343a40;">Account Number: <span
+                                    class="text-success">{{$account->account_number}}</span></p>
+                            <p class="text-secondary fs-5">Branch: <span class="fw-bold text-dark">{{$account->branch_name}}</span></p>
+                        </div>
+
+                        <!-- QR Code Section -->
+                        <div class="text-center">
+                            <img src="{{ asset($account->qr_code) }}" alt="Account QR" loading="lazy"
+                                class="img-fluid mb-3 rounded" style="max-width: 200px;">
+                        </div>
                     </div>
-                
-                    <!-- QR Code Section -->
-                    <div class="text-center">
-                        <img src="{{ asset('frontend/img/qr.png') }}" alt="Account QR" loading="lazy" class="img-fluid mb-3 rounded" style="max-width: 200px;">
-                    </div>
-                </div>
-                
-                
+                @endif
+
+
 
                 <!-- Receipt Section -->
                 <div id="receipt_section" class="mb-3" style="display: none;">

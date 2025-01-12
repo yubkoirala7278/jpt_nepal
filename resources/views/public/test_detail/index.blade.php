@@ -10,8 +10,7 @@
                     <div class="carousel-caption d-flex flex-column h-100 align-items-start justify-content-center ">
                         <h1 class="display-5 fw-bold" data-aos="fade-right" data-aos-duration="1500">Test Centers</h1>
                         <p class="fs-4 text-start text-white " style="max-width: 600px;" data-aos="fade-left"
-                            data-aos-duration="1500"> Lorem ipsum dolor sit amet
-                            consectetur adipisicing elit.</p>
+                            data-aos-duration="1500">Find a convenient center to take the Japanese Proficiency Test.</p>
                     </div>
                 </div>
             </div>
@@ -42,7 +41,7 @@
                             <th scope="row">{{$key+1}}</th>
                             <td>{{$testCenter->name}}</td>
                             <td>{{$testCenter->email}}</td>
-                            <td>{{$testCenter->test_center->address}}</td>
+                            <td>{{$testCenter->test_center->venue_address}}</td>
                             <td>{{$testCenter->test_center->phone}}</td>
                         </tr>
                         @endforeach

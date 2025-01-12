@@ -16,8 +16,7 @@
                         <h1 class="display-5 fw-bold" data-aos="fade-right" data-aos-duration="1500">Agent Registration
                         </h1>
                         <p class="fs-4 text-start text-white " style="max-width: 600px;" data-aos="fade-left"
-                            data-aos-duration="1500"> Lorem ipsum dolor sit amet
-                            consectetur adipisicing elit.</p>
+                            data-aos-duration="1500">Join our network as an agent and help promote the Japanese Proficiency Test globally.</p>
                     </div>
                 </div>
             </div>

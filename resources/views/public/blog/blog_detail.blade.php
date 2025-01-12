@@ -11,8 +11,7 @@
                     <div class="carousel-caption d-flex flex-column h-100 align-items-start justify-content-center ">
                         <h1 class="display-5 fw-bold" data-aos="fade-right" data-aos-duration="1500">Blog Detail</h1>
                         <p class="fs-4 text-start text-white " style="max-width: 600px;" data-aos="fade-left"
-                            data-aos-duration="1500"> Lorem ipsum dolor sit amet
-                            consectetur adipisicing elit.</p>
+                            data-aos-duration="1500">Stay updated with news, tips, and insights on learning Japanese and proficiency tests.</p>
                     </div>
                 </div>
             </div>

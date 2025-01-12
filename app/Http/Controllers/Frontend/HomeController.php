@@ -3,7 +3,11 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\About;
+use App\Models\Blog;
 use App\Models\ExamDate;
+use App\Models\Footer;
+use App\Models\Header;
 use App\Models\Notice;
 use App\Models\TestCenter;
 use App\Models\Testimonial;
@@ -20,9 +24,12 @@ class HomeController extends Controller
                 ->take(4)
                 ->get();
             $notices = Notice::latest()->take(4)->get();
-            $testCentreAddress = TestCenter::select('address')->distinct()->get();
+            $testCentreAddress = TestCenter::select('venue_address')->distinct()->get();
             $testimonials=Testimonial::where('status',true)->latest()->get();
-            return view('public.home.index', compact('upcomingTests', 'notices', 'testCentreAddress','testimonials'));
+            $headers=Header::latest()->get();
+            $blogs = Blog::where('status', 'active')->get(['slug', 'title']);
+            $abouts = About::latest()->take(2)->get();
+            return view('public.home.index', compact('upcomingTests', 'notices', 'testCentreAddress','testimonials','headers','blogs','abouts'));
         } catch (\Throwable $th) {
             return back()->with('error', $th->getMessage());
         }
@@ -39,7 +46,7 @@ class HomeController extends Controller
             // If validation passes, proceed with fetching the test centers
             $address = $request->input('address');
             $testCentres = TestCenter::with('user')
-                ->where('address', 'like', '%' . $address . '%') // Partial match for the address
+                ->where('venue_address', 'like', '%' . $address . '%') // Partial match for the address
                 ->get();
     
             // Check if any test centers were found

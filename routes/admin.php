@@ -1,11 +1,12 @@
 <?php
 
+use App\Http\Controllers\Admin\AccountController;
 use App\Http\Controllers\Admin\AdmitCardController;
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\ConsultancyController;
 use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\ExamDateController;
-use App\Http\Controllers\Admin\HeaderController;
+use App\Http\Controllers\admin\FaqController;
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\NoticeController;
 use App\Http\Controllers\Admin\ResultController;
@@ -13,9 +14,14 @@ use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\TestCenterController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\Admin\TransactionController;
+use App\Http\Controllers\StaticPage\AboutController;
+use App\Http\Controllers\StaticPage\FooterController;
+use App\Http\Controllers\StaticPage\HeaderController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/home', [HomeController::class, 'index'])->name('admin.home');
+Route::get('/chart', [HomeController::class, 'showApplicantCountPerMonthChart'])->name('chart.show');
+Route::post('/change-student-status', [StudentController::class, 'changeStatus'])->name('student.changeStatus');
 
 // =======check if the status of consultancy or test center is active or disabled======
 Route::middleware(['auth', 'check.consultancy.test_center'])->group(function () {
@@ -34,10 +40,16 @@ Route::middleware(['auth', 'check.consultancy.test_center'])->group(function () 
         Route::post('/applicant-result/import', [ResultController::class, 'import'])->name('results.import');
         Route::post('/applicant-exam-code/import', [StudentController::class, 'import'])->name('exam-code.import');
         Route::resource('blog', BlogController::class);
-        Route::resource('header', HeaderController::class);
         Route::get('/contact', [ContactController::class, 'index'])->name('admin.contact');
         Route::delete('/contact/{slug}', [ContactController::class, 'destroy'])->name('contact.destroy');
         Route::get('/contact/{id}', [ContactController::class, 'show'])->name('contact.show');
+
+        // static Pages
+        Route::resource('header', HeaderController::class);
+        Route::resource('about', AboutController::class);
+        Route::resource('footer', FooterController::class);
+        Route::resource('faq', FaqController::class);
+        Route::resource('account', AccountController::class);
     });
 
     // =========accessible by test centers and admin only============
@@ -67,9 +79,3 @@ Route::middleware(['auth', 'check.consultancy.test_center'])->group(function () 
         Route::post('/upload-receipt', [StudentController::class, 'storeReceiptInfo'])->name('store.receipt');
     });
 });
-
-
-Route::get('/chart', [HomeController::class, 'showApplicantCountPerMonthChart'])->name('chart.show');
-// Route::get('/chart/test-centers', [HomeController::class, 'showApplicantAddedPerTestCenter'])->name('chart.testCenters');
-
-Route::post('/change-student-status', [StudentController::class, 'changeStatus'])->name('student.changeStatus');
