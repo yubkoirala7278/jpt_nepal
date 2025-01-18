@@ -26,6 +26,9 @@ class FooterRequest extends FormRequest
            'description'=> 'required|min:5|max:180',
            'phone'=> 'required|max:30',
            'email'=> 'required|email',
+           'facebook_link'=>'required',
+           'twitter_link'=>'required',
+           'whatsapp_link'=>'required'
         ];
     }
 }

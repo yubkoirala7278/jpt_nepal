@@ -186,13 +186,13 @@
                     <div class="social-media">
                         <h2 class="fs-5 ">Follow Us:</h2>
                         <div class="d-flex gap-3 mt-3">
-                            <a href="">
+                            <a href="{{$footerContent->facebook_link??''}}" target="_blank">
                                 <i class="fa-brands fa-facebook-f"></i>
                             </a>
-                            <a href="">
+                            <a href="{{$footerContent->twitter_link??''}}" target="_blank">
                                 <i class="fa-brands fa-x-twitter"></i>
                             </a>
-                            <a href="">
+                            <a href="{{$footerContent->whatsapp_link??''}}" target="_blank">
                                 <i class="fa-brands fa-whatsapp"></i>
                             </a>
                         </div>

@@ -79,7 +79,10 @@
                         orderable: false,
                         searchable: false
                     }
-                ]
+                ],
+                order: [
+                    [0, 'desc']
+                ],
             });
 
             // Handle delete with SweetAlert2

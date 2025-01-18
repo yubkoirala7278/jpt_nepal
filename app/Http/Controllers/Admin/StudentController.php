@@ -107,7 +107,7 @@ class StudentController extends Controller
                 'receipt_image' => $receiptPath,
                 'user_id' => Auth::user()->id,
                 'exam_date_id' => $request['exam_date'],
-                'amount' => $request['amount'] ?? null,
+                'amount' => $request['receipt_image']?4000:null,
                 'gender' => $request['gender'],
                 'nationality' => $request['nationality'],
                 'venue_code' => $test_center->venue_code,
@@ -258,7 +258,6 @@ class StudentController extends Controller
                 'is_appeared_previously' => $request['is_appeared_previously'] ? true : false,
                 'receipt_image' => $receiptPath,
                 'exam_date_id' => $request['exam_date'],
-                'amount' => $request['amount'],
                 'nationality' => $request['nationality'],
                 'gender' => $request['gender'],
                 'examinee_category' => $request['examinee_category'],
@@ -442,6 +441,12 @@ class StudentController extends Controller
             if ($status !== null) {
                 $query->where('status', $status);
             }
+             // Filter by exam date if selected
+        if ($request->has('exam_date_slug') && $request->exam_date_slug) {
+            $query->whereHas('exam_date', function ($query) use ($request) {
+                $query->where('slug', $request->exam_date_slug);
+            });
+        }
 
             if (Auth::user()->hasRole('consultancy_manager')) {
                 $query->where('user_id', Auth::user()->id);
@@ -471,6 +476,9 @@ class StudentController extends Controller
                 ->addColumn('receipt', function ($row) {
                     $modalId = 'modal-' . $row->id; // Unique modal ID for each row
                     $imageUrl = asset($row->receipt_image);
+                    if(!$row->receipt_image){
+                        return 'Not available';
+                    }
 
                     return '
                         <img src="' . $imageUrl . '" alt="Not Available" height="30" loading="lazy" 
@@ -753,7 +761,7 @@ class StudentController extends Controller
                 // Update the student record with the receipt image path
                 $studentInfo->update([
                     'receipt_image' => $receiptPath,
-                    'amount' => $each_student_receipt_amount
+                    'amount' => 4000
                 ]);
             }
             return redirect()->route('student.index')->with('success', 'Receipt has been uploaded for the selected applicants!');

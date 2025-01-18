@@ -160,7 +160,7 @@
                 </div>
                 <!-- Applicant Profile -->
                 <div class="mb-3">
-                    <label for="profile" class="form-label">Student PP Size Photo of 120px by 160px (3cm x 4cm)</label>
+                    <label for="profile" class="form-label">Upload PP Size Photo</label>
                     <input type="file" class="form-control" id="profile" name="profile" accept="image/*">
                     <span class="text-danger error-text profile-error"></span>
                 </div>
@@ -202,6 +202,7 @@
                             <p class="fw-bold mb-1" style="font-size: 1.5rem; color: #343a40;">Account Number: <span
                                     class="text-success">{{$account->account_number}}</span></p>
                             <p class="text-secondary fs-5">Branch: <span class="fw-bold text-dark">{{$account->branch_name}}</span></p>
+                            <p class="text-secondary fs-5">Amount: <span class="fw-bold text-success">Rs. 4000</span></p>
                         </div>
 
                         <!-- QR Code Section -->
@@ -223,12 +224,12 @@
                 </div>
 
                 <!-- Amount Section -->
-                <div id="amount_section" class="mb-3" style="display: none;">
+                {{-- <div id="amount_section" class="mb-3" style="display: none;">
                     <label for="amount" class="form-label">Amount</label>
                     <input type="number" class="form-control" id="amount" name="amount"
                         placeholder="Enter Receipt Amount" value="{{ old('amount') }}">
                     <span class="text-danger error-text amount-error"></span>
-                </div>
+                </div> --}}
                 <!-- Previous Exam -->
                 <div class="mb-3">
                     <div class="form-check">
@@ -378,17 +379,17 @@
         function updateVisibility() {
             const receiptSection = document.getElementById('receipt_section');
             const accountSection = document.getElementById('account_section');
-            const amountSection = document.getElementById('amount_section');
+            // const amountSection = document.getElementById('amount_section');
             const selectedOption = document.querySelector('input[name="payment_option"]:checked').value;
 
             if (selectedOption === 'pay_now') {
                 receiptSection.style.display = 'block';
-                amountSection.style.display = 'block';
+                // amountSection.style.display = 'block';
                 accountSection.style.display = 'block';
             } else {
                 // Hide sections
                 receiptSection.style.display = 'none';
-                amountSection.style.display = 'none';
+                // amountSection.style.display = 'none';
                 accountSection.style.display = 'none';
 
                 // Reset values

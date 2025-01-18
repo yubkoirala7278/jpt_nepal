@@ -211,12 +211,12 @@
                         <div class="card-body">
                             <div class="d-flex align-items-center">
                                 <div>
-                                    <p class="mb-0 text-secondary">Admit Card</p>
-                                    <h4 class="my-1 text-primary fw-bold">{{ $totalAdmitCard }}</h4>
+                                    <p class="mb-0 text-secondary">Blogs</p>
+                                    <h4 class="my-1 text-primary fw-bold">{{ $totalBlogs }}</h4>
                                 </div>
                                 <div class="widgets-icons-2 rounded-circle bg-gradient-blues text-white ms-auto"
                                     style="background: linear-gradient(to right, #007bff, #004085);">
-                                    <i class="fas fa-id-card"></i>
+                                    <i class="fa-solid fa-blog"></i>
                                 </div>
                             </div>
                         </div>

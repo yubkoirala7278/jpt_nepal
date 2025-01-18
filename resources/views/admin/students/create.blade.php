@@ -196,14 +196,14 @@
         </div>
 
         <!-- Amount Section -->
-        <div id="amount_section" class="mb-3" style="display: none;">
+        {{-- <div id="amount_section" class="mb-3" style="display: none;">
             <label for="amount" class="form-label">Amount</label>
             <input type="number" class="form-control" id="amount" name="amount" placeholder="Enter Receipt Amount"
                 value="{{ old('amount') }}">
             @if ($errors->has('amount'))
                 <span class="text-danger">{{ $errors->first('amount') }}</span>
             @endif
-        </div>
+        </div> --}}
 
         <div class="mb-3">
             <div class="form-check">

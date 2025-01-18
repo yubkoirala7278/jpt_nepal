@@ -24,7 +24,7 @@ class AboutRequest extends FormRequest
         $rules= [
             'title' => 'required|min:10|max:15',
             'description' => 'required|min:100|max:600',
-            'sub_title'=> 'required|min:10|max:30',
+            'sub_title'=> 'required|max:30',
         ];
         if ($this->isMethod('post')) { 
             $rules['image'] = 'required|image|mimes:webp,jpeg,png,jpg,gif,svg|max:2048|dimensions:width=640,height=427';

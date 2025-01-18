@@ -44,6 +44,9 @@ class FooterController extends Controller
                 'description' => $request['description'],
                 'phone' => $request['phone'],
                 'email' => $request['email'],
+                'facebook_link'=>$request['facebook_link'],
+                'twitter_link'=>$request['twitter_link'],
+                'whatsapp_link'=>$request['whatsapp_link']
             ]);
             return redirect()->route('footer.index')->with('success', 'Footer added successfully!');
         } catch (\Throwable $th) {
@@ -83,6 +86,9 @@ class FooterController extends Controller
                 'description' => $request['description'],
                 'phone' => $request['phone'],
                 'email' => $request['email'],
+                'facebook_link'=>$request['facebook_link'],
+                'twitter_link'=>$request['twitter_link'],
+                'whatsapp_link'=>$request['whatsapp_link']
             ]);
     
             return redirect()->route('footer.index')->with('success', 'Footer updated successfully!');

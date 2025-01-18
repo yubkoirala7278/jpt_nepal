@@ -126,10 +126,10 @@
                     <div id="top-bar-slider">
                         <div class="top-blog-slider">
                             @foreach ($blogs as $blog)
-                                <div>
-                                    <a class="link fs-5"
-                                        href="{{ route('blog-detail', $blog->slug) }}">{{ $blog->title }}</a>
-                                </div>
+                            <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                <a class="link fs-5"
+                                    href="{{ route('blog-detail', $blog->slug) }}">{{ $blog->title }}</a>
+                            </div>
                             @endforeach
                         </div>
                     </div>
@@ -356,7 +356,7 @@
                                 html += '<p class="mb-0"><strong>Phone:</strong> ' +
                                     testCentre.phone + '</p>';
                                 html += '<p class="mb-0"><strong>Address:</strong> ' +
-                                    testCentre.address + '</p>';
+                                    testCentre.venue_address + '</p>';
                                 html += '<p class="mb-0"><strong>Email:</strong> ' +
                                     testCentre.user.email + '</p>';
                                 html += '<hr/></div>';

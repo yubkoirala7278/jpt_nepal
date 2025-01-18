@@ -12,8 +12,22 @@ class UserFactory extends Factory
 
     public function definition()
     {
+        // List of company names related to Japanese proficiency test or similar themes
+        $companyNames = [
+            'Nihongo Proficiency Academy',
+            'Japan Language Institute',
+            'Nepal-Japan Cultural Exchange Center',
+            'Sakura Japanese Learning Center',
+            'Tokyo Exam Preparation Hub',
+            'Mount Fuji Language School',
+            'Himalayan Nihongo Center',
+            'Nepal-Japan Study Link',
+            'Shin Nihongo Academy',
+            'Rising Sun Language Institute',
+        ];
+
         return [
-            'name' => $this->faker->name,
+            'name' => $this->faker->randomElement($companyNames), // Random company name
             'email' => $this->faker->unique()->safeEmail,
             'email_verified_at' => now(),
             'password' => bcrypt('password'), // default password

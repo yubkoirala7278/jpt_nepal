@@ -27,7 +27,7 @@ class NoticeController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $notices = Notice::select(['id', 'title', 'image', 'slug']);
+            $notices = Notice::select(['id', 'title', 'image', 'slug'])->latest();
 
             return DataTables::of($notices)
                 ->addIndexColumn()

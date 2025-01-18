@@ -16,6 +16,18 @@
                 </button>
             </div>
         @endif
+        <!-- Exam Dates Select -->
+
+    </div>
+    <div class="d-flex justify-content-center mb-2 align-items-center">
+        <label for="examDateSelect" class="form-label mt-2 me-2">Exam Date:</label>
+        <select id="examDateSelect" class="form-control w-auto">
+            <option selected disabled>Select Exam Date</option>
+            <option value="">All</option>
+            @foreach ($examDates as $examDate)
+                <option value="{{ $examDate->slug }}">{{ $examDate->exam_date }}</option>
+            @endforeach
+        </select>
     </div>
     <div class="table-responsive">
         <table class="table applicants-datatable table-hover pt-3 w-100" id="studentsTable" style="white-space: nowrap;">
@@ -174,17 +186,17 @@
                             <label class="form-label">Export Reason</label>
                             <div class="d-flex align-items-center" style="column-gap: 20px">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="export_reason" value="exam_code"
-                                        id="exam_code" checked>
+                                    <input class="form-check-input" type="radio" name="export_reason"
+                                        value="exam_code" id="exam_code" checked>
                                     <label class="form-check-label" for="exam_code">
-                                       Insert Examinee Number
+                                        Insert Examinee Number
                                     </label>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="export_reason" value="result"
                                         id="result">
                                     <label class="form-check-label" for="result">
-                                       Insert Result
+                                        Insert Result
                                     </label>
                                 </div>
                                 <div class="form-check">
@@ -240,11 +252,20 @@
             // ====== Display Applicants in Data Table ======
             var isConsultancyManager = {{ auth()->user()->hasRole('consultancy_manager') ? 'true' : 'false' }};
 
-            $('#studentsTable').DataTable({
+            var table = $('#studentsTable').DataTable({
                 processing: true,
                 serverSide: true,
                 searchDelay: 1000,
-                ajax: "{{ route('student.index') }}",
+                ajax: {
+                    url: "{{ route('student.index') }}",
+                    data: function(d) {
+                        // Append the selected exam date to the request if any
+                        var selectedExamDate = $('#examDateSelect').val();
+                        if (selectedExamDate) {
+                            d.exam_date_slug = selectedExamDate; // Send selected exam date as parameter
+                        }
+                    }
+                },
                 columns: [{
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex',
@@ -353,6 +374,10 @@
                     targets: [3, 4],
                     visible: false
                 }] : []
+            });
+            // Handle exam date selection change
+            $('#examDateSelect').on('change', function() {
+                table.draw(); // Redraw the table with the new filter
             });
             // ====== End of Display Applicants in Data Table ======
 

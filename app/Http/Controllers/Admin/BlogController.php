@@ -18,7 +18,7 @@ class BlogController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $blogs = Blog::select(['id', 'title', 'image', 'slug','status']);
+            $blogs = Blog::select(['id', 'title', 'image', 'slug','status'])->latest();
 
             return DataTables::of($blogs)
                 ->addIndexColumn()

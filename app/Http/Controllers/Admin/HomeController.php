@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\AdmitCard;
+use App\Models\Blog;
 use App\Models\Consultancy;
 use App\Models\ExamDate;
 use App\Models\Notice;
@@ -26,7 +27,7 @@ class HomeController extends Controller
             $totalEducationConsultancy = null;
             $totalApplicants = 0;
             $totalNotice = null;
-            $totalAdmitCard = null;
+            $totalBlogs=null;
             $totalResults = null;
             $students = [];
             $notices = [];
@@ -40,7 +41,7 @@ class HomeController extends Controller
                 $totalApplicants = Students::count();
                 $pendingApplicants = Students::where('status', false)->count();
                 $totalNotice = Notice::count();
-                $totalAdmitCard = AdmitCard::count();
+                $totalBlogs=Blog::count();
                 $totalResults = Result::count();
                 $students = Students::where('is_viewed_by_admin', false)->where('status', true)->with('user', 'exam_date')->latest()->paginate(10);
                 $upcomingTestCount = ExamDate::where('exam_date', '>', Carbon::today())->count();
@@ -67,7 +68,7 @@ class HomeController extends Controller
                     $students = Students::whereIn('user_id', $educationConsultancy)->where('is_viewed_by_test_center_manager', false)->where('status', false)->with('user', 'exam_date')->latest()->paginate(10);
                 }
             }
-            return view('admin.home.index', compact('totalTestCenter', 'totalEducationConsultancy', 'totalApplicants', 'totalNotice', 'totalAdmitCard', 'totalResults', 'students', 'notices', 'upcomingTests', 'jptApplicants', 'pendingApplicants', 'upcomingTestCount'));
+            return view('admin.home.index', compact('totalTestCenter', 'totalEducationConsultancy', 'totalApplicants', 'totalNotice', 'totalBlogs', 'totalResults', 'students', 'notices', 'upcomingTests', 'jptApplicants', 'pendingApplicants', 'upcomingTestCount'));
         } catch (\Throwable $th) {
             return back()->with('error', $th->getMessage());
         }

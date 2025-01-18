@@ -62,7 +62,7 @@ class RegistrationController extends Controller
                     [
                         'exam_date' => $examDate ? $examDate->exam_date : null,
                         'test_center'=>$testCenter?$testCenter->name:null,
-                        'amount'=>$request->amount??"Pay Later",
+                        'amount'=>$request->receipt_image?"Rs. 4000":"Pay Later",
                     ]
                 ),
             ]);
@@ -99,7 +99,7 @@ class RegistrationController extends Controller
                 'receipt_image' => str_replace('public/', 'Storage/', $receiptPath),
                 'user_id' => $request->test_center,
                 'exam_date_id' => $request->exam_date,
-                'amount' => $request->amount??null,
+                'amount' => $request->receipt_image?4000:null,
                 'gender'=>$request->gender,
                 'nationality'=>$request->nationality,
                 'exam_category'=>$request->exam_category,

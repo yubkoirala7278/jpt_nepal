@@ -15,22 +15,23 @@ class ResultFactory extends Factory
 
     public function definition()
     {
-        // Generate marks, and determine result based on marks
-        $marks = $this->faker->numberBetween(0, 100);
-        $result = $marks < 30 ? 'fail' : 'pass'; // Marks below 30 will be fail, otherwise pass
+        // Find a student who fulfills the criteria and doesn't already have a result
+        $student = Students::where('status', true)
+            ->whereNotNull('exam_number')
+            ->whereNotNull('amount')
+            ->whereDoesntHave('result') // Ensure the student doesn't already have a result
+            ->inRandomOrder()
+            ->first();
+
+        // If no valid student is found, skip factory generation
+        if (!$student) {
+            throw new \Exception("No valid student found to generate a result.");
+        }
 
         return [
-            'result' => $result,
-            'marks' => $marks,
-            'student_id' => function () {
-                // Get students with status true who do not already have a result
-                $student = Students::where('status', true)
-                    ->whereDoesntHave('results') // Ensure the student doesn't already have a result
-                    ->inRandomOrder()
-                    ->first();
-
-                return $student ? $student->id : null; // Return student id if found, else return null
-            },
+            'student_id' => $student->id,
+            'result' => $this->faker->randomElement(['pass', 'fail']), // Random result (pass or fail)
+            'marks' => $this->faker->randomFloat(2, 0, 100), // Marks between 0 and 100
         ];
     }
 }

@@ -17,11 +17,15 @@ class DatabaseSeeder extends Seeder
         	AdminSeeder::class, 
             NationalitySeeder::class,
             // factory
-            // ExamDateSeeder::class,
-            // TestCenterAndConsultancySeeder::class,
-            // StudentSeeder::class,
-            // AdmitCardSeeder::class,
-            // ResultSeeder::class,
+            ExamDateSeeder::class,
+            TestCenterAndConsultancySeeder::class,
+            StudentSeeder::class,
+            ResultSeeder::class,
+            TestimonialSeeder::class,
+            NoticeSeeder::class,
+            ContactSeeder::class,
+            BlogSeeder::class,
+            FaqsTableSeeder::class,
     	]);
     }
 }

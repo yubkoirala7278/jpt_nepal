@@ -27,7 +27,7 @@ class TransactionController extends Controller
                         if($student->user->consultancy){
                             return $student->user->consultancy->address;
                         }else{
-                            return $student->user->test_center->address;
+                            return $student->user->test_center->venue_address;
                         }
                     })
                     ->addColumn('action', function($student) {

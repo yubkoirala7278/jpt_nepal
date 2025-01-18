@@ -61,18 +61,6 @@
             </div>
         @endif
         <div class="mb-3">
-            <label for="receipt_image" class="form-label">Upload Receipt</label>
-            <input type="file" class="form-control" id="receipt_image" name="receipt_image"
-                accept="image/jpeg, image/png, image/jpg, image/webp, image/svg+xml" />
-            @if ($errors->has('receipt_image'))
-                <span class="text-danger">{{ $errors->first('receipt_image') }}</span>
-            @endif
-            <div id="image_preview" class="position-relative mt-3">
-                <!-- Image preview and remove icon will appear here -->
-            </div>
-        </div>
-
-        <div class="mb-3">
             <label for="students" class="form-label">Select Students</label>
             <select class="form-select" name="students[]" id="students" multiple>
                 @if (count($students) > 0)
@@ -88,9 +76,8 @@
                 <span class="text-danger">{{ $errors->first('students') }}</span>
             @endif
         </div>
-
-        <!-- Amount Section -->
-        <div class="mb-3">
+         <!-- Amount Section -->
+         <div class="mb-3">
             <label for="amount" class="form-label">Total Receipt Amount</label>
             <input type="number" class="form-control" id="amount" name="amount" placeholder="Enter Receipt Amount"
                 value="{{ old('amount') }}">
@@ -98,6 +85,21 @@
                 <span class="text-danger">{{ $errors->first('amount') }}</span>
             @endif
         </div>
+        <div class="mb-3">
+            <label for="receipt_image" class="form-label">Upload Receipt</label>
+            <input type="file" class="form-control" id="receipt_image" name="receipt_image"
+                accept="image/jpeg, image/png, image/jpg, image/webp, image/svg+xml" />
+            @if ($errors->has('receipt_image'))
+                <span class="text-danger">{{ $errors->first('receipt_image') }}</span>
+            @endif
+            <div id="image_preview" class="position-relative mt-3">
+                <!-- Image preview and remove icon will appear here -->
+            </div>
+        </div>
+
+       
+
+       
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 @endsection

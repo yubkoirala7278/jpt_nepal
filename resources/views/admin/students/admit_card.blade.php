@@ -8,6 +8,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <style>
+        body {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
         table {
             border: 1px solid #ccc;
             border-collapse: collapse;
@@ -72,14 +78,14 @@
                                     <div class="d-flex justify-content-around gap-0"
                                         style="border: 3px solid rgb(245, 37, 141);">
                                         @php
-                                            $venueCodeDigits = str_split($data['venueCode']);
+                                        $venueCodeDigits = str_split($data['venueCode']);
                                         @endphp
 
                                         @foreach ($venueCodeDigits as $digit)
-                                            <div class="text-center"
-                                                style="width: 30px; border: 1px solid rgb(245, 37, 141);">
-                                                {{ $digit }}
-                                            </div>
+                                        <div class="text-center"
+                                            style="width: 30px; border: 1px solid rgb(245, 37, 141);">
+                                            {{ $digit }}
+                                        </div>
                                         @endforeach
                                     </div>
                                 </div>
@@ -95,14 +101,14 @@
                                     <div class="d-flex justify-content-around gap-0"
                                         style="border: 3px solid rgb(245, 37, 141);">
                                         @php
-                                            $examineeNumber = str_split($data['examineeNumber']);
+                                        $examineeNumber = str_split($data['examineeNumber']);
                                         @endphp
 
                                         @foreach ($examineeNumber as $digit)
-                                            <div class="text-center"
-                                                style="width: 30px; border: 1px solid rgb(245, 37, 141);">
-                                                {{ $digit }}
-                                            </div>
+                                        <div class="text-center"
+                                            style="width: 30px; border: 1px solid rgb(245, 37, 141);">
+                                            {{ $digit }}
+                                        </div>
                                         @endforeach
                                     </div>
 
@@ -138,14 +144,14 @@
                                     <div class="d-flex justify-content-around gap-0"
                                         style="border: 3px solid rgb(245, 37, 141);">
                                         @php
-                                            $dobDigits = str_split(str_replace('-', '', $data['dob']));
+                                        $dobDigits = str_split(str_replace('-', '', $data['dob']));
                                         @endphp
 
                                         @foreach ($dobDigits as $digit)
-                                            <div class="text-center"
-                                                style="width: 30px; border: 1px solid rgb(245, 37, 141);">
-                                                {{ $digit }}
-                                            </div>
+                                        <div class="text-center"
+                                            style="width: 30px; border: 1px solid rgb(245, 37, 141);">
+                                            {{ $digit }}
+                                        </div>
                                         @endforeach
                                     </div>
                                 </div>
@@ -246,7 +252,7 @@
 
                     </div>
 
-                    <img src="{{ asset($data['imagePath']) }}" class="h-100" alt="Profile Image">
+                    <img src="{{ asset($data['imagePath']) }}" style="max-height: 150px" alt="Profile Image">
 
                 </div>
             </td>
@@ -381,6 +387,16 @@
 
             .noprint {
                 display: none;
+            }
+
+            /* Remove page margins */
+            @page {
+                margin: 0;
+            }
+
+            body {
+                margin: 0;
+                padding: 20px 10px;
             }
         }
     </style>
